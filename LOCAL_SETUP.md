@@ -29,6 +29,9 @@ DB_SSL=false
 ```sql
 database/schema.sql
 ```
+Le serveur accepte aussi les alias `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`,
+`MYSQL_PASSWORD`, `MYSQL_DATABASE` et `JWT_SECRET`, ce qui aide sur Hostinger
+si ces variables existent deja dans le panel.
 
 ## Démarrage
 Le script `npm start` lance `ng serve` (port 4200 par défaut).
@@ -79,6 +82,7 @@ Le serveur crée automatiquement ces comptes au démarrage (avec hash sécurisé
 1. Créer la base MySQL sur l'hébergeur.
 2. Importer `database/schema.sql`.
 3. Configurer les variables `DB_*` dans l'environnement serveur.
+   Les alias `MYSQL_*` et `JWT_SECRET` sont aussi acceptes par le code.
 4. Build puis run SSR (deux options):
 
 **Option A** (recommandée - en utilisant npm start):

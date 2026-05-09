@@ -264,6 +264,7 @@ const angularApp = new AngularNodeAppEngine({
 
 let dbPool: Pool | null = null;
 let useMemoryStore = false;
+let serverStarted = false;
 
 const memoryUsers: StoredUser[] = [
   makeStoredUser('1', 'Admin User', 'admin@essentielle.com', 'admin', 'password123'),
@@ -667,7 +668,32 @@ function toPublicUser(user: StoredUser): PublicUser {
 }
 
 function getTokenSecret(): string {
-  return process.env['TOKEN_SECRET'] ?? 'dev-insecure-secret';
+  return process.env['TOKEN_SECRET'] ?? process.env['JWT_SECRET'] ?? 'dev-insecure-secret';
+}
+
+function getDbHost(): string | undefined {
+  return process.env['DB_HOST'] ?? process.env['MYSQL_HOST'];
+}
+
+function getDbPort(): number {
+  const rawPort = process.env['DB_PORT'] ?? process.env['MYSQL_PORT'];
+  return rawPort ? Number(rawPort) : 3306;
+}
+
+function getDbUser(): string | undefined {
+  return process.env['DB_USER'] ?? process.env['MYSQL_USER'];
+}
+
+function getDbPassword(): string {
+  return process.env['DB_PASSWORD'] ?? process.env['MYSQL_PASSWORD'] ?? '';
+}
+
+function getDbName(): string | undefined {
+  return process.env['DB_NAME'] ?? process.env['MYSQL_DATABASE'];
+}
+
+function isDbSslEnabled(): boolean {
+  return (process.env['DB_SSL'] ?? '').toLowerCase() === 'true';
 }
 
 function createToken(user: PublicUser): string {
@@ -711,7 +737,7 @@ function makeStoredUser(id: string, name: string, email: string, role: UserRole,
 }
 
 function hasDatabaseConfig(): boolean {
-  return Boolean(process.env['DB_HOST'] && process.env['DB_USER'] && process.env['DB_NAME']);
+  return Boolean(getDbHost() && getDbUser() && getDbName());
 }
 
 async function getDbPool(): Promise<Pool | null> {
@@ -726,15 +752,15 @@ async function getDbPool(): Promise<Pool | null> {
 
   try {
     dbPool = mysql.createPool({
-      host: process.env['DB_HOST'],
-      port: process.env['DB_PORT'] ? Number(process.env['DB_PORT']) : 3306,
-      user: process.env['DB_USER'],
-      password: process.env['DB_PASSWORD'] ?? '',
-      database: process.env['DB_NAME'],
+      host: getDbHost(),
+      port: getDbPort(),
+      user: getDbUser(),
+      password: getDbPassword(),
+      database: getDbName(),
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
-      ssl: process.env['DB_SSL'] === 'true' ? { rejectUnauthorized: false } : undefined,
+      ssl: isDbSslEnabled() ? { rejectUnauthorized: false } : undefined,
     });
     await dbPool.query('SELECT 1');
     await ensureSchemaAndSeed(dbPool);
@@ -2356,13 +2382,21 @@ app.use((req, res, next) => {
     .catch(next);
 });
 
-if (isMainModule(import.meta.url) || process.env['pm_id']) {
-  const port = process.env['PORT'] || 4000;
+export async function startServer(): Promise<void> {
+  if (serverStarted) return;
+  serverStarted = true;
+
+  const port = Number(process.env['PORT'] || 4000);
   void getDbPool();
+
   app.listen(port, (error) => {
     if (error) throw error;
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
+}
+
+if (isMainModule(import.meta.url) || process.env['pm_id']) {
+  void startServer();
 }
 
 export const reqHandler = createNodeRequestHandler(app);
