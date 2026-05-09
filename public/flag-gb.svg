@@ -1,0 +1,21 @@
+<svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="32" cy="32" r="31" fill="white" stroke="#D9BE80" stroke-width="2"/>
+  <mask id="maskGB" maskUnits="userSpaceOnUse" x="1" y="1" width="62" height="62">
+    <circle cx="32" cy="32" r="31" fill="white"/>
+  </mask>
+  <g mask="url(#maskGB)">
+    <!-- Union Jack -->
+    <rect x="1" y="1" width="62" height="62" fill="#012169"/>
+    <!-- Croix blanche -->
+    <rect x="1" y="24" width="62" height="16" fill="#FFFFFF"/>
+    <rect x="24" y="1" width="16" height="62" fill="#FFFFFF"/>
+    <!-- Croix rouge -->
+    <rect x="1" y="28" width="62" height="8" fill="#C8102E"/>
+    <rect x="28" y="1" width="8" height="62" fill="#C8102E"/>
+    <!-- Diagonales -->
+    <polygon points="1,1 12,1 62,51 62,62 51,62 1,12" fill="#C8102E"/>
+    <polygon points="1,62 12,62 62,12 62,1 51,1 1,51" fill="#C8102E"/>
+    <polygon points="1,1 10,1 62,52 62,62 52,62 1,10" fill="#FFFFFF"/>
+    <polygon points="1,62 10,62 62,11 62,1 52,1 1,52" fill="#FFFFFF"/>
+  </g>
+</svg>

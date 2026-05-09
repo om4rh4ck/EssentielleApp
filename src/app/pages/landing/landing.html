@@ -1,0 +1,545 @@
+<!-- Premium Hero Section -->
+<section class="relative overflow-hidden bg-[var(--color-brand-cream)] pt-24 pb-10 lg:min-h-screen lg:pt-18 lg:pb-8">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:hidden">
+    <div #heroContent class="overflow-hidden rounded-[2rem] border border-[var(--color-brand-gold-300)]/30 bg-white/60 shadow-[0_24px_60px_rgba(15,23,19,0.10)] backdrop-blur-sm">
+      <div class="relative h-[360px] overflow-hidden rounded-t-[2rem]">
+        <img
+          src="/imac orig.png"
+          alt="Essenti'Elle Sant&eacute;"
+          class="h-full w-full object-cover object-[62%_center]"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-brand-cream)]/72 via-transparent to-white/10"></div>
+      </div>
+
+      <div class="px-5 py-6">
+        <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/50 bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-green-900)] shadow-sm">
+          <mat-icon class="h-4 w-4 text-[var(--color-brand-gold-500)]" style="font-size: 15px;">bolt</mat-icon>
+          {{ t({ fr: "L'ESSENTIELLE SANTE", en: "ESSENTIELLE HEALTH", ar: "الأسنسية للصحة" }) }}
+        </div>
+
+        <h1 class="mt-5 font-serif text-[2.2rem] leading-[1.02] text-[var(--color-brand-green-900)]">
+          {{ t({ fr: 'Formations professionnelles 100% féminines', en: '100% women-focused professional training', ar: 'تكوين مهني نسائي 100%' }) }}
+        </h1>
+
+        <p class="mt-4 text-[1rem] leading-7 text-[var(--color-brand-green-800)]/80">
+          {{ t({ fr: "Essenti’Elle Santé est un institut de formation et d’expertise en bien-être féminin international, créé par une Française basée à Djerba.", en: "Essenti’Elle Santé is an international women’s wellness training and expertise institute, created by a French founder based in Djerba.", ar: "إيسونتيال سانتي هو معهد دولي للتكوين والخبرة في الرفاه النسائي، أسسته فرنسية مقيمة في جربة." }) }}
+        </p>
+
+        <p class="mt-3 text-[0.98rem] leading-7 text-[var(--color-brand-green-800)]/75">
+          {{ t({ fr: "Avec la méthode Essenti’Elle, vous avez une compétence concrète, une possibilité de revenus et un accompagnement. C’est une vraie opportunité de changement.", en: "With the Essenti’Elle method, you gain real skills, income potential and support. It is a true opportunity for change.", ar: "مع طريقة إيسونتيال، تحصلين على مهارة حقيقية وفرصة دخل ومرافقة. إنها فرصة حقيقية للتغيير." }) }}
+        </p>
+
+        <a routerLink="/formations" class="mt-5 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-6 py-3 text-sm font-bold text-white shadow-[0_18px_36px_rgba(200,169,106,0.28)] transition-all duration-300 hover:bg-[var(--color-brand-green-800)]">
+          {{ t({ fr: 'Découvrir nos formations', en: 'Discover our programs', ar: 'اكتشفي برامجنا' }) }}
+        </a>
+
+        <div class="mt-6 grid grid-cols-3 gap-3 text-center">
+          <div class="flex flex-col items-center gap-2 text-[var(--color-brand-green-800)]/75">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-brand-gold-300)]/22 text-[var(--color-brand-gold-500)]">
+              <mat-icon style="font-size: 18px;">verified_user</mat-icon>
+            </div>
+            <span class="text-[11px] font-semibold leading-4">{{ t({ fr: 'Certifications reconnues', en: 'Recognized certificates', ar: 'شهادات معترف بها' }) }}</span>
+          </div>
+          <div class="flex flex-col items-center gap-2 text-[var(--color-brand-green-800)]/75">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-brand-gold-300)]/22 text-[var(--color-brand-gold-500)]">
+              <mat-icon style="font-size: 18px;">laptop_mac</mat-icon>
+            </div>
+            <span class="text-[11px] font-semibold leading-4">{{ t({ fr: 'Accès en ligne', en: 'Online access', ar: 'وصول عبر الإنترنت' }) }}</span>
+          </div>
+          <div class="flex flex-col items-center gap-2 text-[var(--color-brand-green-800)]/75">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-brand-gold-300)]/22 text-[var(--color-brand-gold-500)]">
+              <mat-icon style="font-size: 18px;">person_outline</mat-icon>
+            </div>
+            <span class="text-[11px] font-semibold leading-4">{{ t({ fr: 'Accompagnement personnalisé', en: 'Personal guidance', ar: 'مرافقة شخصية' }) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="relative hidden overflow-hidden lg:block lg:min-h-screen">
+    <img
+      src="/imac orig.png"
+      alt="Essenti'Elle Sant&eacute;"
+      class="absolute inset-0 h-full w-full object-cover object-[68%_center]"
+    />
+    <div class="absolute inset-y-0 left-0 w-[58%]" style="background: linear-gradient(90deg, rgba(248,244,236,0.98) 0%, rgba(248,244,236,0.94) 42%, rgba(248,244,236,0.72) 72%, rgba(248,244,236,0) 100%);"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(circle at 18% 24%, rgba(230,211,163,0.32), transparent 26%);"></div>
+
+    <div class="relative z-10 mx-auto flex min-h-[calc(100vh-5.5rem)] max-w-7xl items-start px-6 pt-0 lg:px-4">
+      <div
+        #heroContent
+        class="relative z-20 w-full max-w-xl rounded-[2rem] border border-white/30 px-8 py-6 text-center lg:-translate-x-24 lg:px-12 lg:py-6 lg:text-left"
+        style="background: transparent;"
+      >
+        <div class="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--color-brand-green-900)] shadow-[0_14px_34px_rgba(15,23,19,0.10)]">
+          <mat-icon class="h-4 w-4 text-[var(--color-brand-gold-500)]" style="font-size: 15px;">bolt</mat-icon>
+          {{ t({ fr: "L'ESSENTIELLE SANTE", en: "ESSENTIELLE HEALTH", ar: "الأسنسية للصحة" }) }}
+        </div>
+
+        <h1 class="mt-5 font-serif text-[2.8rem] leading-[0.96] text-[var(--color-brand-green-900)] sm:text-[3.5rem] lg:text-[4.05rem]">
+          {{ t({ fr: 'L’excellence de la formation bien-être au féminin', en: 'Excellence in women’s wellness education', ar: 'التميّز في التكوين النسائي في الرفاه' }) }}
+        </h1>
+
+        <h2 class="mt-4 text-lg font-semibold tracking-[0.08em] text-[var(--color-brand-gold-500)] uppercase sm:text-xl">
+          {{ t({ fr: 'Une plateforme professionnelle dédiée aux femmes ambitieuses', en: 'A professional platform for ambitious women', ar: 'منصة احترافية للنساء الطموحات' }) }}
+        </h2>
+
+        <p class="mt-5 max-w-xl text-base leading-7 text-[var(--color-brand-green-800)]/80 sm:text-[1.05rem]">
+          {{ t({ fr: "Essenti’Elle Santé est un institut de formation et d’expertise en bien-être féminin international, fondé par une Française basée à Djerba.", en: "Essenti’Elle Santé is an international women’s wellness training and expertise institute founded by a French entrepreneur based in Djerba.", ar: "إيسونتيال سانتي هو معهد دولي للتكوين والخبرة في الرفاه النسائي، أسسته فرنسية مقيمة في جربة." }) }}
+        </p>
+
+        <p class="mt-4 max-w-xl text-base leading-7 text-[var(--color-brand-green-800)]/80 sm:text-[1.05rem]">
+          {{ t({ fr: 'Nous formons des femmes à devenir expertes du bien-être et indépendantes financièrement, grâce à des formations professionnelles de haute qualité.', en: 'We train women to become wellness experts and financially independent through high-quality professional programs.', ar: 'نحن نكوّن النساء ليصبحن خبيرات في الرفاه ومستقلات مادياً عبر برامج احترافية عالية الجودة.' }) }}
+        </p>
+
+        <p class="mt-4 max-w-xl text-base leading-7 text-[var(--color-brand-green-800)]/80 sm:text-[1.05rem]">
+          {{ t({ fr: 'Avec la méthode Essenti’Elle, vous obtenez une compétence concrète, une possibilité de revenus et un accompagnement réel. C’est une vraie opportunité de changement, avec des places limitées pour garantir la qualité.', en: 'With the Essenti’Elle method, you gain practical skills, income potential and real support. It is a genuine opportunity for change, with limited seats to protect quality.', ar: 'مع طريقة إيسونتيال، تحصلين على مهارة عملية وفرصة دخل ومرافقة حقيقية. إنها فرصة تغيير حقيقية مع عدد أماكن محدود لضمان الجودة.' }) }}
+        </p>
+
+        <div class="mt-6 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-center lg:justify-start">
+          <a routerLink="/register" class="inline-flex min-h-15 items-center justify-center gap-2 rounded-2xl bg-[var(--color-brand-green-800)] px-8 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white shadow-[0_20px_40px_rgba(15,23,19,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-brand-green-900)]">
+            <mat-icon style="font-size: 18px;">rocket_launch</mat-icon>
+            {{ t({ fr: 'Démarrer gratuitement', en: 'Start for free', ar: 'ابدئي مجاناً' }) }}
+          </a>
+          <a href="#features" class="inline-flex min-h-15 items-center justify-center gap-2 rounded-2xl border border-[var(--color-brand-gold-300)]/70 bg-white/92 px-8 py-4 text-sm font-bold uppercase tracking-[0.18em] text-[var(--color-brand-green-900)] shadow-[0_18px_34px_rgba(15,23,19,0.08)] backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand-gold-500)] hover:text-[var(--color-brand-gold-500)]">
+            <mat-icon style="font-size: 18px;">insights</mat-icon>
+            {{ t({ fr: 'Découvrir la plateforme', en: 'Explore the platform', ar: 'اكتشفي المنصة' }) }}
+          </a>
+        </div>
+
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-green-800)]/65 lg:justify-start">
+          <span>{{ t({ fr: 'Compétence concrète', en: 'Practical skill', ar: 'مهارة عملية' }) }}</span>
+          <span>{{ t({ fr: 'Possibilité de revenus', en: 'Income potential', ar: 'فرصة دخل' }) }}</span>
+          <span>{{ t({ fr: 'Places limitées', en: 'Limited seats', ar: 'أماكن محدودة' }) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SaaS Features Section -->
+<section id="features" class="py-24 bg-white relative border-t border-[var(--color-brand-gold-300)]/30">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col items-center text-center mb-16">
+      <div class="text-[var(--color-brand-gold-500)] font-bold tracking-widest uppercase text-xs mb-3">{{ t({ fr: "Plateforme Essenti'Elle", en: 'EssentiElle Platform', ar: 'منصة إيسونتيال' }) }}</div>
+      <h2 class="font-serif text-4xl text-[var(--color-brand-green-900)] mb-4">{{ t({ fr: 'Une plateforme pensée pour votre évolution', en: 'A platform designed for your growth', ar: 'منصة مصممة لتطورك' }) }}</h2>
+      <p class="font-sans text-[var(--color-brand-green-800)]/70 max-w-2xl font-light text-lg">
+        {{ t({ fr: 'Un espace de formation complet pour apprendre, pratiquer, valider vos acquis et construire une activité durable dans le bien-être féminin.', en: 'A complete training space to learn, practice, validate your skills and build a lasting business in women’s wellness.', ar: 'مساحة تدريب متكاملة للتعلم والتطبيق وتأكيد المهارات وبناء نشاط مستدام في الرفاه النسائي.' }) }}
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center">
+      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-[var(--color-brand-gold-300)]/50 transition-all opacity-100 group w-full max-w-sm">
+        <div class="w-12 h-12 bg-[var(--color-brand-green-800)]/5 text-[var(--color-brand-green-800)] flex items-center justify-center rounded-xl mb-6 group-hover:scale-110 group-hover:bg-[var(--color-brand-green-800)] group-hover:text-white transition-all">
+          <mat-icon>query_stats</mat-icon>
+        </div>
+        <p class="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-green-800)]/55">Modules progressifs</p>
+        <h3 class="font-sans font-bold text-[var(--color-brand-green-900)] mb-2">{{ t({ fr: 'Parcours de Formation', en: 'Training Paths', ar: 'مسارات التكوين' }) }}</h3>
+        <p class="font-sans text-[var(--color-brand-green-800)]/70 text-sm font-light leading-relaxed">
+          {{ t({ fr: 'Des modules structurés, progressifs et accessibles pour apprendre à votre rythme et développer des compétences concrètes.', en: 'Structured, progressive and accessible modules to learn at your own pace and build practical skills.', ar: 'وحدات منظمة ومتدرجة وسهلة الوصول للتعلم حسب وتيرتك وبناء مهارات عملية.' }) }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-[var(--color-brand-gold-300)]/50 transition-all opacity-100 group w-full max-w-sm">
+        <div class="w-12 h-12 bg-[var(--color-brand-gold-300)]/30 text-[var(--color-brand-gold-500)] flex items-center justify-center rounded-xl mb-6 group-hover:scale-110 group-hover:bg-[var(--color-brand-gold-500)] group-hover:text-white transition-all">
+          <mat-icon>fact_check</mat-icon>
+        </div>
+        <p class="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-gold-500)]/70">Validation officielle</p>
+        <h3 class="font-sans font-bold text-[var(--color-brand-green-900)] mb-2">{{ t({ fr: 'Évaluations & Certifications', en: 'Assessments & Certifications', ar: 'التقييمات والشهادات' }) }}</h3>
+        <p class="font-sans text-[var(--color-brand-green-800)]/70 text-sm font-light leading-relaxed">
+          {{ t({ fr: 'Validez vos acquis grâce à des évaluations claires et obtenez des certifications valorisantes pour votre parcours professionnel.', en: 'Validate your skills with clear assessments and earn certifications that strengthen your professional path.', ar: 'أكدي مهاراتك من خلال تقييمات واضحة واحصلي على شهادات تعزز مسارك المهني.' }) }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-[var(--color-brand-gold-300)]/50 transition-all opacity-100 group w-full max-w-sm">
+        <div class="w-12 h-12 bg-[var(--color-brand-green-800)]/5 text-[var(--color-brand-green-800)] flex items-center justify-center rounded-xl mb-6 group-hover:scale-110 group-hover:bg-[var(--color-brand-green-800)] group-hover:text-white transition-all">
+          <mat-icon>important_devices</mat-icon>
+        </div>
+        <p class="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-green-800)]/55">Accès privé en ligne</p>
+        <h3 class="font-sans font-bold text-[var(--color-brand-green-900)] mb-2">{{ t({ fr: 'Espace Élève Privé', en: 'Private Student Space', ar: 'فضاء الطالب الخاص' }) }}</h3>
+        <p class="font-sans text-[var(--color-brand-green-800)]/70 text-sm font-light leading-relaxed">
+          {{ t({ fr: 'Retrouvez vos cours, vos supports, vos ressources et vos contenus vidéo dans un environnement fluide, moderne et facile à utiliser.', en: 'Access your lessons, materials, resources and videos in a smooth, modern and easy-to-use environment.', ar: 'اعثري على دروسك ومواردك ومحتوياتك المرئية في بيئة حديثة وسهلة الاستخدام.' }) }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-[var(--color-brand-gold-300)]/50 transition-all opacity-100 group w-full max-w-sm">
+        <div class="w-12 h-12 bg-[var(--color-brand-gold-300)]/30 text-[var(--color-brand-gold-500)] flex items-center justify-center rounded-xl mb-6 group-hover:scale-110 group-hover:bg-[var(--color-brand-gold-500)] group-hover:text-white transition-all">
+          <mat-icon>gpp_good</mat-icon>
+        </div>
+        <p class="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-gold-500)]/70">Suivi sécurisé</p>
+        <h3 class="font-sans font-bold text-[var(--color-brand-green-900)] mb-2">{{ t({ fr: 'Accompagnement Sécurisé', en: 'Secure Guidance', ar: 'مرافقة آمنة' }) }}</h3>
+        <p class="font-sans text-[var(--color-brand-green-800)]/70 text-sm font-light leading-relaxed">
+          {{ t({ fr: 'Profitez d\'une plateforme fiable et confidentielle, pensée pour vous accompagner sérieusement dans votre progression.', en: 'Benefit from a reliable and confidential platform designed to support your progress seriously.', ar: 'استفيدي من منصة موثوقة وسرية صممت لمرافقتك بجدية في تقدمك.' }) }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Formation Par Formule Section -->
+<section class="py-24 bg-gradient-to-br from-[var(--color-brand-cream)] via-white to-[var(--color-brand-gold-100)]">
+  <div class="mx-auto max-w-7xl px-6">
+    <h2 class="text-center font-serif text-4xl md:text-5xl text-[var(--color-brand-green-900)] mb-14">
+      Formation Par Formule :
+    </h2>
+    <div class="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
+      <!-- Formule Essentielle -->
+      <div class="rounded-3xl border-2 border-[var(--color-brand-gold-300)] bg-white shadow-lg p-8 flex flex-col items-center hover:scale-[1.03] transition-transform">
+        <div class="w-16 h-16 flex items-center justify-center rounded-full bg-[var(--color-brand-gold-500)]/20 mb-5">
+          <mat-icon class="text-[var(--color-brand-gold-700)]" style="font-size: 2.2rem;">verified</mat-icon>
+        </div>
+        <h3 class="font-serif text-2xl text-[var(--color-brand-gold-700)] mb-2">Essentielle</h3>
+        <p class="text-center text-[var(--color-brand-green-800)]/80 text-base mb-4">Une formule d’initiation structurée pour acquérir les fondamentaux du bien-être féminin avec clarté et méthode.</p>
+        <p class="text-center text-sm leading-6 text-[var(--color-brand-green-800)]/65 mb-6">Idéale pour démarrer sur des bases solides, développer une première expertise et avancer avec confiance dans un cadre professionnel.</p>
+        <span class="inline-block rounded-full bg-[var(--color-brand-gold-100)] px-4 py-1 text-xs font-bold text-[var(--color-brand-gold-700)]">Fondamentale</span>
+        <a routerLink="/formation" class="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-5 py-3 text-sm font-bold text-white no-underline transition-colors duration-300 hover:bg-black hover:text-white">
+          <mat-icon style="font-size: 18px;">explore</mat-icon>
+          Explorer
+        </a>
+      </div>
+      <!-- Formule Premium -->
+      <div class="rounded-3xl border-2 border-[var(--color-brand-green-800)]/30 bg-gradient-to-br from-white to-[var(--color-brand-green-100)] shadow-xl p-8 flex flex-col items-center hover:scale-[1.03] transition-transform">
+        <div class="w-16 h-16 flex items-center justify-center rounded-full bg-[var(--color-brand-green-800)]/15 mb-5">
+          <mat-icon class="text-[var(--color-brand-green-800)]" style="font-size: 2.2rem;">military_tech</mat-icon>
+        </div>
+        <h3 class="font-serif text-2xl text-[var(--color-brand-green-800)] mb-2">Premium</h3>
+        <p class="text-center text-[var(--color-brand-green-800)]/80 text-base mb-4">Une formule renforcée pensée pour accélérer votre progression grâce à un contenu plus riche et un accompagnement approfondi.</p>
+        <p class="text-center text-sm leading-6 text-[var(--color-brand-green-800)]/65 mb-6">Elle combine davantage de modules, de pratique encadrée et de suivi pour soutenir une montée en compétence plus rapide.</p>
+        <span class="inline-block rounded-full bg-[var(--color-brand-green-200)] px-4 py-1 text-xs font-bold text-[var(--color-brand-green-900)]">Signature</span>
+        <a routerLink="/formation" class="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[var(--color-brand-green-800)] px-5 py-3 text-sm font-bold text-white no-underline transition-colors duration-300 hover:bg-black hover:text-white">
+          <mat-icon style="font-size: 18px;">explore</mat-icon>
+          Explorer
+        </a>
+      </div>
+      <!-- Formule Expert -->
+      <div class="rounded-3xl border-2 border-[var(--color-brand-gold-500)]/40 bg-gradient-to-br from-[var(--color-brand-gold-50)] to-white shadow-xl p-8 flex flex-col items-center hover:scale-[1.03] transition-transform">
+        <div class="w-16 h-16 flex items-center justify-center rounded-full bg-[var(--color-brand-gold-500)]/15 mb-5">
+          <mat-icon class="text-[var(--color-brand-gold-500)]" style="font-size: 2.2rem;">school</mat-icon>
+        </div>
+        <h3 class="font-serif text-2xl text-[var(--color-brand-gold-500)] mb-2">Expert</h3>
+        <p class="text-center text-[var(--color-brand-green-800)]/80 text-base mb-4">Une formule d’expertise dédiée aux profils qui souhaitent atteindre un niveau avancé de maîtrise et de spécialisation.</p>
+        <p class="text-center text-sm leading-6 text-[var(--color-brand-green-800)]/65 mb-6">Elle intègre des modules approfondis, des cas concrets et une approche orientée résultats pour une posture pleinement professionnelle.</p>
+        <span class="inline-block rounded-full bg-[var(--color-brand-gold-200)] px-4 py-1 text-xs font-bold text-[var(--color-brand-gold-700)]">Expertise</span>
+        <a routerLink="/formation" class="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-5 py-3 text-sm font-bold text-white no-underline transition-colors duration-300 hover:bg-black hover:text-white">
+          <mat-icon style="font-size: 18px;">explore</mat-icon>
+          Explorer
+        </a>
+      </div>
+      <!-- Formule Sur-mesure -->
+      <div class="rounded-3xl border-2 border-[var(--color-brand-green-800)]/20 bg-gradient-to-br from-white to-[var(--color-brand-green-50)] shadow-xl p-8 flex flex-col items-center hover:scale-[1.03] transition-transform">
+        <div class="w-16 h-16 flex items-center justify-center rounded-full bg-[var(--color-brand-green-800)]/10 mb-5">
+          <mat-icon class="text-[var(--color-brand-green-900)]" style="font-size: 2.2rem;">tune</mat-icon>
+        </div>
+        <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-2">Sur-mesure</h3>
+        <p class="text-center text-[var(--color-brand-green-800)]/80 text-base mb-4">Une formule sur mesure conçue pour répondre précisément à vos objectifs, votre niveau et vos priorités de développement.</p>
+        <p class="text-center text-sm leading-6 text-[var(--color-brand-green-800)]/65 mb-6">Elle permet de construire un parcours personnalisé, flexible et cohérent avec votre rythme, votre ambition et votre projet professionnel.</p>
+        <span class="inline-block rounded-full bg-[var(--color-brand-green-100)] px-4 py-1 text-xs font-bold text-[var(--color-brand-green-900)]">Exclusif</span>
+        <a routerLink="/formation" class="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[var(--color-brand-green-800)] px-5 py-3 text-sm font-bold text-white no-underline transition-colors duration-300 hover:bg-black hover:text-white">
+          <mat-icon style="font-size: 18px;">explore</mat-icon>
+          Explorer
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Training Info Section -->
+<section class="border-t border-[var(--color-brand-gold-300)]/30 bg-[var(--color-brand-cream)] py-24">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="mx-auto max-w-3xl text-center">
+      <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/60 bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)] shadow-sm">
+        <mat-icon class="text-[var(--color-brand-gold-500)]" style="font-size: 16px;">menu_book</mat-icon>
+        {{ t({ fr: 'Informations formations', en: 'Training information', ar: 'معلومات التكوين' }) }}
+      </div>
+
+      <h2 class="mt-5 font-serif text-4xl text-[var(--color-brand-green-900)]">
+        {{ t({ fr: 'Tout ce qu il faut savoir avant de rejoindre le centre', en: 'Everything to know before joining the institute', ar: 'كل ما تحتاجين معرفته قبل الانضمام إلى المعهد' }) }}
+      </h2>
+
+      <p class="mt-4 text-lg leading-8 text-[var(--color-brand-green-800)]/75">
+        {{ t({ fr: "Des parcours professionnalisants concus pour former des expertes du bien-etre feminin, avec accompagnement, certification et acces a une vraie evolution professionnelle.", en: "Professional learning paths designed to train women’s wellness experts with guidance, certification and a real path to professional growth.", ar: 'مسارات احترافية لتكوين خبيرات في الرفاه النسائي مع مرافقة وشهادات وفرص تطور مهني حقيقي.' }) }}
+      </p>
+    </div>
+
+    <div class="mt-14 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+      <article class="rounded-[1.75rem] border border-[var(--color-brand-gold-300)]/35 bg-white p-7 shadow-[0_18px_40px_rgba(15,23,19,0.06)]">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-brand-gold-300)]/28 text-[var(--color-brand-gold-500)]">
+          <mat-icon style="font-size: 26px;">school</mat-icon>
+        </div>
+        <h3 class="mt-5 font-sans text-lg font-bold text-[var(--color-brand-green-900)]">{{ t({ fr: 'Parcours structures', en: 'Structured paths', ar: 'مسارات منظمة' }) }}</h3>
+        <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/72">
+          {{ t({ fr: 'Des modules progressifs, accessibles et orientes pratique pour apprendre a votre rythme.', en: 'Progressive, accessible and practice-focused modules so you can learn at your own pace.', ar: 'وحدات متدرجة وسهلة الوصول وتركز على التطبيق العملي.' }) }}
+        </p>
+      </article>
+
+      <article class="rounded-[1.75rem] border border-[var(--color-brand-gold-300)]/35 bg-white p-7 shadow-[0_18px_40px_rgba(15,23,19,0.06)]">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-brand-green-800)]/8 text-[var(--color-brand-green-800)]">
+          <mat-icon style="font-size: 26px;">verified</mat-icon>
+        </div>
+        <h3 class="mt-5 font-sans text-lg font-bold text-[var(--color-brand-green-900)]">{{ t({ fr: 'Certifications reconnues', en: 'Recognized certifications', ar: 'شهادات معترف بها' }) }}</h3>
+        <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/72">
+          {{ t({ fr: 'Des certificats adaptes a vos objectifs professionnels en France, Tunisie et a l international.', en: 'Certificates aligned with your professional goals in France, Tunisia and internationally.', ar: 'شهادات مناسبة لأهدافك المهنية في فرنسا وتونس وعلى المستوى الدولي.' }) }}
+        </p>
+      </article>
+
+      <article class="rounded-[1.75rem] border border-[var(--color-brand-gold-300)]/35 bg-white p-7 shadow-[0_18px_40px_rgba(15,23,19,0.06)]">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-brand-gold-300)]/28 text-[var(--color-brand-gold-500)]">
+          <mat-icon style="font-size: 26px;">laptop_mac</mat-icon>
+        </div>
+        <h3 class="mt-5 font-sans text-lg font-bold text-[var(--color-brand-green-900)]">{{ t({ fr: 'Acces flexible', en: 'Flexible access', ar: 'وصول مرن' }) }}</h3>
+        <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/72">
+          {{ t({ fr: 'Suivez vos contenus, supports et ressources dans un espace eleve fluide et moderne.', en: 'Follow your lessons, resources and documents in a smooth and modern student space.', ar: 'تابعي الدروس والموارد والملفات داخل فضاء طالبة حديث وسلس.' }) }}
+        </p>
+      </article>
+
+      <article class="rounded-[1.75rem] border border-[var(--color-brand-gold-300)]/35 bg-white p-7 shadow-[0_18px_40px_rgba(15,23,19,0.06)]">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-brand-green-800)]/8 text-[var(--color-brand-green-800)]">
+          <mat-icon style="font-size: 26px;">support_agent</mat-icon>
+        </div>
+        <h3 class="mt-5 font-sans text-lg font-bold text-[var(--color-brand-green-900)]">{{ t({ fr: 'Accompagnement reel', en: 'Real guidance', ar: 'مرافقة حقيقية' }) }}</h3>
+        <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/72">
+          {{ t({ fr: 'Une equipe engagee pour vous aider a progresser, vous orienter et valoriser votre avenir professionnel.', en: 'A committed team to help you progress, choose the right path and build your professional future.', ar: 'فريق ملتزم لمساعدتك على التقدم واختيار المسار المناسب وبناء مستقبلك المهني.' }) }}
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Temoignages Section -->
+<section id="testimonials" class="py-24 bg-[var(--color-brand-cream)] border-t border-[var(--color-brand-gold-300)]/30">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-white text-[var(--color-brand-green-900)] text-xs font-bold rounded-full uppercase tracking-widest mb-4 border border-[var(--color-brand-gold-300)]/50 shadow-sm">
+        <mat-icon class="text-sm w-4 h-4 text-[var(--color-brand-gold-500)]" style="font-size: 16px;">star</mat-icon> T&eacute;moignages
+      </div>
+      <h2 class="font-serif text-4xl text-[var(--color-brand-green-900)] mb-4">Ce que nos &eacute;tudiants disent</h2>
+      <p class="font-sans text-[var(--color-brand-green-800)]/70 max-w-2xl mx-auto font-light text-lg">
+        Des professionnels de la sant&eacute; et du bien-&ecirc;tre qui ont transform&eacute; leur expertise et leur carri&egrave;re gr&acirc;ce &agrave; nos formations.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="bg-white rounded-2xl p-8 border border-[var(--color-brand-gold-300)]/30 hover:border-[var(--color-brand-gold-500)] transition-colors shadow-sm hover:shadow-md">
+        <div class="flex items-center gap-1 mb-4">
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+        </div>
+        <p class="font-sans text-[var(--color-brand-green-800)] mb-6 leading-relaxed">
+          "Cette formation a compl&egrave;tement transform&eacute; ma pratique. Les modules sont clairs, les &eacute;tudes de cas sont tr&egrave;s r&eacute;alistes et j'ai pu appliquer les connaissances imm&eacute;diatement avec mes clients. Le certificat m'a ouvert des portes que je n'aurais jamais imagin&eacute;es."
+        </p>
+        <div class="flex items-center gap-4">
+          <img src="/ess logo.png" alt="Logo Essenti'Elle Santé" class="h-12 w-12 rounded-full border border-[var(--color-brand-gold-300)]/50 bg-[var(--color-brand-cream)] p-1 object-cover shadow-sm" />
+          <div>
+            <h4 class="font-sans font-bold text-[var(--color-brand-green-900)]">Marie Petit</h4>
+            <p class="font-sans text-sm text-[var(--color-brand-green-800)]/60">Naturopathe, Lyon</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 border border-[var(--color-brand-gold-300)]/30 hover:border-[var(--color-brand-gold-500)] transition-colors shadow-sm hover:shadow-md md:scale-105 md:shadow-lg md:border-[var(--color-brand-gold-500)]/50">
+        <div class="flex items-center gap-1 mb-4">
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+        </div>
+        <p class="font-sans text-[var(--color-brand-green-800)] mb-6 leading-relaxed">
+          "J'ai suivi la Formule Internationale et c'est l'une des meilleures d&eacute;cisions professionnelles que j'ai prises. Les certificats multiples m'ont permis de d&eacute;velopper mon activit&eacute; &agrave; l'international. L'&eacute;quipe p&eacute;dagogique est exceptionnelle et toujours disponible."
+        </p>
+        <div class="flex items-center gap-4">
+          <img src="/ess logo.png" alt="Logo Essenti'Elle Santé" class="h-12 w-12 rounded-full border border-[var(--color-brand-gold-300)]/50 bg-[var(--color-brand-cream)] p-1 object-cover shadow-sm" />
+          <div>
+            <h4 class="font-sans font-bold text-[var(--color-brand-green-900)]">Sophie Baudry</h4>
+            <p class="font-sans text-sm text-[var(--color-brand-green-800)]/60">Coach Bien-&ecirc;tre, Paris</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 border border-[var(--color-brand-gold-300)]/30 hover:border-[var(--color-brand-gold-500)] transition-colors shadow-sm hover:shadow-md">
+        <div class="flex items-center gap-1 mb-4">
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+        </div>
+        <p class="font-sans text-[var(--color-brand-green-800)] mb-6 leading-relaxed">
+          "Le contenu de la formation sur la nutrition et la d&eacute;tox est remarquablement complet et pratique. J'utilise les protocoles tous les jours avec ma client&egrave;le. Les PDF et les ressources t&eacute;l&eacute;chargeables valent &agrave; eux seuls le prix de la formation."
+        </p>
+        <div class="flex items-center gap-4">
+          <img src="/ess logo.png" alt="Logo Essenti'Elle Santé" class="h-12 w-12 rounded-full border border-[var(--color-brand-gold-300)]/50 bg-[var(--color-brand-cream)] p-1 object-cover shadow-sm" />
+          <div>
+            <h4 class="font-sans font-bold text-[var(--color-brand-green-900)]">Julien Moreau</h4>
+            <p class="font-sans text-sm text-[var(--color-brand-green-800)]/60">Di&eacute;t&eacute;ticien, Marseille</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 border border-[var(--color-brand-gold-300)]/30 hover:border-[var(--color-brand-gold-500)] transition-colors shadow-sm hover:shadow-md">
+        <div class="flex items-center gap-1 mb-4">
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+        </div>
+        <p class="font-sans text-[var(--color-brand-green-800)] mb-6 leading-relaxed">
+          "En tant que formatrice, j'ai appr&eacute;ci&eacute; la qualit&eacute; p&eacute;dagogique de cette plateforme. Les &eacute;tudes de cas sont inspirantes et les exercices m'ont vraiment fait progresser dans ma ma&icirc;trise du sujet. Un excellent rapport qualit&eacute;-prix!"
+        </p>
+        <div class="flex items-center gap-4">
+          <img src="/ess logo.png" alt="Logo Essenti'Elle Santé" class="h-12 w-12 rounded-full border border-[var(--color-brand-gold-300)]/50 bg-[var(--color-brand-cream)] p-1 object-cover shadow-sm" />
+          <div>
+            <h4 class="font-sans font-bold text-[var(--color-brand-green-900)]">Nathalie Leclerc</h4>
+            <p class="font-sans text-sm text-[var(--color-brand-green-800)]/60">Formatrice, Toulouse</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 border border-[var(--color-brand-gold-300)]/30 hover:border-[var(--color-brand-gold-500)] transition-colors shadow-sm hover:shadow-md">
+        <div class="flex items-center gap-1 mb-4">
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+        </div>
+        <p class="font-sans text-[var(--color-brand-green-800)] mb-6 leading-relaxed">
+          "L'exp&eacute;rience d'immersion a chang&eacute; mon approche du bien-&ecirc;tre. Non seulement j'ai re&ccedil;u une formation intense, mais le s&eacute;jour &agrave; l'&eacute;tranger m'a ouvert l'esprit. Les contacts cr&eacute;&eacute;s pendant cette p&eacute;riode ont d&eacute;j&agrave; g&eacute;n&eacute;r&eacute; de nouveaux clients."
+        </p>
+        <div class="flex items-center gap-4">
+          <img src="/ess logo.png" alt="Logo Essenti'Elle Santé" class="h-12 w-12 rounded-full border border-[var(--color-brand-gold-300)]/50 bg-[var(--color-brand-cream)] p-1 object-cover shadow-sm" />
+          <div>
+            <h4 class="font-sans font-bold text-[var(--color-brand-green-900)]">Laure Chauveau</h4>
+            <p class="font-sans text-sm text-[var(--color-brand-green-800)]/60">Th&eacute;rapeute Holistique, Gen&egrave;ve</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 border border-[var(--color-brand-gold-300)]/30 hover:border-[var(--color-brand-gold-500)] transition-colors shadow-sm hover:shadow-md">
+        <div class="flex items-center gap-1 mb-4">
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+          <mat-icon style="font-size: 18px; color: var(--color-brand-gold-500);">star</mat-icon>
+        </div>
+        <p class="font-sans text-[var(--color-brand-green-800)] mb-6 leading-relaxed">
+          "J'ai suivi cette formation pour me reconvertir dans le bien-&ecirc;tre. La plateforme est tr&egrave;s intuitive, les contenus vid&eacute;o et audio sont de haute qualit&eacute;, et le support client exceptionnellement r&eacute;actif. Je recommande vivement!"
+        </p>
+        <div class="flex items-center gap-4">
+          <img src="/ess logo.png" alt="Logo Essenti'Elle Santé" class="h-12 w-12 rounded-full border border-[var(--color-brand-gold-300)]/50 bg-[var(--color-brand-cream)] p-1 object-cover shadow-sm" />
+          <div>
+            <h4 class="font-sans font-bold text-[var(--color-brand-green-900)]">Amandine Merlin</h4>
+            <p class="font-sans text-sm text-[var(--color-brand-green-800)]/60">Entrepreneur, Lille</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 text-center">
+      <p class="font-sans text-[var(--color-brand-green-800)]/70 font-light text-lg mb-8">
+        Plus de 2,500 &eacute;tudiants satisfaits depuis 2023 &bull; 4.9/5 &eacute;toiles moyenne
+      </p>
+      <a routerLink="/register" class="inline-flex items-center gap-2 text-sm uppercase tracking-widest font-bold bg-[var(--color-brand-green-800)] text-white px-8 py-4 rounded-xl shadow-xl shadow-[var(--color-brand-green-800)]/20 hover:bg-[var(--color-brand-green-900)] transition-all hover:-translate-y-1">
+        <mat-icon style="font-size: 18px;">check_circle</mat-icon> Rejoignez nos &eacute;tudiants
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="relative overflow-hidden border-t border-[var(--color-brand-gold-300)]/30 bg-white py-24">
+  <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at 10% 20%, rgba(230,211,163,0.18), transparent 26%), radial-gradient(circle at 88% 80%, rgba(31,42,36,0.08), transparent 24%);"></div>
+  <div class="relative mx-auto max-w-7xl px-6">
+    <div class="grid gap-10 overflow-hidden rounded-[2rem] border border-[var(--color-brand-gold-300)]/40 bg-[var(--color-brand-cream)] p-8 shadow-[0_28px_70px_rgba(15,23,19,0.08)] lg:grid-cols-[1.15fr_0.85fr] lg:p-12">
+      <div class="max-w-2xl">
+        <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/60 bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)] shadow-sm">
+          <mat-icon class="text-[var(--color-brand-gold-500)]" style="font-size: 16px;">mark_email_read</mat-icon>
+          {{ t({ fr: 'Newsletter', en: 'Newsletter', ar: 'النشرة الإخبارية' }) }}
+        </div>
+
+        <h2 class="mt-5 font-serif text-4xl leading-tight text-[var(--color-brand-green-900)]">
+          {{ t({ fr: 'Recevez nos nouveautes, conseils et offres privees', en: 'Get our latest insights, updates and private offers', ar: 'احصلي على آخر المستجدات والنصائح والعروض الخاصة' }) }}
+        </h2>
+
+        <p class="mt-4 max-w-xl text-base leading-7 text-[var(--color-brand-green-800)]/75">
+          {{ t({ fr: "Une newsletter premium pensee pour les femmes ambitieuses qui veulent suivre les nouvelles formations, les ouvertures de sessions et les opportunites professionnelles Essenti'Elle.", en: "A premium newsletter for ambitious women who want to follow new programs, session openings and Essenti'Elle professional opportunities.", ar: 'نشرة مميزة للنساء الطموحات لمتابعة البرامج الجديدة ومواعيد التسجيل والفرص المهنية.' }) }}
+        </p>
+
+        <div class="mt-8 grid gap-4 sm:grid-cols-3">
+          <div class="rounded-2xl border border-white/70 bg-white/90 p-4">
+            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--color-brand-gold-300)]/30 text-[var(--color-brand-gold-500)]">
+              <mat-icon>campaign</mat-icon>
+            </div>
+            <p class="mt-3 text-sm font-semibold text-[var(--color-brand-green-900)]">{{ t({ fr: 'Lancements en avant-premiere', en: 'Early launches', ar: 'إطلاقات مبكرة' }) }}</p>
+          </div>
+
+          <div class="rounded-2xl border border-white/70 bg-white/90 p-4">
+            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--color-brand-green-800)]/8 text-[var(--color-brand-green-800)]">
+              <mat-icon>workspace_premium</mat-icon>
+            </div>
+            <p class="mt-3 text-sm font-semibold text-[var(--color-brand-green-900)]">{{ t({ fr: 'Conseils experts et exclusifs', en: 'Exclusive expert tips', ar: 'نصائح حصرية' }) }}</p>
+          </div>
+
+          <div class="rounded-2xl border border-white/70 bg-white/90 p-4">
+            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--color-brand-gold-300)]/30 text-[var(--color-brand-gold-500)]">
+              <mat-icon>sell</mat-icon>
+            </div>
+            <p class="mt-3 text-sm font-semibold text-[var(--color-brand-green-900)]">{{ t({ fr: 'Offres reservees aux abonnees', en: 'Subscriber-only offers', ar: 'عروض خاصة بالمشتركات' }) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-[1.75rem] bg-[var(--color-brand-green-900)] p-7 text-white shadow-[0_24px_50px_rgba(15,23,19,0.24)] lg:p-8">
+        <div class="flex items-center gap-3">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-[var(--color-brand-gold-300)]">
+            <mat-icon>mail_lock</mat-icon>
+          </div>
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-gold-300)]">{{ t({ fr: 'Acces prioritaire', en: 'Priority access', ar: 'أولوية الوصول' }) }}</p>
+            <p class="mt-1 text-sm text-white/70">{{ t({ fr: 'Une selection breve, utile et elegante.', en: 'A brief, useful and elegant digest.', ar: 'محتوى مختصر وعملي وأنيق.' }) }}</p>
+          </div>
+        </div>
+
+        <form class="mt-8 space-y-4" (submit)="onNewsletterSubmit($event, newsletterEmail)">
+          <label for="newsletter-email" class="block text-xs font-bold uppercase tracking-[0.18em] text-white/75">
+            {{ t({ fr: 'Votre email', en: 'Your email', ar: 'بريدك الإلكتروني' }) }}
+          </label>
+          <input
+            #newsletterEmail
+            id="newsletter-email"
+            type="email"
+            class="w-full rounded-2xl border border-white/15 bg-white/8 px-5 py-4 text-sm text-white outline-none transition placeholder:text-white/40 focus:border-[var(--color-brand-gold-300)] focus:bg-white/12"
+            [placeholder]="t({ fr: 'vous@exemple.com', en: 'you@example.com', ar: 'you@example.com' })"
+          />
+
+          <button type="submit" class="inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[var(--color-brand-gold-500)] px-6 py-4 text-sm font-bold uppercase tracking-[0.16em] text-white shadow-[0_18px_36px_rgba(200,169,106,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#b89454]">
+            <mat-icon style="font-size: 18px;">outgoing_mail</mat-icon>
+            {{ t({ fr: "S'abonner maintenant", en: 'Subscribe now', ar: 'اشتركي الآن' }) }}
+          </button>
+
+          @if (newsletterState() === 'success') {
+            <p class="rounded-2xl border border-emerald-300/25 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-100">
+              {{ t({ fr: 'Merci, votre demande d abonnement a bien ete prise en compte.', en: 'Thank you, your subscription request has been recorded.', ar: 'شكرا، تم تسجيل طلب الاشتراك بنجاح.' }) }}
+            </p>
+          }
+
+          @if (newsletterState() === 'error') {
+            <p class="rounded-2xl border border-rose-300/25 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
+              {{ t({ fr: 'Veuillez saisir une adresse email valide.', en: 'Please enter a valid email address.', ar: 'يرجى إدخال بريد إلكتروني صالح.' }) }}
+            </p>
+          }
+
+          <p class="text-xs leading-6 text-white/55">
+            {{ t({ fr: 'Aucun spam. Seulement les informations importantes sur nos programmes, ouvertures et avantages exclusifs.', en: 'No spam. Only important updates about our programs, launches and exclusive benefits.', ar: 'بدون رسائل مزعجة، فقط المعلومات المهمة حول البرامج والعروض.' }) }}
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

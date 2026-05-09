@@ -1,0 +1,205 @@
+<div class="min-h-screen bg-[var(--color-brand-cream)] text-[var(--color-brand-green-900)] font-sans selection:bg-[var(--color-brand-gold-300)] selection:text-[var(--color-brand-green-900)] overflow-x-hidden flex flex-col">
+  <nav class="fixed top-0 left-0 w-full z-50 md:hidden">
+    <div class="mx-auto flex h-[82px] w-full items-center justify-between rounded-b-[1.75rem] bg-white/95 px-4 shadow-[0_14px_40px_rgba(15,23,19,0.10)] backdrop-blur-xl">
+      <a routerLink="/" class="flex items-center">
+        <img src="ess logo.png" alt="Essenti'Elle Sant&eacute;" class="h-14 w-auto" />
+      </a>
+      <div class="flex items-center gap-3">
+        <div class="header-floating-menu">
+          <button type="button" class="header-icon-button" (click)="toggleCurrencyMenu()" aria-label="Changer la devise">
+            <img [src]="currentCurrencyIcon()" alt="" class="selector-icon" />
+          </button>
+          @if (showCurrencyMenu) {
+            <div class="floating-panel">
+              @for (option of currencyOptions; track option.code) {
+                <button
+                  type="button"
+                  class="floating-option"
+                  [class.floating-option-active]="currency() === option.code"
+                  [attr.aria-label]="option.label"
+                  (click)="setCurrency(option.code)"
+                >
+                  <img [src]="option.icon" alt="" class="selector-icon selector-icon-option" />
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="header-floating-menu">
+          <button type="button" class="header-icon-button" (click)="toggleLanguageMenu()" aria-label="Changer la langue">
+            <img [src]="currentLanguageIcon()" alt="" class="selector-icon" />
+          </button>
+          @if (showLanguageMenu) {
+            <div class="floating-panel">
+              @for (option of languageOptions; track option.code) {
+                <button
+                  type="button"
+                  class="floating-option floating-option-text"
+                  [class.floating-option-active]="language() === option.code"
+                  [attr.aria-label]="option.label"
+                  (click)="setLanguage(option.code)"
+                >
+                  <img [src]="option.icon" alt="" class="selector-icon selector-icon-option" />
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-full text-[var(--color-brand-green-900)]/75">
+          <mat-icon style="font-size: 22px;">notifications_none</mat-icon>
+        </button>
+        <a routerLink="/register" class="inline-flex items-center gap-2 rounded-2xl bg-[var(--color-brand-green-800)] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_24px_rgba(15,23,19,0.18)]">
+          <mat-icon style="font-size: 17px;">auto_awesome</mat-icon>
+          {{ t({ fr: 'Essai Gratuit', en: 'Free Trial', ar: 'تجربة مجانية' }) }}
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <nav class="fixed top-0 left-0 hidden w-full z-50 border-b border-[var(--color-brand-gold-300)]/30 bg-white/80 backdrop-blur-xl md:block">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-3 w-1/4">
+        <a routerLink="/" class="hover:opacity-80 transition-opacity">
+          <img src="ess logo.png" alt="Essenti'Elle Sant&eacute;" class="h-20 w-auto" />
+        </a>
+      </div>
+
+      <div class="flex items-center justify-center gap-8 flex-1">
+        <a routerLink="/" routerLinkActive="text-[var(--color-brand-green-900)]" [routerLinkActiveOptions]="{ exact: true }" class="text-sm font-semibold tracking-wide text-[var(--color-brand-green-800)]/70 hover:text-[var(--color-brand-green-900)] transition-colors">{{ t({ fr: 'Accueil', en: 'Home', ar: 'الرئيسية' }) }}</a>
+        <a routerLink="/formations" routerLinkActive="text-[var(--color-brand-green-900)]" class="text-sm font-semibold tracking-wide text-[var(--color-brand-green-800)]/70 hover:text-[var(--color-brand-green-900)] transition-colors">{{ t({ fr: 'Formations', en: 'Programs', ar: 'الدورات' }) }}</a>
+        <a routerLink="/about" routerLinkActive="text-[var(--color-brand-green-900)]" class="text-sm font-semibold tracking-wide text-[var(--color-brand-green-800)]/70 hover:text-[var(--color-brand-green-900)] transition-colors">{{ t({ fr: 'À propos', en: 'About', ar: 'من نحن' }) }}</a>
+        <a routerLink="/contact" routerLinkActive="text-[var(--color-brand-green-900)]" class="text-sm font-semibold tracking-wide text-[var(--color-brand-green-800)]/70 hover:text-[var(--color-brand-green-900)] transition-colors">{{ t({ fr: 'Contact', en: 'Contact', ar: 'اتصل بنا' }) }}</a>
+      </div>
+
+      <div class="flex items-center justify-end gap-4 w-1/4">
+        <div class="header-floating-menu">
+          <button type="button" class="header-icon-button" (click)="toggleCurrencyMenu()" aria-label="Changer la devise">
+            <img [src]="currentCurrencyIcon()" alt="" class="selector-icon" />
+          </button>
+          @if (showCurrencyMenu) {
+            <div class="floating-panel floating-panel-desktop">
+              @for (option of currencyOptions; track option.code) {
+                <button
+                  type="button"
+                  class="floating-option"
+                  [class.floating-option-active]="currency() === option.code"
+                  [attr.aria-label]="option.label"
+                  (click)="setCurrency(option.code)"
+                >
+                  <img [src]="option.icon" alt="" class="selector-icon selector-icon-option" />
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="header-floating-menu">
+          <button type="button" class="header-icon-button" (click)="toggleLanguageMenu()" aria-label="Changer la langue">
+            <img [src]="currentLanguageIcon()" alt="" class="selector-icon" />
+          </button>
+          @if (showLanguageMenu) {
+            <div class="floating-panel floating-panel-desktop">
+              @for (option of languageOptions; track option.code) {
+                <button
+                  type="button"
+                  class="floating-option floating-option-text"
+                  [class.floating-option-active]="language() === option.code"
+                  [attr.aria-label]="option.label"
+                  (click)="setLanguage(option.code)"
+                >
+                  <img [src]="option.icon" alt="" class="selector-icon selector-icon-option" />
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <a routerLink="/login" class="hidden lg:inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/45 bg-white/80 px-4 py-2 text-sm font-bold text-[var(--color-brand-green-900)] shadow-sm transition-all hover:border-[var(--color-brand-gold-500)]/50 hover:text-[var(--color-brand-gold-500)]">
+          <mat-icon class="w-4 h-4" style="font-size: 17px;">login</mat-icon>
+          {{ t({ fr: 'Connexion', en: 'Login', ar: 'تسجيل الدخول' }) }}
+        </a>
+        <a routerLink="/register" class="text-sm font-bold bg-[var(--color-brand-green-800)] text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-[var(--color-brand-green-900)] hover:shadow-lg transition-all border border-transparent hover:border-[var(--color-brand-gold-500)]/30 inline-flex items-center gap-2">
+          <mat-icon class="w-4 h-4 text-base" style="font-size: 17px;">auto_awesome</mat-icon>
+          {{ t({ fr: 'Essai Gratuit', en: 'Free Trial', ar: 'تجربة مجانية' }) }}
+          <mat-icon class="w-4 h-4 text-base" style="font-size: 16px;">arrow_forward</mat-icon>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-grow pb-28 md:pb-0">
+    <router-outlet></router-outlet>
+  </main>
+
+  <nav class="bottom-nav z-50 md:hidden">
+    <div class="grid w-full grid-cols-5 gap-1">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item">
+        <mat-icon>home</mat-icon>
+        <span>{{ t({ fr: 'Accueil', en: 'Home', ar: 'الرئيسية' }) }}</span>
+      </a>
+      <a routerLink="/formations" routerLinkActive="active" class="nav-item">
+        <mat-icon>menu_book</mat-icon>
+        <span>{{ t({ fr: 'Formations', en: 'Programs', ar: 'الدورات' }) }}</span>
+      </a>
+      <a routerLink="/about" routerLinkActive="active" class="nav-item">
+        <mat-icon>info</mat-icon>
+        <span>{{ t({ fr: 'À propos', en: 'About', ar: 'من نحن' }) }}</span>
+      </a>
+      <a routerLink="/contact" routerLinkActive="active" class="nav-item">
+        <mat-icon>contact_mail</mat-icon>
+        <span>{{ t({ fr: 'Contact', en: 'Contact', ar: 'اتصل بنا' }) }}</span>
+      </a>
+      <a routerLink="/login" routerLinkActive="active" class="nav-item">
+        <mat-icon>person_outline</mat-icon>
+        <span>{{ t({ fr: 'Profil', en: 'Profile', ar: 'الملف' }) }}</span>
+      </a>
+    </div>
+  </nav>
+
+  <footer class="bg-[var(--color-brand-green-900)] py-12 border-t border-[var(--color-brand-gold-500)] text-[var(--color-brand-cream)]/60 font-sans font-light text-sm mt-auto">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      <div class="col-span-1 md:col-span-2">
+        <div class="flex items-center gap-2 mb-4">
+          <a routerLink="/" class="hover:opacity-80 transition-opacity">
+            <img src="ess logo.png" alt="Essenti'Elle Sant&eacute;" class="h-14 w-auto" />
+          </a>
+        </div>
+        <p class="text-[var(--color-brand-cream)]/50 max-w-sm mb-4">{{ t({ fr: "Institut international de formation et d'expertise en bien-être féminin, dédié aux femmes qui souhaitent se former, évoluer et réussir professionnellement.", en: "An international training and expertise institute in women's wellness, dedicated to women who want to learn, grow and succeed professionally.", ar: 'معهد دولي للتكوين والخبرة في الرفاه النسائي، مخصص للنساء الراغبات في التعلم والتطور والنجاح المهني.' }) }}</p>
+        <div class="mb-4 flex flex-col items-start gap-3 text-[var(--color-brand-cream)]/75">
+          <a href="tel:+33677281007" class="inline-flex items-center gap-3 transition-colors hover:text-[var(--color-brand-gold-500)]">
+            <mat-icon style="font-size: 18px; width: 18px; height: 18px;">phone</mat-icon>
+            <span>+33 6 77 28 10 07</span>
+          </a>
+          <a href="mailto:contact@lessentielle-sante.com" class="inline-flex items-center gap-3 transition-colors hover:text-[var(--color-brand-gold-500)]">
+            <mat-icon style="font-size: 18px; width: 18px; height: 18px;">email</mat-icon>
+            <span>contact@lessentielle-sante.com</span>
+          </a>
+        </div>
+        <a href="https://maps.app.goo.gl/RkEp8VFiSXSuKYQM9?g_st=aw" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-brand-green-800)] border border-[var(--color-brand-gold-500)]/30 text-[var(--color-brand-gold-500)] rounded hover:bg-[var(--color-brand-green-900)] hover:border-[var(--color-brand-gold-500)] transition-colors">
+          <mat-icon style="font-size: 18px; width: 18px; height: 18px;">location_on</mat-icon>
+          <span>{{ t({ fr: 'Nous trouver sur Google Maps', en: 'Find us on Google Maps', ar: 'اعثروا علينا على خرائط غوغل' }) }}</span>
+        </a>
+      </div>
+      <div>
+        <h4 class="text-white font-bold mb-4 uppercase tracking-wider text-xs">{{ t({ fr: 'Produit', en: 'Product', ar: 'المنصة' }) }}</h4>
+        <ul class="space-y-2">
+          <li><a routerLink="/formations" class="hover:text-[var(--color-brand-gold-500)] transition-colors">{{ t({ fr: 'Catalogue de formations', en: 'Training catalog', ar: 'كتالوج الدورات' }) }}</a></li>
+          <li><a routerLink="/formations" class="hover:text-[var(--color-brand-gold-500)] transition-colors">{{ t({ fr: 'Nos formules', en: 'Our plans', ar: 'باقاتنا' }) }}</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-bold mb-4 uppercase tracking-wider text-xs">{{ t({ fr: 'Légal', en: 'Legal', ar: 'قانوني' }) }}</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:text-[var(--color-brand-gold-500)] transition-colors">{{ t({ fr: 'CGV', en: 'Terms', ar: 'الشروط' }) }}</a></li>
+          <li><a href="#" class="hover:text-[var(--color-brand-gold-500)] transition-colors">{{ t({ fr: 'Politique de confidentialité', en: 'Privacy policy', ar: 'سياسة الخصوصية' }) }}</a></li>
+          <li><a routerLink="/contact" class="hover:text-[var(--color-brand-gold-500)] transition-colors">{{ t({ fr: 'Contact', en: 'Contact', ar: 'اتصل بنا' }) }}</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-6 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between">
+      <p>{{ t({ fr: "© 2026 Essenti'Elle Santé. Tous droits réservés.", en: "© 2026 Essenti'Elle Santé. All rights reserved.", ar: "© 2026 Essenti'Elle Santé. جميع الحقوق محفوظة." }) }}</p>
+    </div>
+  </footer>
+</div>

@@ -1,0 +1,220 @@
+<app-dashboard-layout title="Nutrition et Pathologie courante" [menuItems]="menuItems">
+  <div class="max-w-4xl mx-auto space-y-8 pb-12">
+    <!-- Hero Banner -->
+    <div class="relative rounded-3xl overflow-hidden bg-[var(--color-brand-green-900)] text-white shadow-xl">
+      <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10 pointer-events-none"></div>
+      <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Nutrition" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-50" referrerpolicy="no-referrer" />
+      
+      <div class="relative z-20 p-8 md:p-12">
+        <span class="inline-flex items-center px-3 py-1 bg-[var(--color-brand-gold-500)] text-[var(--color-brand-green-900)] text-xs font-bold rounded-full uppercase tracking-widest mb-4">
+          Formation 1
+        </span>
+        <h1 class="font-serif text-4xl md:text-5xl font-bold mb-4">Nutrition & Pathologies Courantes</h1>
+        <p class="font-sans text-xl text-[var(--color-brand-cream)] font-light max-w-2xl">
+          Apprenez à transformer votre santé naturellement
+        </p>
+      </div>
+    </div>
+
+    <!-- Presentation & Objectifs -->
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="md:col-span-2 space-y-6">
+        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+          <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-4 flex items-center gap-2">
+            <mat-icon class="text-[var(--color-brand-gold-500)]">emoji_people</mat-icon> Présentation
+          </h2>
+          <p class="text-gray-700 leading-relaxed mb-4">
+            Bienvenue dans la formation <strong>Essenti'elle Santé</strong>. Cette formation a été conçue pour permettre à chaque femme de comprendre son corps, améliorer sa santé et accompagner d’autres femmes.
+          </p>
+          <div class="p-4 bg-[var(--color-brand-cream)]/50 rounded-xl border border-[var(--color-brand-gold-300)]/30 text-sm italic text-gray-600 flex gap-3">
+            <mat-icon class="text-[var(--color-brand-gold-500)] shrink-0">info</mat-icon>
+            <p><strong>Avertissement :</strong> Cette formation ne remplace pas un professionnel de santé. Elle a pour but d'éduquer et d'accompagner vers une meilleure hygiène de vie.</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+          <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-4 flex items-center gap-2">
+            <mat-icon class="text-[var(--color-brand-gold-500)]">track_changes</mat-icon> Objectifs
+          </h2>
+          <p class="text-gray-700 leading-relaxed mb-4">À la fin de cette formation, vous serez capable de :</p>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <mat-icon class="text-green-500 text-[20px] shrink-0 mt-0.5">check_circle</mat-icon>
+              <span class="text-gray-800">Comprendre les bases de la nutrition</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <mat-icon class="text-green-500 text-[20px] shrink-0 mt-0.5">check_circle</mat-icon>
+              <span class="text-gray-800">Identifier les déséquilibres</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <mat-icon class="text-green-500 text-[20px] shrink-0 mt-0.5">check_circle</mat-icon>
+              <span class="text-gray-800">Mettre en place une détox adaptée</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <mat-icon class="text-green-500 text-[20px] shrink-0 mt-0.5">check_circle</mat-icon>
+              <span class="text-gray-800">Proposer des programmes personnalisés</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="md:col-span-1">
+        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 sticky top-6">
+          <h3 class="font-sans font-bold text-lg text-[var(--color-brand-green-900)] mb-4">Contenu de la formation</h3>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3 text-sm text-gray-700">
+              <mat-icon class="text-gray-400">menu_book</mat-icon>
+              <div>4 formations incluses dans ce cursus</div>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-gray-700">
+              <mat-icon class="text-gray-400">library_books</mat-icon>
+              <div>5 Modules, 3 chapitres, (25 pages min/module)</div>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-gray-700">
+              <mat-icon class="text-gray-400">ondemand_video</mat-icon>
+              <div>Cours + images + PDF + vidéos + audio</div>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-gray-700">
+              <mat-icon class="text-gray-400">assignment</mat-icon>
+              <div>1 Étude de cas & 5 QCM après chaque module</div>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-gray-700">
+              <mat-icon class="text-gray-400">workspace_premium</mat-icon>
+              <div>30 questions, étude de cas globale & examen final</div>
+            </li>
+          </ul>
+          
+          <button class="w-full mt-6 py-3 bg-[var(--color-brand-green-900)] text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[var(--color-brand-gold-500)] transition-colors">
+            <mat-icon>play_arrow</mat-icon> Commencer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Programme Détaillé -->
+    <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+      <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-6 flex items-center gap-2">
+        <mat-icon class="text-[var(--color-brand-gold-500)]">format_list_bulleted</mat-icon> Programme : Formation 1
+      </h2>
+
+      <div class="space-y-4">
+        <!-- Chapitre 1 -->
+        <details class="group bg-gray-50 border border-gray-100 rounded-xl cursor-pointer" open>
+          <summary class="flex justify-between items-center p-4 font-bold text-[var(--color-brand-green-900)]">
+            <span>Chapitre 1 : Les bases de la nutrition (Les macronutriments)</span>
+            <mat-icon class="group-open:rotate-180 transition-transform">expand_more</mat-icon>
+          </summary>
+          <div class="px-4 pb-4 text-gray-700 text-sm">
+            <ul class="space-y-3 mt-2 border-t border-gray-200 pt-3">
+              <li><strong>• Les protéines :</strong> <br>Rôle : Construction musculaire.<br>Sources : Œufs, poisson, légumineuses.</li>
+              <li><strong>• Les glucides :</strong> <br>Rôle : Énergie.<br>Éviter : Sucres rapides. Privilégier : Glucides complexes.</li>
+              <li><strong>• Les lipides :</strong> <br>Rôle : Hormones.<br>Privilégier : Bonnes graisses.</li>
+            </ul>
+          </div>
+        </details>
+
+        <!-- Chapitre 2 -->
+        <details class="group bg-gray-50 border border-gray-100 rounded-xl cursor-pointer">
+          <summary class="flex justify-between items-center p-4 font-bold text-[var(--color-brand-green-900)]">
+            <span>Chapitre 2 : L’inflammation</span>
+            <mat-icon class="group-open:rotate-180 transition-transform">expand_more</mat-icon>
+          </summary>
+          <div class="px-4 pb-4 text-gray-700 text-sm">
+            <p class="mt-2 border-t border-gray-200 pt-3 mb-2">L’inflammation chronique est à l’origine de nombreuses maladies.</p>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <strong class="text-red-500">Causes :</strong>
+                <ul class="list-disc pl-4 mt-1">
+                  <li>Sucre</li>
+                  <li>Produits transformés</li>
+                  <li>Stress</li>
+                </ul>
+              </div>
+              <div>
+                <strong class="text-green-600">Solutions :</strong>
+                <ul class="list-disc pl-4 mt-1">
+                  <li>Alimentation naturelle</li>
+                  <li>Hydratation</li>
+                  <li>Repos</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Chapitre 3 -->
+        <details class="group bg-gray-50 border border-gray-100 rounded-xl cursor-pointer">
+          <summary class="flex justify-between items-center p-4 font-bold text-[var(--color-brand-green-900)]">
+            <span>Chapitre 3 : Diabète</span>
+            <mat-icon class="group-open:rotate-180 transition-transform">expand_more</mat-icon>
+          </summary>
+          <div class="px-4 pb-4 text-gray-700 text-sm">
+             <div class="mt-2 border-t border-gray-200 pt-3">
+                <strong class="text-blue-600">Recommandations :</strong>
+                <ul class="list-disc pl-4 mt-1">
+                  <li>Éviter le sucre blanc</li>
+                  <li>Consommer des fibres</li>
+                  <li>Fractionner les repas</li>
+                </ul>
+             </div>
+          </div>
+        </details>
+
+        <!-- Chapitre 4 -->
+        <details class="group bg-gray-50 border border-gray-100 rounded-xl cursor-pointer">
+          <summary class="flex justify-between items-center p-4 font-bold text-[var(--color-brand-green-900)]">
+            <span>Chapitre 4 : Hypertension</span>
+            <mat-icon class="group-open:rotate-180 transition-transform">expand_more</mat-icon>
+          </summary>
+          <div class="px-4 pb-4 text-gray-700 text-sm">
+             <div class="mt-2 border-t border-gray-200 pt-3">
+                <strong class="text-blue-600">Recommandations :</strong>
+                <ul class="list-disc pl-4 mt-1">
+                  <li>Réduire le sel</li>
+                  <li>Boire beaucoup d'eau</li>
+                  <li>Consommer des légumes verts</li>
+                </ul>
+             </div>
+          </div>
+        </details>
+
+        <!-- Chapitre 5 -->
+        <details class="group bg-gray-50 border border-gray-100 rounded-xl cursor-pointer">
+          <summary class="flex justify-between items-center p-4 font-bold text-[var(--color-brand-green-900)]">
+            <span>Chapitre 5 : Troubles digestifs</span>
+            <mat-icon class="group-open:rotate-180 transition-transform">expand_more</mat-icon>
+          </summary>
+          <div class="px-4 pb-4 text-gray-700 text-sm">
+            <div class="grid grid-cols-2 gap-4 mt-2 border-t border-gray-200 pt-3">
+              <div>
+                <strong class="text-red-500">Causes :</strong>
+                <ul class="list-disc pl-4 mt-1">
+                  <li>Mauvaise alimentation</li>
+                  <li>Stress</li>
+                  <li>Microbiote déséquilibré</li>
+                </ul>
+              </div>
+              <div>
+                <strong class="text-green-600">Solutions :</strong>
+                <ul class="list-disc pl-4 mt-1">
+                  <li>Probiotiques</li>
+                  <li>Fibres</li>
+                  <li>Mastication lente</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="mt-4 p-4 bg-orange-50 border border-orange-100 rounded-lg">
+              <h4 class="font-bold text-orange-800 flex items-center gap-2 mb-2"><mat-icon>assignment</mat-icon> Exercice de fin de module :</h4>
+              <ul class="space-y-1 text-orange-900/80">
+                <li>• Créer un menu pour une personne avec troubles digestifs.</li>
+                <li>• Répondre aux 5 questions sur le sujet.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </div>
+</app-dashboard-layout>

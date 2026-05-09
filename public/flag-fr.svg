@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="32" cy="32" r="31" fill="white" stroke="#D9BE80" stroke-width="2"/>
+  <mask id="maskFR" maskUnits="userSpaceOnUse" x="1" y="1" width="62" height="62">
+    <circle cx="32" cy="32" r="31" fill="white"/>
+  </mask>
+  <g mask="url(#maskFR)">
+    <!-- Drapeau français: Bleu-Blanc-Rouge -->
+    <rect x="1" y="1" width="20.7" height="62" fill="#002395"/>
+    <rect x="21.7" y="1" width="20.7" height="62" fill="#FFFFFF"/>
+    <rect x="42.4" y="1" width="20.6" height="62" fill="#ED2939"/>
+  </g>
+</svg>

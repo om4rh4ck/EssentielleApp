@@ -1,0 +1,39 @@
+<section class="py-24 bg-white pt-36 pb-36 min-h-[90vh] flex items-center relative">
+  <div class="absolute inset-0 bg-gradient-to-b from-[var(--color-brand-cream)]/50 to-white z-0 pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
+    <div>
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-[var(--color-brand-cream)] text-[var(--color-brand-green-900)] text-xs font-bold rounded-full uppercase tracking-widest mb-6 border border-[var(--color-brand-gold-300)]/50">
+        <mat-icon style="font-size: 16px; width: 16px; height: 16px;">info</mat-icon> {{ t({ fr: "Essenti'Elle Santé", en: "Essenti'Elle Health", ar: 'إيسونتيال سانتي' }) }}
+      </div>
+      <h1 class="font-serif text-4xl lg:text-5xl text-[var(--color-brand-green-900)] mb-6">{{ t({ fr: 'Notre Concept', en: 'Our Concept', ar: 'مفهومنا' }) }}</h1>
+      <p class="font-sans text-[var(--color-brand-green-800)]/80 text-lg leading-relaxed mb-6">
+        {{ t({ fr: "Essenti'Elle Santé est un institut de formation et d'expertise en bien-être féminin international, pensé pour les femmes qui souhaitent se former dans les domaines du bien-être, de la santé naturelle et des pratiques paramédicales.", en: "Essenti'Elle Santé is an international women’s wellness training and expertise institute designed for women who want to train in wellness, natural health and paramedical practices.", ar: 'إيسونتيال سانتي معهد دولي للتكوين والخبرة في الرفاه النسائي، مخصص للنساء الراغبات في التكوين في مجالات الرفاه والصحة الطبيعية والممارسات شبه الطبية.' }) }}
+      </p>
+      <p class="font-sans text-[var(--color-brand-green-800)]/80 text-lg leading-relaxed mb-6">
+        {{ t({ fr: "Je suis Française, basée à Djerba, et j'ai conçu cette plateforme pour former des femmes à devenir expertes du bien-être et indépendantes financièrement, dans un cadre sérieux, élégant et accessible.", en: "I am French, based in Djerba, and I created this platform to train women to become wellness experts and financially independent in a serious, elegant and accessible environment.", ar: 'أنا فرنسية ومقيمة في جربة، وقد أنشأت هذه المنصة لتكوين النساء حتى يصبحن خبيرات في الرفاه ومستقلات مالياً في إطار جاد وأنيق ومتاح.' }) }}
+      </p>
+      <p class="font-sans text-[var(--color-brand-green-800)]/80 text-lg leading-relaxed mb-8">
+        {{ t({ fr: "Avec la méthode Essenti’Elle, vous avez une compétence concrète, une possibilité de revenus et un accompagnement réel. C’est une vraie opportunité de changement, avec des places limitées pour garantir la qualité de chaque parcours.", en: "With the Essenti’Elle method, you gain practical skills, income potential and real support. It is a genuine opportunity for change, with limited seats to guarantee quality.", ar: 'مع طريقة إيسونتيال، تحصلين على مهارة عملية وفرصة دخل ومرافقة حقيقية. إنها فرصة تغيير حقيقية مع عدد أماكن محدود لضمان جودة كل مسار.' }) }}
+      </p>
+      <a routerLink="/formations" class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-brand-green-900)] text-white font-bold rounded-lg hover:bg-[var(--color-brand-gold-500)] transition-colors">
+        {{ t({ fr: 'Découvrir nos formations', en: 'Discover our programs', ar: 'اكتشفي برامجنا' }) }} <mat-icon style="font-size: 18px; width: 18px; height: 18px;">arrow_forward</mat-icon>
+      </a>
+    </div>
+    <div class="relative">
+      <div class="absolute inset-0 bg-gradient-to-tr from-[var(--color-brand-gold-300)] to-[var(--color-brand-green-800)] opacity-20 blur-2xl rounded-3xl"></div>
+      <div class="relative flex items-center justify-center rounded-2xl shadow-xl w-full h-[500px] bg-[var(--color-brand-cream)] border border-[var(--color-brand-gold-300)]/30 p-10">
+        <img
+          #conceptLogo
+          src="ess logo.png"
+          alt="Logo original Essenti'Elle Sant&eacute;"
+          class="max-w-full max-h-full object-contain cursor-pointer select-none"
+          tabindex="0"
+          role="button"
+          (click)="onLogoClick()"
+          (keydown.enter)="onLogoClick()"
+          (keydown.space)="onLogoClick()"
+        >
+      </div>
+    </div>
+  </div>
+</section>

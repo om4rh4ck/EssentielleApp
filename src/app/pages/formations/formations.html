@@ -1,0 +1,234 @@
+<div class="pt-20">
+  <section id="catalog" class="bg-[var(--color-brand-cream)] py-24">
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div>
+          <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/50 bg-[var(--color-brand-cream)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[var(--color-brand-green-900)]">
+            <mat-icon style="font-size: 16px; width: 16px; height: 16px;">school</mat-icon>
+            {{ t({ fr: 'Catalogue vivant', en: 'Live catalog', ar: 'كتالوج حي' }) }}
+          </div>
+          <h2 class="mb-2 font-serif text-3xl text-[var(--color-brand-green-900)]">
+            {{ t({ fr: 'Nos formations specialisees', en: 'Our specialized programs', ar: 'برامجنا المتخصصة' }) }}
+          </h2>
+          <p class="max-w-3xl text-sm leading-7 text-[var(--color-brand-green-800)]/80">
+            {{ t({ fr: 'Toutes les formations publiees par la plateforme et les formatrices apparaissent ici automatiquement.', en: 'All programs published by the platform and instructors appear here automatically.', ar: 'كل الدورات المنشورة من المنصة والمدربات تظهر هنا تلقائيا.' }) }}
+          </p>
+        </div>
+
+        <a routerLink="/register" class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-[var(--color-brand-gold-500)] transition-colors hover:text-[var(--color-brand-green-900)]">
+          {{ t({ fr: 'Creer un compte', en: 'Create an account', ar: 'انشاء حساب' }) }}
+          <mat-icon class="h-4 w-4 text-base" style="font-size: 16px;">arrow_forward</mat-icon>
+        </a>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        @for (course of courses(); track course.id) {
+          <article class="group flex h-full flex-col overflow-hidden rounded-[26px] border border-[var(--color-brand-gold-300)]/24 bg-white shadow-[0_18px_40px_rgba(18,53,36,0.06)]">
+            <div class="relative h-52 overflow-hidden">
+              <img [src]="course.thumbnail" [alt]="course.title" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" referrerpolicy="no-referrer" />
+              <div class="absolute inset-0 bg-gradient-to-t from-[rgba(10,16,26,0.58)] via-transparent to-transparent"></div>
+
+              <div class="absolute left-5 top-5 flex flex-wrap gap-2">
+                <span class="rounded-full bg-white/92 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-gold-700)]">{{ course.category }}</span>
+                <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em]" [class.bg-emerald-100]="course.access === 'free'" [class.text-emerald-800]="course.access === 'free'" [class.bg-rose-100]="course.access === 'paid'" [class.text-rose-800]="course.access === 'paid'">
+                  <mat-icon class="!h-[14px] !w-[14px] !text-[14px]">{{ course.access === 'free' ? 'lock_open' : 'lock' }}</mat-icon>
+                  {{ course.access === 'free' ? 'Ouverte' : 'Fermee / payante' }}
+                </span>
+              </div>
+
+              <div class="absolute bottom-4 left-5 right-5 flex items-center justify-between gap-3">
+                <span class="inline-flex items-center gap-2 rounded-full bg-white/92 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-green-900)] shadow-[0_10px_20px_rgba(18,53,36,0.12)]">
+                  <mat-icon class="!h-[14px] !w-[14px] !text-[14px] text-[var(--color-brand-gold-500)]">{{ course.access === 'free' ? 'how_to_reg' : 'workspace_premium' }}</mat-icon>
+                  {{ course.access === 'free' ? 'Inscription directe' : 'Choix formule' }}
+                </span>
+                <a [routerLink]="['/formations', course.id, 'inscription']" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white shadow-[0_14px_28px_rgba(18,53,36,0.24)] transition hover:bg-[var(--color-brand-gold-500)]">
+                  <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">{{ course.access === 'free' ? 'arrow_forward' : 'payments' }}</mat-icon>
+                  {{ course.access === 'free' ? 'S inscrire' : 'Reserver' }}
+                </a>
+              </div>
+            </div>
+
+            <div class="flex flex-1 flex-col p-6">
+              <div class="flex items-start justify-between gap-4">
+                <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)]">{{ course.title }}</h3>
+                <div class="shrink-0 rounded-2xl bg-[var(--color-brand-cream)] px-4 py-3 text-right">
+                  <div class="text-[11px] uppercase tracking-[0.18em] text-[var(--color-brand-green-800)]/45">Prix</div>
+                  <div class="mt-1 text-sm font-bold text-[var(--color-brand-green-900)]">{{ coursePrice(course) }}</div>
+                </div>
+              </div>
+
+              <div class="mt-4 flex flex-wrap gap-2">
+                <span class="inline-flex items-center gap-2 rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-[0.18em]" [class.bg-emerald-50]="course.access === 'free'" [class.text-emerald-700]="course.access === 'free'" [class.bg-rose-50]="course.access === 'paid'" [class.text-rose-700]="course.access === 'paid'">
+                  <mat-icon class="!h-[14px] !w-[14px] !text-[14px]">{{ course.access === 'free' ? 'check_circle' : 'schedule' }}</mat-icon>
+                  {{ course.access === 'free' ? 'Acces immediat' : 'Validation avec formule' }}
+                </span>
+              </div>
+
+              <p class="mt-4 flex-1 text-sm leading-7 text-[var(--color-brand-green-800)]/74">{{ course.description }}</p>
+
+              <div class="mt-5 grid grid-cols-2 gap-3 rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
+                <div>
+                  <div class="text-[11px] uppercase tracking-[0.18em] text-[var(--color-brand-green-800)]/45">Modules</div>
+                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ course.modules }}</div>
+                </div>
+                <div>
+                  <div class="text-[11px] uppercase tracking-[0.18em] text-[var(--color-brand-green-800)]/45">Etudiantes</div>
+                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ course.students }}</div>
+                </div>
+              </div>
+
+              <div class="mt-5 flex flex-wrap gap-3">
+                <a [routerLink]="['/formations', course.id, 'inscription']" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_34px_rgba(18,53,36,0.18)] transition hover:-translate-y-0.5 hover:bg-[var(--color-brand-gold-500)]">
+                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">{{ course.access === 'free' ? 'how_to_reg' : 'payments' }}</mat-icon>
+                  {{ course.access === 'free' ? 'S inscrire maintenant' : 'Choisir cette formation' }}
+                </a>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" class="border-t border-[var(--color-brand-gold-300)]/30 bg-white py-24">
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="mb-16 text-center">
+        <div class="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/50 bg-[var(--color-brand-cream)] px-4 py-2 text-xs font-bold uppercase tracking-widest text-[var(--color-brand-green-900)]">
+          <mat-icon style="font-size: 16px; width: 16px; height: 16px;">sell</mat-icon>
+          {{ t({ fr: 'Formules publiees', en: 'Published plans', ar: 'الباقات المنشورة' }) }}
+        </div>
+        <h2 class="mb-4 font-serif text-4xl text-[var(--color-brand-green-900)]">{{ t({ fr: 'Nos formules de formation', en: 'Our training plans', ar: 'باقات التكوين' }) }}</h2>
+        <p class="mx-auto max-w-2xl text-lg font-light text-[var(--color-brand-green-800)]/70">
+          {{ t({ fr: 'Les formules creees depuis le dashboard formatrice s affichent ici automatiquement.', en: 'Plans created from the instructor dashboard appear here automatically.', ar: 'الباقات التي تنشأ من لوحة المدربة تظهر هنا تلقائيا.' }) }}
+        </p>
+      </div>
+
+      <div class="grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4">
+        @for (formula of formulas(); track formula.id) {
+          <article class="group flex h-full flex-col overflow-hidden rounded-[26px] border border-[var(--color-brand-gold-300)]/24 bg-[linear-gradient(180deg,#fffdf9_0%,#f8f1e4_100%)] shadow-[0_18px_40px_rgba(18,53,36,0.06)]">
+            <div class="relative flex h-44 items-end overflow-hidden">
+              <img [src]="formula.image" [alt]="formula.title" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" referrerpolicy="no-referrer" />
+              <div class="absolute inset-0 bg-gradient-to-t from-[rgba(10,16,26,0.6)] via-transparent to-transparent"></div>
+              <div class="absolute left-5 top-5 flex flex-wrap gap-2">
+                <span class="rounded-full bg-white/92 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">{{ formulaPrice(formula) }}</span>
+                @if (formula.promoEnabled) {
+                  <span class="rounded-full bg-[#f8e7e7] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-[#9b2c2c]">Promo</span>
+                }
+              </div>
+            </div>
+
+            <div class="flex flex-1 flex-col p-6">
+              <h3 class="text-xl font-bold text-[var(--color-brand-green-900)]">{{ formula.title }}</h3>
+              <p class="mt-4 flex-1 text-sm leading-7 text-[var(--color-brand-green-800)]/74">{{ formula.description }}</p>
+              @if (formula.highlights.length) {
+                <ul class="mt-5 space-y-2 text-sm text-[var(--color-brand-green-900)]">
+                  @for (highlight of formula.highlights; track highlight) {
+                    <li class="flex items-start gap-2">
+                      <mat-icon class="!h-[18px] !w-[18px] !text-[18px] text-[var(--color-brand-gold-500)]">check_circle</mat-icon>
+                      <span>{{ highlight }}</span>
+                    </li>
+                  }
+                </ul>
+              }
+              <a routerLink="/contact" class="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-gold-500)]">
+                {{ t({ fr: 'Demander cette formule', en: 'Request this plan', ar: 'طلب هذه الباقة' }) }}
+                <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">arrow_forward</mat-icon>
+              </a>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="certificats" class="bg-[var(--color-brand-cream)] py-20">
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="mb-12 text-center">
+        <h2 class="mb-3 font-serif text-3xl text-[var(--color-brand-green-900)]">Certificats disponibles</h2>
+        <p class="mx-auto max-w-2xl text-base font-light text-[var(--color-brand-green-800)]/70">
+          Choisissez les certificats qui correspondent a vos objectifs professionnels et geographiques.
+        </p>
+      </div>
+
+      <div class="grid gap-8 md:grid-cols-2">
+        <div class="rounded-2xl border-2 border-[var(--color-brand-green-900)]/20 bg-white p-8 shadow-sm">
+          <div class="mb-6 flex items-center gap-3">
+            <mat-icon class="text-[28px] text-[var(--color-brand-green-900)]">verified</mat-icon>
+            <h3 class="text-2xl font-bold text-[var(--color-brand-green-900)]">Certificats de base</h3>
+          </div>
+          <p class="mb-6 text-sm text-[var(--color-brand-green-800)]/70">
+            Inclus dans la Formule Initiale et proposes comme socle pour les formules superieures.
+          </p>
+          <div class="space-y-4">
+            <div class="flex items-start gap-4 border-b border-gray-100 pb-4">
+              <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-300)]/30">
+                <span class="font-bold text-[var(--color-brand-gold-500)]">FR</span>
+              </div>
+              <div>
+                <h4 class="mb-1 font-bold text-[var(--color-brand-green-900)]">France</h4>
+                <p class="text-sm text-[var(--color-brand-green-800)]/60">Certificat reconnu par l Etat francais, avec validite internationale.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-300)]/30">
+                <span class="font-bold text-[var(--color-brand-gold-500)]">TN</span>
+              </div>
+              <div>
+                <h4 class="mb-1 font-bold text-[var(--color-brand-green-900)]">Tunisie</h4>
+                <p class="text-sm text-[var(--color-brand-green-800)]/60">Certification tunisienne accreditee, avec reconnaissance maghrebine.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border-2 border-[var(--color-brand-gold-500)]/40 bg-white p-8 shadow-sm">
+          <div class="mb-6 flex items-center gap-3">
+            <mat-icon class="text-[28px] text-[var(--color-brand-gold-500)]">stars</mat-icon>
+            <h3 class="text-2xl font-bold text-[var(--color-brand-green-900)]">Options supplementaires</h3>
+          </div>
+          <p class="mb-6 text-sm text-[var(--color-brand-green-800)]/70">
+            A ajouter selon vos besoins dans les formules Expert et Immersion.
+          </p>
+          <div class="space-y-4">
+            <div class="flex items-start gap-4 border-b border-gray-100 pb-4">
+              <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-300)]/30">
+                <span class="font-bold text-[var(--color-brand-gold-500)]">ME</span>
+              </div>
+              <div>
+                <h4 class="mb-1 font-bold text-[var(--color-brand-green-900)]">Medine</h4>
+                <p class="text-sm text-[var(--color-brand-green-800)]/60">Certificat spirituel reconnu mondialement, oriente bien-etre holistique.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4 border-b border-gray-100 pb-4">
+              <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-300)]/30">
+                <span class="font-bold text-[var(--color-brand-gold-500)]">UK</span>
+              </div>
+              <div>
+                <h4 class="mb-1 font-bold text-[var(--color-brand-green-900)]">Londres</h4>
+                <p class="text-sm text-[var(--color-brand-green-800)]/60">Accreditation britannique avec reconnaissance europeenne et internationale.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4 border-b border-gray-100 pb-4">
+              <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-300)]/30">
+                <span class="font-bold text-[var(--color-brand-gold-500)]">AE</span>
+              </div>
+              <div>
+                <h4 class="mb-1 font-bold text-[var(--color-brand-green-900)]">Dubai</h4>
+                <p class="text-sm text-[var(--color-brand-green-800)]/60">Certification du Moyen-Orient reconnue dans les pays du Golfe.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-300)]/30">
+                <span class="font-bold text-[var(--color-brand-gold-500)]">TR</span>
+              </div>
+              <div>
+                <h4 class="mb-1 font-bold text-[var(--color-brand-green-900)]">Turquie</h4>
+                <p class="text-sm text-[var(--color-brand-green-800)]/60">Certification turque ouvrant l acces au marche turc et asiatique.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

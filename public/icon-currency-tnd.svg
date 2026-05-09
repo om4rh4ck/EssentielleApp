@@ -1,0 +1,5 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="32" cy="32" r="31" fill="#F7F1E4" stroke="#C8A96A" stroke-width="2"/>
+  <text x="32" y="24" font-size="36" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="#1F2A24" font-family="Arial, sans-serif">د.ت</text>
+  <text x="32" y="48" font-size="11" font-weight="bold" text-anchor="middle" fill="#1F2A24" font-family="Arial, sans-serif">TND</text>
+</svg>

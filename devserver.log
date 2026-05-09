@@ -1,0 +1,9 @@
+
+> ai-studio-angular-app@0.0.0 dev
+> ng serve --port 3000 --host 0.0.0.0
+
+[33m>[39m Building...
+[32m√[39m Building...
+Application bundle generation failed. [6.389 seconds] - 2026-05-08T16:33:23.712Z
+
+Watch mode enabled. Watching for file changes...
