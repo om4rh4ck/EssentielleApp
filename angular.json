@@ -20,6 +20,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "cache": false,
             "security": {
               "allowedHosts": ["localhost", "127.0.0.1", "0.0.0.0"]
             },
