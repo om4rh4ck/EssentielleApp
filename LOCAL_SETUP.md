@@ -79,8 +79,21 @@ Le serveur crée automatiquement ces comptes au démarrage (avec hash sécurisé
 1. Créer la base MySQL sur l'hébergeur.
 2. Importer `database/schema.sql`.
 3. Configurer les variables `DB_*` dans l'environnement serveur.
-4. Build puis run SSR:
+4. Build puis run SSR (deux options):
+
+**Option A** (recommandée - en utilisant npm start):
 ```bash
 npm run build
+npm start
+```
+
+**Option B** (compatibilité si Entry File est configuré sur Hostinger):
+```bash
+npm run build
+npm run start:compat
+```
+
+Ou lancer directement:
+```bash
 node dist/app/server/server.mjs
 ```
