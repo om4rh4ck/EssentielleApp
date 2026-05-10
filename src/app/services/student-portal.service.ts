@@ -43,6 +43,10 @@ export interface StudentCourse {
     title: string;
     pdfName: string;
     pdfDataUrl: string;
+    videoName?: string;
+    videoDataUrl?: string;
+    audioName?: string;
+    audioDataUrl?: string;
   }>;
 }
 

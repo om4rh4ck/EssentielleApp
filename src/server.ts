@@ -78,6 +78,10 @@ interface Course {
     title: string;
     pdfName: string;
     pdfDataUrl: string;
+    videoName?: string;
+    videoDataUrl?: string;
+    audioName?: string;
+    audioDataUrl?: string;
   }>;
 }
 
@@ -266,8 +270,8 @@ interface AdminStatsSnapshot {
 }
 
 const app = express();
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: '250mb' }));
+app.use(express.urlencoded({ limit: '250mb', extended: true }));
 
 const angularApp = new AngularNodeAppEngine({
   allowedHosts: ['*'],
@@ -1654,6 +1658,10 @@ app.post('/api/instructor/courses', (req, res): any => {
             title: typeof item?.title === 'string' && item.title.trim() ? item.title.trim() : `Module ${index + 1}`,
             pdfName: typeof item?.pdfName === 'string' ? item.pdfName : `module-${index + 1}.pdf`,
             pdfDataUrl: typeof item?.pdfDataUrl === 'string' ? item.pdfDataUrl : '',
+            videoName: typeof item?.videoName === 'string' ? item.videoName : '',
+            videoDataUrl: typeof item?.videoDataUrl === 'string' ? item.videoDataUrl : '',
+            audioName: typeof item?.audioName === 'string' ? item.audioName : '',
+            audioDataUrl: typeof item?.audioDataUrl === 'string' ? item.audioDataUrl : '',
           }))
           .filter((item: any) => item.pdfDataUrl && item.title.trim())
       : [];
@@ -1737,6 +1745,10 @@ app.put('/api/instructor/courses/:courseId', (req, res): any => {
           title: typeof item?.title === 'string' && item.title.trim() ? item.title.trim() : `Module ${index + 1}`,
           pdfName: typeof item?.pdfName === 'string' ? item.pdfName : `module-${index + 1}.pdf`,
           pdfDataUrl: typeof item?.pdfDataUrl === 'string' ? item.pdfDataUrl : '',
+          videoName: typeof item?.videoName === 'string' ? item.videoName : '',
+          videoDataUrl: typeof item?.videoDataUrl === 'string' ? item.videoDataUrl : '',
+          audioName: typeof item?.audioName === 'string' ? item.audioName : '',
+          audioDataUrl: typeof item?.audioDataUrl === 'string' ? item.audioDataUrl : '',
         }))
         .filter((item: any) => item.pdfDataUrl && item.title.trim());
     }
@@ -2299,6 +2311,10 @@ app.post('/api/admin/courses', (req, res): any => {
             title: typeof item?.title === 'string' && item.title.trim() ? item.title.trim() : `Module ${index + 1}`,
             pdfName: typeof item?.pdfName === 'string' ? item.pdfName : `module-${index + 1}.pdf`,
             pdfDataUrl: typeof item?.pdfDataUrl === 'string' ? item.pdfDataUrl : '',
+            videoName: typeof item?.videoName === 'string' ? item.videoName : '',
+            videoDataUrl: typeof item?.videoDataUrl === 'string' ? item.videoDataUrl : '',
+            audioName: typeof item?.audioName === 'string' ? item.audioName : '',
+            audioDataUrl: typeof item?.audioDataUrl === 'string' ? item.audioDataUrl : '',
           }))
           .filter((item: any) => item.pdfDataUrl && item.title.trim())
       : [];
@@ -2383,6 +2399,10 @@ app.put('/api/admin/courses/:courseId', (req, res): any => {
           title: typeof item?.title === 'string' && item.title.trim() ? item.title.trim() : `Module ${index + 1}`,
           pdfName: typeof item?.pdfName === 'string' ? item.pdfName : `module-${index + 1}.pdf`,
           pdfDataUrl: typeof item?.pdfDataUrl === 'string' ? item.pdfDataUrl : '',
+          videoName: typeof item?.videoName === 'string' ? item.videoName : '',
+          videoDataUrl: typeof item?.videoDataUrl === 'string' ? item.videoDataUrl : '',
+          audioName: typeof item?.audioName === 'string' ? item.audioName : '',
+          audioDataUrl: typeof item?.audioDataUrl === 'string' ? item.audioDataUrl : '',
         }))
         .filter((item: any) => item.pdfDataUrl && item.title.trim());
     }

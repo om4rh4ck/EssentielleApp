@@ -134,8 +134,8 @@ type CourseChapterItem = NonNullable<ManagedCourse['chapters']>[number];
             <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-white/75 p-4">
               <div class="flex items-center justify-between gap-4">
                 <div>
-                  <div class="text-sm font-semibold text-[var(--color-brand-green-900)]">Modules PDF</div>
-                  <div class="mt-1 text-xs uppercase tracking-[0.16em] text-[var(--color-brand-green-800)]/48">{{ moduleItems.length }} module(s) - {{ modulePdfCount() }} avec PDF</div>
+                  <div class="text-sm font-semibold text-[var(--color-brand-green-900)]">Modules et medias</div>
+                  <div class="mt-1 text-xs uppercase tracking-[0.16em] text-[var(--color-brand-green-800)]/48">{{ moduleItems.length }} module(s) - PDF obligatoire, video et audio facultatifs</div>
                 </div>
                 <button type="button" (click)="addModule()" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-green-900)]">
                   <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">add</mat-icon>
@@ -153,13 +153,36 @@ type CourseChapterItem = NonNullable<ManagedCourse['chapters']>[number];
                       <button type="button" (click)="removeModule($index)" class="rounded-full bg-[#f8e7e7] px-4 py-3 text-sm font-semibold text-[#9b2c2c]">Supprimer</button>
                     </div>
                     <div class="mt-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                      <div class="text-sm text-[var(--color-brand-green-800)]/70">
-                        {{ module.value.pdfName || 'Aucun PDF selectionne' }}
+                      <div class="grid w-full gap-3 lg:grid-cols-3">
+                        <div class="rounded-2xl bg-white px-4 py-3 text-sm text-[var(--color-brand-green-800)]/70">
+                          <div class="font-semibold text-[var(--color-brand-green-900)]">PDF obligatoire</div>
+                          <div class="mt-1 break-all">{{ module.value.pdfName || 'Aucun PDF selectionne' }}</div>
+                        </div>
+                        <div class="rounded-2xl bg-white px-4 py-3 text-sm text-[var(--color-brand-green-800)]/70">
+                          <div class="font-semibold text-[var(--color-brand-green-900)]">Video facultative</div>
+                          <div class="mt-1 break-all">{{ module.value.videoName || 'Aucune video selectionnee' }}</div>
+                        </div>
+                        <div class="rounded-2xl bg-white px-4 py-3 text-sm text-[var(--color-brand-green-800)]/70">
+                          <div class="font-semibold text-[var(--color-brand-green-900)]">Audio facultatif</div>
+                          <div class="mt-1 break-all">{{ module.value.audioName || 'Aucun audio selectionne' }}</div>
+                        </div>
                       </div>
-                      <label class="inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[var(--color-brand-green-900)]">
+                    </div>
+                    <div class="mt-3 grid gap-3 lg:grid-cols-3">
+                      <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-white px-4 py-3 text-sm font-semibold text-[var(--color-brand-green-900)]">
                         <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">picture_as_pdf</mat-icon>
                         Upload PDF
                         <input type="file" accept="application/pdf" class="hidden" (change)="onModulePdfSelected($event, $index)" />
+                      </label>
+                      <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-white px-4 py-3 text-sm font-semibold text-[var(--color-brand-green-900)]">
+                        <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">videocam</mat-icon>
+                        Upload video
+                        <input type="file" accept="video/*" class="hidden" (change)="onModuleVideoSelected($event, $index)" />
+                      </label>
+                      <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-white px-4 py-3 text-sm font-semibold text-[var(--color-brand-green-900)]">
+                        <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">graphic_eq</mat-icon>
+                        Upload audio
+                        <input type="file" accept="audio/*" class="hidden" (change)="onModuleAudioSelected($event, $index)" />
                       </label>
                     </div>
                   </div>
@@ -314,6 +337,10 @@ export class InstructorCoursesComponent implements OnInit {
       title: [module?.title ?? ''],
       pdfName: [module?.pdfName ?? ''],
       pdfDataUrl: [module?.pdfDataUrl ?? ''],
+      videoName: [module?.videoName ?? ''],
+      videoDataUrl: [module?.videoDataUrl ?? ''],
+      audioName: [module?.audioName ?? ''],
+      audioDataUrl: [module?.audioDataUrl ?? ''],
     });
   }
 
@@ -387,6 +414,36 @@ export class InstructorCoursesComponent implements OnInit {
       group.patchValue({
         pdfName: file.name,
         pdfDataUrl: String(reader.result ?? ''),
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  onModuleVideoSelected(event: Event, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const group = this.moduleItems.at(index);
+      group.patchValue({
+        videoName: file.name,
+        videoDataUrl: String(reader.result ?? ''),
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  onModuleAudioSelected(event: Event, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const group = this.moduleItems.at(index);
+      group.patchValue({
+        audioName: file.name,
+        audioDataUrl: String(reader.result ?? ''),
       });
     };
     reader.readAsDataURL(file);
