@@ -20,6 +20,24 @@ export interface PublicCatalogCourse {
   promoPriceUsd?: number;
   category: string;
   status: 'published' | 'draft';
+  presentation?: string;
+  warning?: string;
+  objectives?: string[];
+  contentItems?: Array<{
+    id: string;
+    text: string;
+  }>;
+  chapters?: Array<{
+    id: string;
+    title: string;
+    content: string;
+  }>;
+  moduleItems?: Array<{
+    id: string;
+    title: string;
+    pdfName: string;
+    pdfDataUrl: string;
+  }>;
 }
 
 export interface PublicCatalogFormula {

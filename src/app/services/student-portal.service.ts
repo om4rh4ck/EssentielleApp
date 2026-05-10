@@ -26,6 +26,24 @@ export interface StudentCourse {
   category: string;
   enrolled: boolean;
   progress: number;
+  presentation?: string;
+  warning?: string;
+  objectives?: string[];
+  contentItems?: Array<{
+    id: string;
+    text: string;
+  }>;
+  chapters?: Array<{
+    id: string;
+    title: string;
+    content: string;
+  }>;
+  moduleItems?: Array<{
+    id: string;
+    title: string;
+    pdfName: string;
+    pdfDataUrl: string;
+  }>;
 }
 
 export interface StudentCertificate {

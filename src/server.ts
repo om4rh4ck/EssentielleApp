@@ -61,6 +61,18 @@ interface Course {
   promoPriceUsd?: number;
   category: string;
   status: CourseStatus;
+  presentation?: string;
+  warning?: string;
+  objectives?: string[];
+  contentItems?: Array<{
+    id: string;
+    text: string;
+  }>;
+  chapters?: Array<{
+    id: string;
+    title: string;
+    content: string;
+  }>;
   moduleItems?: Array<{
     id: string;
     title: string;
@@ -289,6 +301,27 @@ const courses: Course[] = [
     promoEnabled: false,
     category: 'Nutrition',
     status: 'published',
+    presentation: "Bienvenue dans la formation Essenti'elle Santé. Cette formation a été conçue pour permettre à chaque femme de comprendre son corps, améliorer sa santé et accompagner d'autres femmes.",
+    warning: "Cette formation ne remplace pas un professionnel de santé. Elle a pour but d'éduquer et d'accompagner vers une meilleure hygiène de vie.",
+    objectives: [
+      'Comprendre les bases de la nutrition',
+      'Identifier les déséquilibres',
+      'Mettre en place une détox adaptée',
+      'Proposer des programmes personnalisés',
+    ],
+    contentItems: [
+      { id: 'content-1-1', text: 'PDF de cours et supports visuels' },
+      { id: 'content-1-2', text: 'Vidéos explicatives par module' },
+      { id: 'content-1-3', text: 'Examens de validation' },
+      { id: 'content-1-4', text: 'QCM de contrôle des acquis' },
+    ],
+    chapters: [
+      { id: 'chapter-1-1', title: 'Chapitre 1 : Les bases de la nutrition', content: "Les macronutriments, leur rôle, les bonnes associations alimentaires et les premières bases d'équilibre nutritionnel." },
+      { id: 'chapter-1-2', title: 'Chapitre 2 : L’inflammation', content: 'Comprendre les facteurs inflammatoires, les erreurs alimentaires fréquentes et les pistes naturelles pour apaiser le terrain.' },
+      { id: 'chapter-1-3', title: 'Chapitre 3 : Diabète', content: 'Identifier les mécanismes du diabète, choisir les bons aliments et adapter l’accompagnement au quotidien.' },
+      { id: 'chapter-1-4', title: 'Chapitre 4 : Hypertension', content: 'Mettre en place une hygiène de vie adaptée, réduire les facteurs aggravants et soutenir l’équilibre cardiovasculaire.' },
+      { id: 'chapter-1-5', title: 'Chapitre 5 : Troubles digestifs', content: 'Analyser les causes fréquentes, renforcer la digestion et proposer un protocole alimentaire plus confortable.' },
+    ],
     moduleItems: [],
   },
   {
@@ -734,6 +767,34 @@ function makeStoredUser(id: string, name: string, email: string, role: UserRole,
     role,
     passwordHash: hashPassword(password),
   };
+}
+
+function parseTextList(items: unknown): string[] {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item) => String(item ?? '').trim())
+    .filter((item) => item.length > 0);
+}
+
+function parseContentItems(items: unknown): Array<{ id: string; text: string }> {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item: any, index: number) => ({
+      id: typeof item?.id === 'string' && item.id ? item.id : `content-${Date.now()}-${index}`,
+      text: typeof item?.text === 'string' ? item.text.trim() : '',
+    }))
+    .filter((item) => item.text.length > 0);
+}
+
+function parseChapterItems(items: unknown): Array<{ id: string; title: string; content: string }> {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item: any, index: number) => ({
+      id: typeof item?.id === 'string' && item.id ? item.id : `chapter-${Date.now()}-${index}`,
+      title: typeof item?.title === 'string' ? item.title.trim() : '',
+      content: typeof item?.content === 'string' ? item.content.trim() : '',
+    }))
+    .filter((item) => item.title.length > 0 || item.content.length > 0);
 }
 
 function hasDatabaseConfig(): boolean {
@@ -1596,6 +1657,11 @@ app.post('/api/instructor/courses', (req, res): any => {
           }))
           .filter((item: any) => item.pdfDataUrl && item.title.trim())
       : [];
+    const objectives = parseTextList(req.body?.objectives);
+    const contentItems = parseContentItems(req.body?.contentItems);
+    const chapters = parseChapterItems(req.body?.chapters);
+    const presentation = typeof req.body?.presentation === 'string' ? req.body.presentation.trim() : '';
+    const warning = typeof req.body?.warning === 'string' ? req.body.warning.trim() : '';
 
     const status = req.body?.status === 'draft' ? 'draft' : 'published';
     
@@ -1622,6 +1688,11 @@ app.post('/api/instructor/courses', (req, res): any => {
       promoPriceUsd: Math.max(0, Number(req.body?.promoPriceUsd ?? 0)),
       category: typeof req.body?.category === 'string' ? req.body.category.trim() : 'Formation',
       status,
+      presentation,
+      warning,
+      objectives,
+      contentItems,
+      chapters,
       moduleItems,
     };
     courses.unshift(course);
@@ -1668,6 +1739,21 @@ app.put('/api/instructor/courses/:courseId', (req, res): any => {
           pdfDataUrl: typeof item?.pdfDataUrl === 'string' ? item.pdfDataUrl : '',
         }))
         .filter((item: any) => item.pdfDataUrl && item.title.trim());
+    }
+    if (req.body?.presentation !== undefined) {
+      course.presentation = typeof req.body.presentation === 'string' ? req.body.presentation.trim() : '';
+    }
+    if (req.body?.warning !== undefined) {
+      course.warning = typeof req.body.warning === 'string' ? req.body.warning.trim() : '';
+    }
+    if (Array.isArray(req.body?.objectives)) {
+      course.objectives = parseTextList(req.body.objectives);
+    }
+    if (Array.isArray(req.body?.contentItems)) {
+      course.contentItems = parseContentItems(req.body.contentItems);
+    }
+    if (Array.isArray(req.body?.chapters)) {
+      course.chapters = parseChapterItems(req.body.chapters);
     }
     
     course.modules = course.moduleItems?.length || Number(req.body?.modules ?? course.modules);
@@ -2216,6 +2302,11 @@ app.post('/api/admin/courses', (req, res): any => {
           }))
           .filter((item: any) => item.pdfDataUrl && item.title.trim())
       : [];
+    const objectives = parseTextList(req.body?.objectives);
+    const contentItems = parseContentItems(req.body?.contentItems);
+    const chapters = parseChapterItems(req.body?.chapters);
+    const presentation = typeof req.body?.presentation === 'string' ? req.body.presentation.trim() : '';
+    const warning = typeof req.body?.warning === 'string' ? req.body.warning.trim() : '';
 
     const status = req.body?.status === 'draft' ? 'draft' : 'published';
     
@@ -2243,6 +2334,11 @@ app.post('/api/admin/courses', (req, res): any => {
       promoPriceUsd: Math.max(0, Number(req.body?.promoPriceUsd ?? 0)),
       category: typeof req.body?.category === 'string' ? req.body.category.trim() : 'Formation',
       status,
+      presentation,
+      warning,
+      objectives,
+      contentItems,
+      chapters,
       moduleItems,
     };
     courses.unshift(course);
@@ -2289,6 +2385,21 @@ app.put('/api/admin/courses/:courseId', (req, res): any => {
           pdfDataUrl: typeof item?.pdfDataUrl === 'string' ? item.pdfDataUrl : '',
         }))
         .filter((item: any) => item.pdfDataUrl && item.title.trim());
+    }
+    if (req.body?.presentation !== undefined) {
+      course.presentation = typeof req.body.presentation === 'string' ? req.body.presentation.trim() : '';
+    }
+    if (req.body?.warning !== undefined) {
+      course.warning = typeof req.body.warning === 'string' ? req.body.warning.trim() : '';
+    }
+    if (Array.isArray(req.body?.objectives)) {
+      course.objectives = parseTextList(req.body.objectives);
+    }
+    if (Array.isArray(req.body?.contentItems)) {
+      course.contentItems = parseContentItems(req.body.contentItems);
+    }
+    if (Array.isArray(req.body?.chapters)) {
+      course.chapters = parseChapterItems(req.body.chapters);
     }
     
     course.modules = course.moduleItems?.length || Number(req.body?.modules ?? course.modules);
