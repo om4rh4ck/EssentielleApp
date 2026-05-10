@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { interval } from 'rxjs';
 import { DashboardLayoutComponent } from '../../components/dashboard-layout/dashboard-layout';
 import { MessageContact, StudentMessage, StudentPortalService } from '../../services/student-portal.service';
 import { STUDENT_MENU_ITEMS } from './student-menu';
@@ -54,6 +56,13 @@ import { AuthService } from '../../services/auth.service';
                 }
               </p>
             </div>
+            <button
+              type="button"
+              (click)="refreshConversation()"
+              class="inline-flex items-center gap-2 rounded-xl border border-[var(--color-brand-green-900)]/18 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-green-900)] shadow-[0_10px_24px_rgba(15,23,19,0.06)] transition hover:border-[var(--color-brand-green-900)]/40 hover:bg-[var(--color-brand-cream)]">
+              <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">refresh</mat-icon>
+              Actualiser
+            </button>
           </div>
 
           <div class="mt-6 space-y-4">
@@ -102,6 +111,7 @@ export class StudentMessagesComponent implements OnInit {
   private readonly portal = inject(StudentPortalService);
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly menuItems = [...STUDENT_MENU_ITEMS];
   readonly contacts = signal<MessageContact[]>([]);
@@ -121,16 +131,10 @@ export class StudentMessagesComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.portal.getMessageContacts().subscribe({
-      next: (contacts) => {
-        this.contacts.set(contacts);
-        if (contacts.length && !this.selectedContactId()) {
-          this.selectedContactId.set(contacts[0].id);
-        }
-      },
-      error: (error) => this.handleHttpError(error),
-    });
-    this.loadMessages();
+    this.refreshConversation();
+    interval(5000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.refreshConversation(false));
   }
 
   loadMessages(): void {
@@ -138,6 +142,27 @@ export class StudentMessagesComponent implements OnInit {
       next: (data) => this.messages.set(data),
       error: (error) => this.handleHttpError(error),
     });
+  }
+
+  refreshConversation(resetSelection = true): void {
+    this.portal.getMessageContacts().subscribe({
+      next: (contacts) => {
+        this.contacts.set(contacts);
+        if (!contacts.length) {
+          this.selectedContactId.set('');
+          return;
+        }
+
+        const current = this.selectedContactId();
+        const hasCurrent = contacts.some((contact) => contact.id === current);
+        if (resetSelection || !hasCurrent) {
+          this.selectedContactId.set(hasCurrent && current ? current : contacts[0].id);
+        }
+      },
+      error: (error) => this.handleHttpError(error),
+    });
+
+    this.loadMessages();
   }
 
   selectContact(contact: MessageContact): void {
@@ -155,7 +180,7 @@ export class StudentMessagesComponent implements OnInit {
     }).subscribe({
       next: () => {
         this.form.patchValue({ subject: '', content: '' });
-        this.loadMessages();
+        this.refreshConversation(false);
       },
       error: (error) => this.handleHttpError(error),
     });

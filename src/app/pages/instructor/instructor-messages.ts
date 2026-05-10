@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { interval } from 'rxjs';
 import { DashboardLayoutComponent } from '../../components/dashboard-layout/dashboard-layout';
 import { ConversationMessage, MessageContact, StaffPortalService } from '../../services/staff-portal.service';
 import { INSTRUCTOR_MENU_ITEMS } from './instructor-menu';
@@ -43,14 +45,25 @@ import { AuthService } from '../../services/auth.service';
         </section>
 
         <section class="rounded-[28px] bg-white p-6 shadow-[0_20px_45px_rgba(0,0,0,0.04)]">
-          <h2 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Conversation</h2>
-          <p class="mt-2 text-sm leading-6 text-[var(--color-brand-green-800)]/70">
-            @if (selectedContact(); as contact) {
-              Echanges avec {{ contact.name }}
-            } @else {
-              Selectionnez un contact pour consulter vos messages.
-            }
-          </p>
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <h2 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Conversation</h2>
+              <p class="mt-2 text-sm leading-6 text-[var(--color-brand-green-800)]/70">
+                @if (selectedContact(); as contact) {
+                  Echanges avec {{ contact.name }}
+                } @else {
+                  Selectionnez un contact pour consulter vos messages.
+                }
+              </p>
+            </div>
+            <button
+              type="button"
+              (click)="refreshConversation()"
+              class="inline-flex items-center gap-2 rounded-xl border border-[var(--color-brand-green-900)]/18 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-green-900)] shadow-[0_10px_24px_rgba(15,23,19,0.06)] transition hover:border-[var(--color-brand-green-900)]/40 hover:bg-[var(--color-brand-cream)]">
+              <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">refresh</mat-icon>
+              Actualiser
+            </button>
+          </div>
 
           <div class="mt-6 space-y-4">
             @for (message of conversation(); track message.id) {
@@ -87,6 +100,7 @@ export class InstructorMessagesComponent implements OnInit {
   private readonly staff = inject(StaffPortalService);
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly menuItems = [...INSTRUCTOR_MENU_ITEMS];
   readonly contacts = signal<MessageContact[]>([]);
@@ -106,16 +120,10 @@ export class InstructorMessagesComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.staff.getInstructorMessageContacts().subscribe({
-      next: (contacts) => {
-        this.contacts.set(contacts);
-        if (contacts.length && !this.selectedContactId()) {
-          this.selectedContactId.set(contacts[0].id);
-        }
-      },
-      error: (error) => this.handleHttpError(error),
-    });
-    this.load();
+    this.refreshConversation();
+    interval(5000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.refreshConversation(false));
   }
 
   load(): void {
@@ -123,6 +131,27 @@ export class InstructorMessagesComponent implements OnInit {
       next: (data) => this.messages.set(data),
       error: (error) => this.handleHttpError(error),
     });
+  }
+
+  refreshConversation(resetSelection = true): void {
+    this.staff.getInstructorMessageContacts().subscribe({
+      next: (contacts) => {
+        this.contacts.set(contacts);
+        if (!contacts.length) {
+          this.selectedContactId.set('');
+          return;
+        }
+
+        const current = this.selectedContactId();
+        const hasCurrent = contacts.some((contact) => contact.id === current);
+        if (resetSelection || !hasCurrent) {
+          this.selectedContactId.set(hasCurrent && current ? current : contacts[0].id);
+        }
+      },
+      error: (error) => this.handleHttpError(error),
+    });
+
+    this.load();
   }
 
   selectContact(contact: MessageContact): void {
@@ -137,7 +166,7 @@ export class InstructorMessagesComponent implements OnInit {
     }).subscribe({
       next: () => {
         this.form.patchValue({ subject: '', content: '' });
-        this.load();
+        this.refreshConversation(false);
       },
       error: (error) => this.handleHttpError(error),
     });

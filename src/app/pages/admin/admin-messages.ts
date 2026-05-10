@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { interval } from 'rxjs';
 import { DashboardLayoutComponent } from '../../components/dashboard-layout/dashboard-layout';
 import { ADMIN_MENU_ITEMS } from './admin-menu';
 import { ConversationMessage, MessageContact, StaffPortalService } from '../../services/staff-portal.service';
@@ -73,6 +75,7 @@ import { AuthService } from '../../services/auth.service';
               </div>
               <button
                 type="button"
+                (click)="refreshConversation()"
                 class="inline-flex items-center gap-2 rounded-xl border border-[var(--color-brand-green-900)]/18 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-green-900)] shadow-[0_10px_24px_rgba(15,23,19,0.06)] transition hover:border-[var(--color-brand-green-900)]/40 hover:bg-[var(--color-brand-cream)]">
                 <span class="inline-flex items-center justify-center" style="width:22px;height:22px;font-size:22px;line-height:22px;color: rgb(15,23,19);">
                   <mat-icon style="width:22px;height:22px;display:block;">refresh</mat-icon>
@@ -85,19 +88,19 @@ import { AuthService } from '../../services/auth.service';
               @if (conversation().length > 0) {
                 @for (message of conversation(); track message.id) {
                   <div class="flex" [class.justify-end]="message.senderRole === 'admin'" [class.justify-start]="message.senderRole !== 'admin'">
-                <div class="max-w-[85%] rounded-[28px] p-5 shadow-sm"
-                  [class.bg-white]="message.senderRole === 'admin'"
-                  [class.bg-[var(--color-brand-green-900)]/10]="message.senderRole !== 'admin'">
-                  <div class="flex items-center justify-between gap-3">
-                    <div>
-                      <div class="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-green-900)]">{{ message.senderName }}</div>
-                      <div class="mt-2 text-sm font-semibold text-[var(--color-brand-green-900)]">{{ message.subject }}</div>
+                    <div class="max-w-[85%] rounded-[28px] p-5 shadow-sm"
+                      [class.bg-white]="message.senderRole === 'admin'"
+                      [class.bg-[var(--color-brand-green-900)]/10]="message.senderRole !== 'admin'">
+                      <div class="flex items-center justify-between gap-3">
+                        <div>
+                          <div class="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-green-900)]">{{ message.senderName }}</div>
+                          <div class="mt-2 text-sm font-semibold text-[var(--color-brand-green-900)]">{{ message.subject }}</div>
+                        </div>
+                        <div class="text-[11px] text-[var(--color-brand-green-800)]/60">{{ message.sentAt | date:'dd/MM/yyyy HH:mm' }}</div>
+                      </div>
+                      <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/75">{{ message.content }}</p>
                     </div>
-                    <div class="text-[11px] text-[var(--color-brand-green-800)]/60">{{ message.sentAt | date:'dd/MM/yyyy HH:mm' }}</div>
                   </div>
-                  <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/75">{{ message.content }}</p>
-                </div>
-              </div>
                 }
               } @else {
                 <div class="rounded-[24px] border border-dashed border-[var(--color-brand-green-800)]/40 bg-white/80 p-8 text-center text-sm text-[var(--color-brand-green-800)]/65">
@@ -129,6 +132,7 @@ export class AdminMessagesComponent implements OnInit {
   private readonly staff = inject(StaffPortalService);
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly menuItems = [...ADMIN_MENU_ITEMS];
   readonly contacts = signal<MessageContact[]>([]);
@@ -148,16 +152,10 @@ export class AdminMessagesComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.staff.getAdminMessageContacts().subscribe({
-      next: (contacts) => {
-        this.contacts.set(contacts);
-        if (contacts.length && !this.selectedContactId()) {
-          this.selectedContactId.set(contacts[0].id);
-        }
-      },
-      error: (error) => this.handleHttpError(error),
-    });
-    this.load();
+    this.refreshConversation();
+    interval(5000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.refreshConversation(false));
   }
 
   load(): void {
@@ -165,6 +163,27 @@ export class AdminMessagesComponent implements OnInit {
       next: (data) => this.messages.set(data),
       error: (error) => this.handleHttpError(error),
     });
+  }
+
+  refreshConversation(resetSelection = true): void {
+    this.staff.getAdminMessageContacts().subscribe({
+      next: (contacts) => {
+        this.contacts.set(contacts);
+        if (!contacts.length) {
+          this.selectedContactId.set('');
+          return;
+        }
+
+        const current = this.selectedContactId();
+        const hasCurrent = contacts.some((contact) => contact.id === current);
+        if (resetSelection || !hasCurrent) {
+          this.selectedContactId.set(hasCurrent && current ? current : contacts[0].id);
+        }
+      },
+      error: (error) => this.handleHttpError(error),
+    });
+
+    this.load();
   }
 
   selectContact(contact: MessageContact): void {
@@ -179,7 +198,7 @@ export class AdminMessagesComponent implements OnInit {
     }).subscribe({
       next: () => {
         this.form.patchValue({ subject: '', content: '' });
-        this.load();
+        this.refreshConversation(false);
       },
       error: (error) => this.handleHttpError(error),
     });

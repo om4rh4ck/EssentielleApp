@@ -21,6 +21,7 @@ export class AuthService {
   
   constructor() {
     this.checkToken();
+    this.bindStorageSync();
   }
 
   private checkToken() {
@@ -28,9 +29,44 @@ export class AuthService {
       const token = localStorage.getItem('token');
       const userJSON = localStorage.getItem('user');
       if (token && userJSON) {
-        this.currentUser.set(JSON.parse(userJSON));
+        this.currentUser.set(this.parseStoredUser(userJSON));
       }
     }
+  }
+
+  private bindStorageSync() {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    window.addEventListener('storage', (event) => {
+      if (event.key !== 'token' && event.key !== 'user') {
+        return;
+      }
+
+      const token = localStorage.getItem('token');
+      const userJSON = localStorage.getItem('user');
+      this.currentUser.set(token && userJSON ? this.parseStoredUser(userJSON) : null);
+    });
+  }
+
+  private parseStoredUser(userJSON: string): User | null {
+    try {
+      return JSON.parse(userJSON) as User;
+    } catch {
+      return null;
+    }
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.currentUser();
+  }
+
+  getDashboardRoute(user: User | null = this.currentUser()): string {
+    if (!user) return '/login';
+    if (user.role === 'admin') return '/admin';
+    if (user.role === 'instructor') return '/instructor';
+    return '/student';
   }
 
   getToken(): string | null {
@@ -79,7 +115,7 @@ export class AuthService {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       this.currentUser.set(null);
-      this.router.navigate(['/login']);
+      this.router.navigate(['/']);
     }
   }
 }

@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CurrencyCode, DisplayPreferencesService, LanguageCode, LocalizedText } from '../../shared/services/display-preferences.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-public-layout',
@@ -13,6 +14,8 @@ import { CurrencyCode, DisplayPreferencesService, LanguageCode, LocalizedText } 
 })
 export class PublicLayoutComponent {
   private readonly preferences = inject(DisplayPreferencesService);
+  readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly currency = this.preferences.currency;
   readonly language = this.preferences.language;
@@ -66,5 +69,13 @@ export class PublicLayoutComponent {
 
   t(value: LocalizedText): string {
     return this.preferences.text(value);
+  }
+
+  navigateToAccount(): void {
+    void this.router.navigate([this.auth.getDashboardRoute()]);
+  }
+
+  logout(): void {
+    this.auth.logout();
   }
 }

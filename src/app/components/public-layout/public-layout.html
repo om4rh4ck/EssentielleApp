@@ -50,10 +50,18 @@
         <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-full text-[var(--color-brand-green-900)]/75">
           <mat-icon style="font-size: 22px;">notifications_none</mat-icon>
         </button>
-        <a routerLink="/register" class="inline-flex items-center gap-2 rounded-2xl bg-[var(--color-brand-green-800)] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_24px_rgba(15,23,19,0.18)]">
-          <mat-icon style="font-size: 17px;">auto_awesome</mat-icon>
-          {{ t({ fr: 'Essai Gratuit', en: 'Free Trial', ar: 'تجربة مجانية' }) }}
-        </a>
+
+        @if (auth.isAuthenticated()) {
+          <button type="button" (click)="logout()" class="inline-flex items-center gap-2 rounded-2xl bg-[var(--color-brand-green-800)] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_24px_rgba(15,23,19,0.18)]">
+            <mat-icon style="font-size: 17px;">logout</mat-icon>
+            {{ t({ fr: 'Déconnexion', en: 'Logout', ar: 'تسجيل الخروج' }) }}
+          </button>
+        } @else {
+          <a routerLink="/register" class="inline-flex items-center gap-2 rounded-2xl bg-[var(--color-brand-green-800)] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_24px_rgba(15,23,19,0.18)]">
+            <mat-icon style="font-size: 17px;">auto_awesome</mat-icon>
+            {{ t({ fr: 'Essai Gratuit', en: 'Free Trial', ar: 'تجربة مجانية' }) }}
+          </a>
+        }
       </div>
     </div>
   </nav>
@@ -116,15 +124,27 @@
           }
         </div>
 
-        <a routerLink="/login" class="hidden lg:inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/45 bg-white/80 px-4 py-2 text-sm font-bold text-[var(--color-brand-green-900)] shadow-sm transition-all hover:border-[var(--color-brand-gold-500)]/50 hover:text-[var(--color-brand-gold-500)]">
-          <mat-icon class="w-4 h-4" style="font-size: 17px;">login</mat-icon>
-          {{ t({ fr: 'Connexion', en: 'Login', ar: 'تسجيل الدخول' }) }}
-        </a>
-        <a routerLink="/register" class="text-sm font-bold bg-[var(--color-brand-green-800)] text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-[var(--color-brand-green-900)] hover:shadow-lg transition-all border border-transparent hover:border-[var(--color-brand-gold-500)]/30 inline-flex items-center gap-2">
-          <mat-icon class="w-4 h-4 text-base" style="font-size: 17px;">auto_awesome</mat-icon>
-          {{ t({ fr: 'Essai Gratuit', en: 'Free Trial', ar: 'تجربة مجانية' }) }}
-          <mat-icon class="w-4 h-4 text-base" style="font-size: 16px;">arrow_forward</mat-icon>
-        </a>
+        @if (auth.isAuthenticated()) {
+          <button type="button" (click)="logout()" class="hidden lg:inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/45 bg-white/80 px-4 py-2 text-sm font-bold text-[var(--color-brand-green-900)] shadow-sm transition-all hover:border-[var(--color-brand-gold-500)]/50 hover:text-[var(--color-brand-gold-500)]">
+            <mat-icon class="w-4 h-4" style="font-size: 17px;">logout</mat-icon>
+            {{ t({ fr: 'Déconnexion', en: 'Logout', ar: 'تسجيل الخروج' }) }}
+          </button>
+          <button type="button" (click)="navigateToAccount()" class="text-sm font-bold bg-[var(--color-brand-green-800)] text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-[var(--color-brand-green-900)] hover:shadow-lg transition-all border border-transparent hover:border-[var(--color-brand-gold-500)]/30 inline-flex items-center gap-2">
+            <mat-icon class="w-4 h-4 text-base" style="font-size: 17px;">account_circle</mat-icon>
+            {{ t({ fr: 'Mon espace', en: 'My account', ar: 'حسابي' }) }}
+            <mat-icon class="w-4 h-4 text-base" style="font-size: 16px;">arrow_forward</mat-icon>
+          </button>
+        } @else {
+          <a routerLink="/login" class="hidden lg:inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/45 bg-white/80 px-4 py-2 text-sm font-bold text-[var(--color-brand-green-900)] shadow-sm transition-all hover:border-[var(--color-brand-gold-500)]/50 hover:text-[var(--color-brand-gold-500)]">
+            <mat-icon class="w-4 h-4" style="font-size: 17px;">login</mat-icon>
+            {{ t({ fr: 'Connexion', en: 'Login', ar: 'تسجيل الدخول' }) }}
+          </a>
+          <a routerLink="/register" class="text-sm font-bold bg-[var(--color-brand-green-800)] text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-[var(--color-brand-green-900)] hover:shadow-lg transition-all border border-transparent hover:border-[var(--color-brand-gold-500)]/30 inline-flex items-center gap-2">
+            <mat-icon class="w-4 h-4 text-base" style="font-size: 17px;">auto_awesome</mat-icon>
+            {{ t({ fr: 'Essai Gratuit', en: 'Free Trial', ar: 'تجربة مجانية' }) }}
+            <mat-icon class="w-4 h-4 text-base" style="font-size: 16px;">arrow_forward</mat-icon>
+          </a>
+        }
       </div>
     </div>
   </nav>
@@ -151,10 +171,17 @@
         <mat-icon>contact_mail</mat-icon>
         <span>{{ t({ fr: 'Contact', en: 'Contact', ar: 'اتصل بنا' }) }}</span>
       </a>
-      <a routerLink="/login" routerLinkActive="active" class="nav-item">
-        <mat-icon>person_outline</mat-icon>
-        <span>{{ t({ fr: 'Profil', en: 'Profile', ar: 'الملف' }) }}</span>
-      </a>
+      @if (auth.isAuthenticated()) {
+        <button type="button" (click)="navigateToAccount()" class="nav-item">
+          <mat-icon>person</mat-icon>
+          <span>{{ t({ fr: 'Mon espace', en: 'My account', ar: 'حسابي' }) }}</span>
+        </button>
+      } @else {
+        <a routerLink="/login" routerLinkActive="active" class="nav-item">
+          <mat-icon>person_outline</mat-icon>
+          <span>{{ t({ fr: 'Profil', en: 'Profile', ar: 'الملف' }) }}</span>
+        </a>
+      }
     </div>
   </nav>
 
