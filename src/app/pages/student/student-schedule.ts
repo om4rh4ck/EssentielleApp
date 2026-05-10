@@ -19,9 +19,9 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                 <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">calendar_month</mat-icon>
                 Planning etudiant
               </div>
-              <h2 class="mt-4 font-serif text-4xl">Consultez vos prochains cours</h2>
+              <h2 class="mt-4 font-serif text-4xl">Vos seances inscrites</h2>
               <p class="mt-3 max-w-2xl text-sm leading-7 text-white/80">
-                Retrouvez ici les seances planifiees par la formatrice pour vos formations inscrites.
+                Seules les seances des formations auxquelles vous etes inscrite apparaissent dans cette grille.
               </p>
             </div>
             <div class="rounded-3xl border border-white/14 bg-white/10 px-6 py-5 text-center backdrop-blur-sm">
@@ -31,66 +31,79 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
           </div>
         </section>
 
-        <section class="grid gap-6 xl:grid-cols-[1.4fr_0.9fr]">
-          <div class="rounded-[28px] bg-white p-6 shadow-[0_20px_45px_rgba(0,0,0,0.04)]">
-            <h3 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Tableau hebdomadaire</h3>
-            <div class="mt-6 overflow-x-auto">
-              <table class="min-w-full border-separate border-spacing-y-3">
-                <thead>
-                  <tr class="text-left text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-green-800)]/55">
-                    <th class="px-4">Jour</th>
-                    <th class="px-4">Horaire</th>
-                    <th class="px-4">Cours</th>
-                    <th class="px-4">Format</th>
-                    <th class="px-4">Lieu</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (entry of sortedEntries(); track entry.id) {
-                    <tr class="rounded-2xl bg-[var(--color-brand-cream)] text-sm text-[var(--color-brand-green-900)]">
-                      <td class="rounded-l-2xl px-4 py-4 font-semibold">{{ entry.day }}</td>
-                      <td class="px-4 py-4">{{ entry.startTime }} - {{ entry.endTime }}</td>
-                      <td class="px-4 py-4">
-                        <div class="font-semibold">{{ entry.title }}</div>
-                        <div class="mt-1 text-xs uppercase tracking-[0.12em] text-[var(--color-brand-green-800)]/55">{{ entry.courseTitle }}</div>
-                      </td>
-                      <td class="px-4 py-4">{{ formatLabel(entry.format) }}</td>
-                      <td class="rounded-r-2xl px-4 py-4">{{ entry.room || '-' }}</td>
-                    </tr>
-                  } @empty {
-                    <tr>
-                      <td colspan="5" class="rounded-2xl bg-[var(--color-brand-cream)] px-4 py-8 text-center text-sm text-[var(--color-brand-green-800)]/65">
-                        Aucun emploi du temps n'est encore disponible pour vos formations.
-                      </td>
-                    </tr>
+        <section class="rounded-[28px] bg-white p-6 shadow-[0_20px_45px_rgba(0,0,0,0.04)]">
+          <h3 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Grille hebdomadaire</h3>
+          <p class="mt-2 text-sm leading-6 text-[var(--color-brand-green-800)]/70">
+            Votre formatrice ajoute les seances par formation, puis elles s'affichent ici automatiquement.
+          </p>
+
+          <div class="mt-6 overflow-x-auto">
+            <div class="min-w-[980px] rounded-[26px] bg-[#fff6da] p-3">
+              <div class="grid grid-cols-[120px_repeat(5,minmax(0,1fr))] gap-2">
+                <div class="flex items-center justify-center rounded-xl bg-[#ffd457] px-3 py-3 text-center text-sm font-black uppercase tracking-[0.08em] text-[var(--color-brand-green-900)]">
+                  Horaires
+                </div>
+                @for (day of days; track day) {
+                  <div class="flex items-center justify-center rounded-xl bg-[#ffd457] px-3 py-3 text-center text-sm font-black uppercase tracking-[0.08em] text-[var(--color-brand-green-900)]">
+                    {{ day }}
+                  </div>
+                }
+
+                @for (slot of timeSlots; track slot) {
+                  <div class="flex min-h-[68px] items-center justify-center rounded-xl bg-[#d9edf0] px-3 text-sm font-semibold text-[var(--color-brand-green-900)]/70">
+                    {{ formatHourRange(slot) }}
+                  </div>
+
+                  @for (day of days; track day) {
+                    <div class="min-h-[68px] rounded-xl border border-white/80 bg-[#f6dbe7] p-2">
+                      @if (entryForSlot(day, slot); as entry) {
+                        <div class="flex h-full flex-col justify-between rounded-lg bg-white/78 p-2 shadow-[0_8px_18px_rgba(18,53,36,0.08)]">
+                          <div>
+                            <div class="text-xs font-black uppercase tracking-[0.08em] text-[var(--color-brand-green-900)]">
+                              {{ entry.title }}
+                            </div>
+                            <div class="mt-1 text-[11px] font-semibold text-[var(--color-brand-green-800)]/70">
+                              {{ entry.courseTitle }}
+                            </div>
+                          </div>
+                          <div class="mt-2 text-[10px] uppercase tracking-[0.08em] text-[var(--color-brand-green-800)]/60">
+                            {{ entry.startTime }} - {{ entry.endTime }}
+                          </div>
+                        </div>
+                      }
+                    </div>
                   }
-                </tbody>
-              </table>
+                }
+              </div>
             </div>
           </div>
+        </section>
 
-          <div class="rounded-[28px] bg-white p-6 shadow-[0_20px_45px_rgba(0,0,0,0.04)]">
-            <h3 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Par jour</h3>
-            <div class="mt-6 space-y-4">
-              @for (day of days; track day) {
-                <article class="rounded-[22px] border border-[var(--color-brand-gold-300)]/20 bg-[var(--color-brand-cream)] p-4">
-                  <div class="flex items-center justify-between">
-                    <h4 class="font-semibold text-[var(--color-brand-green-900)]">{{ day }}</h4>
-                    <span class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-brand-green-800)]/55">{{ entriesForDay(day).length }}</span>
-                  </div>
-                  <div class="mt-3 space-y-3">
-                    @for (entry of entriesForDay(day); track entry.id) {
-                      <div class="rounded-2xl bg-white px-4 py-3">
-                        <div class="font-semibold text-[var(--color-brand-green-900)]">{{ entry.startTime }} - {{ entry.endTime }}</div>
-                        <div class="mt-1 text-sm text-[var(--color-brand-green-800)]/72">{{ entry.title }}</div>
-                      </div>
-                    } @empty {
-                      <div class="text-sm text-[var(--color-brand-green-800)]/60">Aucune seance.</div>
-                    }
-                  </div>
-                </article>
-              }
-            </div>
+        <section class="rounded-[28px] bg-white p-6 shadow-[0_20px_45px_rgba(0,0,0,0.04)]">
+          <h3 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Liste detaillee</h3>
+          <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            @for (entry of sortedEntries(); track entry.id) {
+              <article class="rounded-[22px] border border-[var(--color-brand-gold-300)]/20 bg-[var(--color-brand-cream)] p-4">
+                <div class="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-gold-700)]">
+                  {{ entry.day }} • {{ entry.startTime }} - {{ entry.endTime }}
+                </div>
+                <h4 class="mt-3 font-bold text-[var(--color-brand-green-900)]">{{ entry.title }}</h4>
+                <p class="mt-1 text-sm text-[var(--color-brand-green-800)]/72">{{ entry.courseTitle }}</p>
+                <div class="mt-3 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-brand-green-800)]/60">
+                  {{ formatLabel(entry.format) }}
+                </div>
+                @if (entry.room) {
+                  <p class="mt-3 text-sm text-[var(--color-brand-green-800)]/72">Lieu: {{ entry.room }}</p>
+                }
+                @if (entry.notes) {
+                  <p class="mt-2 text-sm leading-6 text-[var(--color-brand-green-800)]/72">{{ entry.notes }}</p>
+                }
+              </article>
+            } @empty {
+              <div class="rounded-[22px] border border-dashed border-[var(--color-brand-gold-300)]/40 bg-white/70 p-4 text-sm text-[var(--color-brand-green-800)]/60">
+                Aucun emploi du temps n'est encore disponible pour vos formations.
+              </div>
+            }
           </div>
         </section>
       </div>
@@ -101,7 +114,8 @@ export class StudentScheduleComponent implements OnInit {
   private readonly portal = inject(StudentPortalService);
 
   readonly menuItems = [...STUDENT_MENU_ITEMS];
-  readonly days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+  readonly days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+  readonly timeSlots = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
   readonly entries = signal<StudentScheduleEntry[]>([]);
 
   ngOnInit(): void {
@@ -116,8 +130,18 @@ export class StudentScheduleComponent implements OnInit {
     });
   }
 
-  entriesForDay(day: string): StudentScheduleEntry[] {
-    return this.sortedEntries().filter((entry) => entry.day === day);
+  entryForSlot(day: string, slot: string): StudentScheduleEntry | undefined {
+    return this.sortedEntries().find((entry) => entry.day === day && this.slotIsWithinEntry(slot, entry));
+  }
+
+  slotIsWithinEntry(slot: string, entry: StudentScheduleEntry): boolean {
+    return slot >= entry.startTime && slot < entry.endTime;
+  }
+
+  formatHourRange(slot: string): string {
+    const [hours, minutes] = slot.split(':').map(Number);
+    const nextHour = `${String(hours + 1).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    return `${slot} - ${nextHour}`;
   }
 
   formatLabel(format: StudentScheduleEntry['format']): string {
