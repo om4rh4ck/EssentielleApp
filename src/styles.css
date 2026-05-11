@@ -15,7 +15,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   background-color: var(--color-brand-cream);
   color: var(--color-brand-green-900);
 }
