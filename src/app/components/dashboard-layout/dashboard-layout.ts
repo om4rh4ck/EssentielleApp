@@ -20,7 +20,7 @@ import { AuthService } from '../../services/auth.service';
       }
 
       <aside
-        class="fixed inset-y-0 left-0 z-50 flex w-[86vw] max-w-[360px] flex-col overflow-hidden bg-[linear-gradient(180deg,#102519_0%,#173927_100%)] text-white shadow-[0_30px_80px_rgba(4,10,28,0.45)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:w-72 lg:border-r lg:border-[var(--color-brand-gold-300)]/18 lg:bg-[linear-gradient(180deg,#fffefb_0%,#f7f0e3_46%,#f2e8d6_100%)] lg:text-[var(--color-brand-green-900)] lg:shadow-[0_22px_50px_rgba(15,23,18,0.08)]"
+        class="fixed inset-y-0 left-0 z-50 flex w-[86vw] max-w-[360px] flex-col overflow-hidden bg-white text-[var(--color-brand-green-900)] shadow-[0_24px_60px_rgba(15,23,18,0.14)] lg:w-72 lg:border-r lg:border-[var(--color-brand-gold-300)]/18 lg:shadow-[0_18px_40px_rgba(15,23,18,0.08)]"
         [style.transform]="menuOpen() ? 'translateX(0)' : 'translateX(-115%)'"
         [style.visibility]="menuOpen() ? 'visible' : 'hidden'"
         [style.pointerEvents]="menuOpen() ? 'auto' : 'none'"
@@ -32,10 +32,10 @@ import { AuthService } from '../../services/auth.service';
                 <img src="ess logo.png" alt="Essenti'Elle Sante" class="h-full w-full object-contain" />
               </span>
               <span class="min-w-0">
-                <span class="block truncate font-serif text-[1.55rem] leading-none tracking-tight text-[var(--color-brand-gold-300)] lg:text-[var(--color-brand-green-900)]">
+                <span class="block truncate font-serif text-[1.55rem] leading-none tracking-tight text-[var(--color-brand-green-900)]">
                   Essenti'Elle
                 </span>
-                <span class="mt-1 block truncate text-[11px] font-semibold uppercase tracking-[0.35em] text-white/72 lg:text-[var(--color-brand-gold-700)]">
+                <span class="mt-1 block truncate text-[11px] font-semibold uppercase tracking-[0.35em] text-[var(--color-brand-gold-700)]">
                   Sante Premium
                 </span>
               </span>
@@ -44,23 +44,9 @@ import { AuthService } from '../../services/auth.service';
             <button
               type="button"
               (click)="closeMenu()"
-              class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/14 bg-white/6 text-white lg:hidden">
+              class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[var(--color-brand-gold-300)]/30 bg-[var(--color-brand-cream)] text-[var(--color-brand-green-900)] lg:hidden">
               <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">close</mat-icon>
             </button>
-          </div>
-
-          <div class="mt-6 rounded-[28px] border border-white/12 bg-white/8 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] lg:border-[var(--color-brand-gold-300)]/18 lg:bg-white/78 lg:p-5 lg:shadow-[0_14px_34px_rgba(18,53,36,0.05)]">
-            <div class="flex items-center gap-3">
-              <span class="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#133123_0%,#28533c_100%)] text-sm font-bold tracking-[0.14em] text-[var(--color-brand-gold-300)] shadow-[0_16px_28px_rgba(18,53,36,0.18)]">
-                {{ initials() }}
-              </span>
-              <div class="min-w-0">
-                <p class="truncate text-sm font-semibold text-white lg:text-[var(--color-brand-green-900)]">{{ auth.currentUser()?.email }}</p>
-                <p class="mt-1 text-[11px] font-semibold uppercase tracking-[0.35em] text-[var(--color-brand-gold-300)] lg:text-[var(--color-brand-green-800)]/70">
-                  {{ roleLabel() }}
-                </p>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -70,16 +56,15 @@ import { AuthService } from '../../services/auth.service';
               #rla="routerLinkActive"
               [routerLink]="item.path"
               (click)="closeMenu()"
-              routerLinkActive="bg-white text-black shadow-[0_16px_36px_rgba(255,255,255,0.10)] lg:bg-[linear-gradient(135deg,var(--color-brand-green-900)_0%,var(--color-brand-green-800)_60%,#355c47_100%)] lg:text-white lg:shadow-[0_16px_34px_rgba(18,53,36,0.18)] lg:[&_.dashboard-item-label]:text-white"
+              routerLinkActive="bg-[linear-gradient(135deg,var(--color-brand-green-900)_0%,var(--color-brand-green-800)_60%,#355c47_100%)] text-white shadow-[0_16px_34px_rgba(18,53,36,0.18)] [&_.dashboard-item-label]:text-white [&_.dashboard-item-icon]:bg-white [&_.dashboard-item-icon]:text-[var(--color-brand-green-900)]"
               [routerLinkActiveOptions]="{ exact: true }"
-              class="group flex items-center gap-3 rounded-[24px] px-4 py-3.5 text-[1rem] font-semibold text-white/88 transition-all duration-300 hover:bg-white/8 hover:text-white lg:text-sm lg:text-[var(--color-brand-green-900)]/76 lg:hover:bg-white/70 lg:hover:text-[var(--color-brand-green-900)]">
-              <span class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-white transition-all duration-300 group-hover:bg-white/14 group-[.bg-white]:bg-[rgba(15,27,61,0.08)] group-[.bg-white]:text-black lg:h-11 lg:w-11 lg:rounded-[16px] lg:border lg:border-[var(--color-brand-gold-300)]/28 lg:bg-[linear-gradient(180deg,#ffffff_0%,#f6ecdb_100%)] lg:text-[var(--color-brand-green-900)] lg:shadow-[0_10px_20px_rgba(18,53,36,0.06)]">
+              class="group flex items-center gap-3 rounded-[24px] px-4 py-3.5 text-[1rem] font-semibold text-[var(--color-brand-green-900)] transition-none hover:bg-[var(--color-brand-cream)] lg:text-sm">
+              <span class="dashboard-item-icon inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[var(--color-brand-gold-300)]/28 bg-[linear-gradient(180deg,#ffffff_0%,#f6ecdb_100%)] text-[var(--color-brand-green-900)] shadow-[0_10px_20px_rgba(18,53,36,0.06)] lg:h-11 lg:w-11 lg:rounded-[16px]">
                 <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">{{ item.icon }}</mat-icon>
               </span>
               <span
                 class="dashboard-item-label flex-1 leading-5"
-                [class.text-black]="rla.isActive && !isDesktop()"
-                [class.!text-white]="rla.isActive && isDesktop()">
+                [class.!text-white]="rla.isActive">
                 {{ item.label }}
               </span>
               @if (first) {
@@ -91,18 +76,18 @@ import { AuthService } from '../../services/auth.service';
           }
         </nav>
 
-        <div class="px-4 pb-5 pt-2 lg:border-t lg:border-[var(--color-brand-gold-300)]/16 lg:bg-white/66 lg:px-5 lg:py-5">
+        <div class="px-4 pb-5 pt-2 lg:border-t lg:border-[var(--color-brand-gold-300)]/16 lg:bg-white lg:px-5 lg:py-5">
           <button
             type="button"
             (click)="auth.logout()"
-            class="flex w-full items-center justify-center gap-2 rounded-[20px] border border-white/12 bg-white/6 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10 lg:border-[var(--color-brand-green-900)]/10 lg:bg-white lg:text-[var(--color-brand-green-900)] lg:hover:border-[var(--color-brand-gold-500)] lg:hover:bg-[var(--color-brand-cream)]">
+            class="flex w-full items-center justify-center gap-2 rounded-[20px] border border-[var(--color-brand-green-900)]/10 bg-white px-4 py-3.5 text-sm font-semibold text-[var(--color-brand-green-900)] transition-none hover:border-[var(--color-brand-gold-500)] hover:bg-[var(--color-brand-cream)]">
             <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">logout</mat-icon>
             Deconnexion
           </button>
         </div>
       </aside>
 
-      <main class="min-h-screen transition-[margin] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" [style.marginLeft]="isDesktop() && menuOpen() ? '18rem' : '0'">
+      <main class="min-h-screen" [style.marginLeft]="isDesktop() && menuOpen() ? '18rem' : '0'">
         <header class="sticky top-0 z-30 border-b border-[var(--color-brand-gold-300)]/14 bg-[linear-gradient(180deg,rgba(255,252,246,0.96)_0%,rgba(250,244,232,0.93)_100%)] backdrop-blur-xl">
           <div class="flex min-h-[78px] items-center justify-between gap-4 px-4 py-3 sm:px-5 lg:px-8">
             <div class="flex min-w-0 items-center gap-3">
@@ -157,7 +142,6 @@ export class DashboardLayoutComponent {
   title = input.required<string>();
   menuItems = input.required<{ label: string; icon: string; path: string }[]>();
   auth = inject(AuthService);
-
   roleLabel = computed(() => {
     const role = this.auth.currentUser()?.role;
     if (role === 'admin') return 'Administration';
