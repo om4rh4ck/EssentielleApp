@@ -29,7 +29,7 @@ import { AuthService } from '../../services/auth.service';
           <div class="flex items-start justify-between gap-3">
             <a routerLink="/" (click)="closeMenu()" class="flex min-w-0 items-center gap-3">
               <span class="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white p-2 shadow-[0_12px_30px_rgba(255,255,255,0.12)] lg:rounded-[20px] lg:border-[var(--color-brand-gold-300)]/40 lg:bg-white lg:shadow-[0_10px_24px_rgba(200,169,106,0.16)]">
-                <img src="ess logo.png" alt="Essenti'Elle Sante" class="h-full w-full object-contain" />
+                <img src="logo origine.png" alt="Essenti'Elle Sante" class="h-full w-full object-contain" />
               </span>
               <span class="min-w-0">
                 <span class="block truncate font-serif text-[1.55rem] leading-none tracking-tight text-[var(--color-brand-green-900)]">
@@ -100,7 +100,7 @@ import { AuthService } from '../../services/auth.service';
 
               <a routerLink="/" class="inline-flex items-center gap-3 lg:hidden">
                 <span class="inline-flex h-12 w-12 items-center justify-center rounded-full border border-[var(--color-brand-gold-300)]/25 bg-white p-2 shadow-[0_10px_22px_rgba(200,169,106,0.16)]">
-                  <img src="ess logo.png" alt="Essenti'Elle Sante" class="h-full w-full object-contain" />
+                  <img src="logo origine.png" alt="Essenti'Elle Sante" class="h-full w-full object-contain" />
                 </span>
               </a>
 
@@ -133,6 +133,20 @@ import { AuthService } from '../../services/auth.service';
 
         <div class="px-4 py-5 sm:px-5 lg:px-8 lg:py-8">
           <ng-content></ng-content>
+
+          <section class="mt-8 rounded-[28px] border border-[var(--color-brand-gold-300)]/28 bg-[linear-gradient(180deg,#fffdf9_0%,#f7efe1_100%)] p-5 shadow-[0_16px_34px_rgba(18,53,36,0.05)]">
+            <div class="flex items-start gap-3">
+              <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-brand-green-900)] text-white">
+                <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">gavel</mat-icon>
+              </span>
+              <div>
+                <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Reservation des droits</h3>
+                <p class="mt-2 text-sm leading-7 text-[var(--color-brand-green-800)]/78">
+                  Tous les contenus, images, videos, audios, documents et supports de cette plateforme sont reserves et proteges. Toute copie, recuperation, reutilisation, diffusion ou redistribution sans autorisation ecrite prealable est strictement interdite.
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
       </main>
     </div>

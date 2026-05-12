@@ -16,7 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
       <div class="w-full max-w-md bg-white rounded-[2rem] p-8 border border-[var(--color-brand-gold-300)]/30 relative z-10 shadow-xl shadow-[var(--color-brand-green-800)]/5">
         <div class="text-center mb-8 flex flex-col items-center">
           <a routerLink="/" class="mb-5 inline-flex h-20 w-20 items-center justify-center rounded-full border border-[var(--color-brand-gold-300)]/40 bg-white p-2 shadow-lg shadow-[var(--color-brand-gold-300)]/25">
-            <img src="ess logo.png" alt="Essenti'Elle Santé" class="h-full w-full rounded-full object-contain" />
+            <img src="logo origine.png" alt="Essenti'Elle Santé" class="h-full w-full rounded-full object-contain" />
           </a>
           <h1 class="text-3xl font-serif text-[var(--color-brand-green-900)]">Bon retour</h1>
           <p class="text-sm font-light text-[var(--color-brand-green-800)]/70 mt-2">Connectez-vous à l'institut Essenti'Elle Santé.</p>
@@ -70,6 +70,17 @@ import { MatIconModule } from '@angular/material/icon';
           Pas encore de compte ? <a routerLink="/register" class="text-[var(--color-brand-gold-500)] font-medium hover:underline">S'inscrire</a>
         </p>
       </div>
+
+      <div class="absolute bottom-4 left-4 right-4 mx-auto max-w-3xl rounded-[24px] border border-[var(--color-brand-gold-300)]/28 bg-white/92 p-4 shadow-[0_16px_34px_rgba(18,53,36,0.05)]">
+        <div class="flex items-start gap-3">
+          <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-brand-green-900)] text-white">
+            <mat-icon class="text-base" style="width: 20px; height: 20px;">gavel</mat-icon>
+          </span>
+          <p class="text-sm leading-7 text-[var(--color-brand-green-800)]/78">
+            Tous les contenus, images, videos, documents et supports de Essenti'Elle Sante sont reserves de droit. Toute copie, recuperation ou reutilisation sans autorisation ecrite est interdite.
+          </p>
+        </div>
+      </div>
     </div>
   `
 })
@@ -116,4 +127,3 @@ export class LoginComponent {
     }
   }
 }
-
