@@ -29,7 +29,7 @@ import { AuthService } from '../../services/auth.service';
           <div class="flex items-start justify-between gap-3">
             <a routerLink="/" (click)="closeMenu()" class="flex min-w-0 items-center gap-3">
               <span class="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white p-2 shadow-[0_12px_30px_rgba(255,255,255,0.12)] lg:rounded-[20px] lg:border-[var(--color-brand-gold-300)]/40 lg:bg-white lg:shadow-[0_10px_24px_rgba(200,169,106,0.16)]">
-                <img src="logo origine.png" alt="Essenti'Elle Sante" class="h-full w-full object-contain" />
+                <img src="lo2 originale.png" alt="Essenti'Elle Sante" class="h-full w-full object-contain" />
               </span>
               <span class="min-w-0">
                 <span class="block truncate font-serif text-[1.55rem] leading-none tracking-tight text-[var(--color-brand-green-900)]">
@@ -100,7 +100,7 @@ import { AuthService } from '../../services/auth.service';
 
               <a routerLink="/" class="inline-flex items-center gap-3 lg:hidden">
                 <span class="inline-flex h-12 w-12 items-center justify-center rounded-full border border-[var(--color-brand-gold-300)]/25 bg-white p-2 shadow-[0_10px_22px_rgba(200,169,106,0.16)]">
-                  <img src="logo origine.png" alt="Essenti'Elle Sante" class="h-full w-full object-contain" />
+                  <img src="lo2 originale.png" alt="Essenti'Elle Sante" class="h-full w-full object-contain" />
                 </span>
               </a>
 

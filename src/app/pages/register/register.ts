@@ -16,7 +16,7 @@ import { AuthService } from '../../services/auth.service';
       <div class="w-full max-w-md bg-white rounded-[2rem] p-8 border border-[var(--color-brand-gold-300)]/30 relative z-10 shadow-xl shadow-[var(--color-brand-green-800)]/5">
         <div class="text-center mb-8 flex flex-col items-center">
           <a routerLink="/" class="mb-5 inline-flex h-20 w-20 items-center justify-center rounded-full border border-[var(--color-brand-gold-300)]/40 bg-white p-2 shadow-lg shadow-[var(--color-brand-gold-300)]/25">
-            <img src="logo origine.png" alt="Essenti'Elle Sante" class="h-full w-full rounded-full object-contain" />
+            <img src="lo2 originale.png" alt="Essenti'Elle Sante" class="h-full w-full rounded-full object-contain" />
           </a>
           <h1 class="text-3xl font-serif text-[var(--color-brand-green-900)]">Rejoindre l'Institut</h1>
           <p class="text-sm font-light text-[var(--color-brand-green-800)]/70 mt-2">Creez votre espace Essenti'Elle Sante.</p>
