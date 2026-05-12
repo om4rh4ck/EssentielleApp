@@ -52,7 +52,7 @@
         </button>
 
         @if (auth.isAuthenticated()) {
-          <button type="button" (click)="logout()" class="inline-flex items-center gap-2 rounded-2xl bg-[var(--color-brand-green-800)] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_24px_rgba(15,23,19,0.18)]">
+          <button type="button" (click)="logout()" class="hidden items-center gap-2 rounded-2xl bg-[var(--color-brand-green-800)] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_24px_rgba(15,23,19,0.18)]">
             <mat-icon style="font-size: 17px;">logout</mat-icon>
             {{ t({ fr: 'Déconnexion', en: 'Logout', ar: 'تسجيل الخروج' }) }}
           </button>
