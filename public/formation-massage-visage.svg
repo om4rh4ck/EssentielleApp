@@ -1,0 +1,18 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="48" fill="#F6EFE0"/>
+  <rect x="60" y="60" width="1080" height="680" rx="40" fill="url(#a)"/>
+  <circle cx="910" cy="180" r="120" fill="#E7C98E" fill-opacity=".36"/>
+  <ellipse cx="790" cy="452" rx="160" ry="210" fill="#FAF6EE"/>
+  <circle cx="790" cy="320" r="92" fill="#FAF6EE"/>
+  <path d="M706 476C742 525 836 525 874 476" stroke="#D9B472" stroke-width="16" stroke-linecap="round"/>
+  <text x="120" y="180" fill="#F4E6C4" font-size="38" font-family="Arial, sans-serif" letter-spacing="4">FORMATION ESTHETIQUE</text>
+  <text x="120" y="270" fill="white" font-size="70" font-weight="700" font-family="Arial, sans-serif">Massage visage</text>
+  <text x="120" y="338" fill="#E7C98E" font-size="40" font-family="Arial, sans-serif">et cou anti-age</text>
+  <text x="120" y="418" fill="#EDE5D7" font-size="28" font-family="Arial, sans-serif">Protocoles douceur, tonicite et bien-etre</text>
+  <defs>
+    <linearGradient id="a" x1="60" y1="60" x2="1140" y2="740" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#183726"/>
+      <stop offset="1" stop-color="#455D4A"/>
+    </linearGradient>
+  </defs>
+</svg>

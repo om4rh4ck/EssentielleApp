@@ -26,11 +26,11 @@ export class FormationsComponent implements OnInit {
           formula.id === 'formula-3'
             ? {
                 ...formula,
-                description: 'Une formule premium conçue pour offrir un parcours professionnalisant complet, avec certifications, ressources exclusives et accompagnement personnalisé.',
+                description: 'Une formule premium concue pour offrir un parcours professionnalisant complet, avec certifications, ressources exclusives et accompagnement personnalise.',
                 highlights: [
                   '3 certificats professionnels inclus',
                   'Ebook exclusif offert',
-                  'Suivi personnalisé pendant 1 mois',
+                  'Suivi personnalise pendant 1 mois',
                 ],
               }
             : formula
@@ -66,7 +66,11 @@ export class FormationsComponent implements OnInit {
 
   coursePrice(course: PublicCatalogCourse): string {
     if (course.access === 'free') {
-      return this.t({ fr: 'Accès libre', en: 'Free access', ar: 'دخول مجاني' });
+      return this.t({ fr: 'Acces libre', en: 'Free access', ar: 'دخول مجاني' });
+    }
+
+    if (course.priceMinEur && course.priceMaxEur && course.priceMaxEur > course.priceMinEur) {
+      return `${this.formatPrice(course.priceMinEur)} - ${this.formatPrice(course.priceMaxEur)}`;
     }
 
     const basePrice = course.promoEnabled && course.promoPriceEur && course.promoPriceEur > 0
@@ -74,6 +78,16 @@ export class FormationsComponent implements OnInit {
       : course.priceEur;
 
     return this.formatPrice(basePrice);
+  }
+
+  courseCertificates(course: PublicCatalogCourse): string | null {
+    if (!course.certificateOptions?.length) {
+      return null;
+    }
+
+    const min = Math.min(...course.certificateOptions);
+    const max = Math.max(...course.certificateOptions);
+    return `${min} - ${max} certificat${max > 1 ? 's' : ''}`;
   }
 
   private getLocale(currency: CurrencyCode): string {

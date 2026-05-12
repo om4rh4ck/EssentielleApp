@@ -1,0 +1,17 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="48" fill="#F7EFDF"/>
+  <rect x="60" y="60" width="1080" height="680" rx="40" fill="url(#a)"/>
+  <circle cx="900" cy="190" r="125" fill="#E5C98F" fill-opacity=".35"/>
+  <path d="M706 236C774 236 826 292 826 364V520H654V364C654 292 706 236 774 236Z" fill="#FBF7EF"/>
+  <path d="M610 430C680 402 704 354 724 324C744 294 784 280 832 286C880 292 924 326 948 368" stroke="#E7C98E" stroke-width="20" stroke-linecap="round"/>
+  <text x="120" y="180" fill="#F4E6C4" font-size="38" font-family="Arial, sans-serif" letter-spacing="4">FORMATION CORPS</text>
+  <text x="120" y="270" fill="white" font-size="70" font-weight="700" font-family="Arial, sans-serif">Drainage lymphatique</text>
+  <text x="120" y="338" fill="#E7C98E" font-size="40" font-family="Arial, sans-serif">et massage anti-cellulite</text>
+  <text x="120" y="418" fill="#EDE5D7" font-size="28" font-family="Arial, sans-serif">Remodelage, circulation et silhouette</text>
+  <defs>
+    <linearGradient id="a" x1="60" y1="60" x2="1140" y2="740" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#163625"/>
+      <stop offset="1" stop-color="#395843"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,18 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="48" fill="#F4EAD7"/>
+  <rect x="60" y="60" width="1080" height="680" rx="40" fill="url(#a)"/>
+  <circle cx="900" cy="190" r="125" fill="#E5C98F" fill-opacity=".35"/>
+  <rect x="684" y="244" width="220" height="300" rx="32" fill="#FBF7EF"/>
+  <path d="M794 298V490" stroke="#D7B471" stroke-width="28" stroke-linecap="round"/>
+  <path d="M698 394H890" stroke="#D7B471" stroke-width="28" stroke-linecap="round"/>
+  <text x="120" y="180" fill="#F4E6C4" font-size="38" font-family="Arial, sans-serif" letter-spacing="4">FORMATION TECHNIQUE</text>
+  <text x="120" y="270" fill="white" font-size="68" font-weight="700" font-family="Arial, sans-serif">Soins infirmiers</text>
+  <text x="120" y="338" fill="#E7C98E" font-size="38" font-family="Arial, sans-serif">Pansement, perfusion, suture</text>
+  <text x="120" y="418" fill="#EDE5D7" font-size="28" font-family="Arial, sans-serif">Gestes pratiques et encadrement professionnel</text>
+  <defs>
+    <linearGradient id="a" x1="60" y1="60" x2="1140" y2="740" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#173726"/>
+      <stop offset="1" stop-color="#4B5A47"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -14,11 +14,14 @@ export interface ManagedCourse {
   priceEur: number;
   priceTnd?: number;
   priceUsd?: number;
+  priceMinEur?: number;
+  priceMaxEur?: number;
   pricingCurrency?: 'EUR' | 'TND' | 'USD';
   promoEnabled?: boolean;
   promoPriceEur?: number;
   promoPriceTnd?: number;
   promoPriceUsd?: number;
+  certificateOptions?: number[];
   category: string;
   status: 'published' | 'draft';
   presentation?: string;

@@ -13,11 +13,14 @@ export interface PublicCatalogCourse {
   priceEur: number;
   priceTnd?: number;
   priceUsd?: number;
+  priceMinEur?: number;
+  priceMaxEur?: number;
   pricingCurrency?: 'EUR' | 'TND' | 'USD';
   promoEnabled?: boolean;
   promoPriceEur?: number;
   promoPriceTnd?: number;
   promoPriceUsd?: number;
+  certificateOptions?: number[];
   category: string;
   status: 'published' | 'draft';
   presentation?: string;
@@ -72,6 +75,7 @@ export interface PublicCatalogResponse {
 export interface PublicEnrollmentPayload {
   courseId: string;
   formulaId?: string;
+  certificateCount?: number;
   name: string;
   email: string;
   phone: string;

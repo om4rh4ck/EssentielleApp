@@ -1,0 +1,18 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="48" fill="#F5EDDC"/>
+  <rect x="60" y="60" width="1080" height="680" rx="40" fill="url(#a)"/>
+  <circle cx="910" cy="180" r="125" fill="#E5C98F" fill-opacity=".35"/>
+  <circle cx="730" cy="360" r="92" fill="#FBF7EF"/>
+  <circle cx="860" cy="430" r="110" fill="#EFE1BE"/>
+  <path d="M700 290C744 334 796 362 872 378" stroke="#D7B471" stroke-width="18" stroke-linecap="round"/>
+  <text x="120" y="180" fill="#F4E6C4" font-size="38" font-family="Arial, sans-serif" letter-spacing="4">FORMATION AVANCEE</text>
+  <text x="120" y="270" fill="white" font-size="66" font-weight="700" font-family="Arial, sans-serif">Nutrition &amp; Pathologies</text>
+  <text x="120" y="350" fill="#E7C98E" font-size="38" font-family="Arial, sans-serif">Approche clinique et fonctionnelle</text>
+  <text x="120" y="430" fill="#EDE5D7" font-size="28" font-family="Arial, sans-serif">Un parcours expert disponible selon 1 a 3 certificats</text>
+  <defs>
+    <linearGradient id="a" x1="60" y1="60" x2="1140" y2="740" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#163525"/>
+      <stop offset="1" stop-color="#4E614B"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -26,7 +26,7 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                   <span class="rounded-full bg-[var(--color-brand-cream)] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-gold-700)]">{{ selectedCourse.category }}</span>
                   <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em]" [class.bg-emerald-100]="selectedCourse.access === 'free'" [class.text-emerald-800]="selectedCourse.access === 'free'" [class.bg-rose-100]="selectedCourse.access === 'paid'" [class.text-rose-800]="selectedCourse.access === 'paid'">
                     <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">{{ selectedCourse.access === 'free' ? 'lock_open' : 'lock' }}</mat-icon>
-                    {{ selectedCourse.access === 'free' ? 'Inscription ouverte' : 'Inscription avec formule' }}
+                    {{ selectedCourse.access === 'free' ? 'Inscription ouverte' : 'Inscription payante' }}
                   </span>
                 </div>
 
@@ -41,12 +41,21 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                     <div class="mt-2 text-lg font-bold text-[var(--color-brand-green-900)]">{{ selectedCourse.modules }}</div>
                   </div>
                   <div>
-                    <div class="text-[11px] uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Accès</div>
-                    <div class="mt-2 text-lg font-bold text-[var(--color-brand-green-900)]">{{ selectedCourse.access === 'free' ? 'Gratuit' : 'Payant' }}</div>
+                    <div class="text-[11px] uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Prix</div>
+                    <div class="mt-2 text-lg font-bold text-[var(--color-brand-green-900)]">{{ priceLabel(selectedCourse) }}</div>
                   </div>
                 </div>
 
-                @if (selectedCourse.access === 'paid') {
+                @if (selectedCourse.certificateOptions?.length) {
+                  <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-[#fffaf2] p-5">
+                    <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Option 1 a 3 certificats</h2>
+                    <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/72">
+                      Le prix final depend du nombre de certificats choisis. Selectionnez 1, 2 ou 3 certificats dans votre demande.
+                    </p>
+                  </div>
+                }
+
+                @if (selectedCourse.access === 'paid' && !selectedCourse.certificateOptions?.length) {
                   <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-[#fffaf2] p-5">
                     <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Formules disponibles</h2>
                     <div class="mt-4 space-y-3">
@@ -73,9 +82,9 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                     <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">assignment_ind</mat-icon>
                     Demande d'inscription
                   </div>
-                  <h2 class="mt-4 font-serif text-3xl text-[var(--color-brand-green-900)]">Réserver votre place</h2>
+                  <h2 class="mt-4 font-serif text-3xl text-[var(--color-brand-green-900)]">Reserver votre place</h2>
                   <p class="mt-2 text-sm leading-7 text-[var(--color-brand-green-800)]/68">
-                    Complétez ce formulaire pour la formation <strong>{{ selectedCourse.title }}</strong>.
+                    Completez ce formulaire pour la formation <strong>{{ selectedCourse.title }}</strong>.
                   </p>
                 </div>
               </div>
@@ -92,14 +101,14 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                 <input formControlName="name" placeholder="Nom complet" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
                 <div class="grid gap-4 md:grid-cols-2">
                   <input formControlName="email" placeholder="Email" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
-                  <input formControlName="phone" placeholder="Téléphone" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
+                  <input formControlName="phone" placeholder="Telephone" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
                 </div>
                 <div class="grid gap-4 md:grid-cols-2">
                   <input formControlName="city" placeholder="Ville" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
                   <input formControlName="country" placeholder="Pays" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
                 </div>
 
-                @if (selectedCourse.access === 'paid') {
+                @if (selectedCourse.access === 'paid' && !selectedCourse.certificateOptions?.length) {
                   <select formControlName="formulaId" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none">
                     <option value="">Choisir une formule</option>
                     @for (formula of formulas(); track formula.id) {
@@ -108,7 +117,16 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                   </select>
                 }
 
-                <textarea formControlName="message" rows="5" placeholder="Message ou précision sur votre demande" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none"></textarea>
+                @if (selectedCourse.certificateOptions?.length) {
+                  <select formControlName="certificateCount" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none">
+                    <option value="">Choisir le nombre de certificats</option>
+                    @for (count of selectedCourse.certificateOptions; track count) {
+                      <option [value]="count">{{ count }} certificat{{ count > 1 ? 's' : '' }}</option>
+                    }
+                  </select>
+                }
+
+                <textarea formControlName="message" rows="5" placeholder="Message ou precision sur votre demande" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none"></textarea>
 
                 <button type="submit" [disabled]="loading()" class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white transition hover:bg-[var(--color-brand-gold-500)] disabled:opacity-60">
                   <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">{{ selectedCourse.access === 'free' ? 'how_to_reg' : 'payments' }}</mat-icon>
@@ -120,7 +138,7 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
         } @else {
           <div class="mt-8 rounded-[28px] bg-white p-8 text-center shadow-[0_24px_54px_rgba(18,53,36,0.08)]">
             <h2 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Formation introuvable</h2>
-            <p class="mt-3 text-sm text-[var(--color-brand-green-800)]/70">Cette formation n'est pas disponible ou n'est plus publiée.</p>
+            <p class="mt-3 text-sm text-[var(--color-brand-green-800)]/70">Cette formation n'est pas disponible ou n'est plus publiee.</p>
           </div>
         }
       </div>
@@ -145,6 +163,7 @@ export class FormationEnrollmentComponent implements OnInit {
     city: [''],
     country: [''],
     formulaId: [''],
+    certificateCount: [''],
     message: [''],
   });
 
@@ -171,7 +190,12 @@ export class FormationEnrollmentComponent implements OnInit {
       return;
     }
 
-    if (selectedCourse.access === 'paid' && !this.form.controls.formulaId.value) {
+    if (selectedCourse.certificateOptions?.length && !this.form.controls.certificateCount.value) {
+      this.errorMsg.set('Veuillez choisir le nombre de certificats souhaite.');
+      return;
+    }
+
+    if (selectedCourse.access === 'paid' && !selectedCourse.certificateOptions?.length && !this.form.controls.formulaId.value) {
       this.errorMsg.set('Veuillez choisir une formule pour cette formation payante.');
       return;
     }
@@ -184,6 +208,7 @@ export class FormationEnrollmentComponent implements OnInit {
     this.catalog.createEnrollmentRequest({
       courseId: selectedCourse.id,
       formulaId: raw.formulaId || undefined,
+      certificateCount: raw.certificateCount ? Number(raw.certificateCount) : undefined,
       name: raw.name.trim(),
       email: raw.email.trim(),
       phone: raw.phone.trim(),
@@ -198,8 +223,16 @@ export class FormationEnrollmentComponent implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        this.errorMsg.set(err?.error?.error || 'Impossible d’envoyer votre demande pour le moment.');
+        this.errorMsg.set(err?.error?.error || 'Impossible d envoyer votre demande pour le moment.');
       },
     });
+  }
+
+  priceLabel(course: PublicCatalogCourse): string {
+    if (course.priceMinEur && course.priceMaxEur && course.priceMaxEur > course.priceMinEur) {
+      return `${course.priceMinEur} EUR - ${course.priceMaxEur} EUR`;
+    }
+
+    return `${course.priceEur} EUR`;
   }
 }

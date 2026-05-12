@@ -1,0 +1,18 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="48" fill="#F5EDDC"/>
+  <rect x="60" y="60" width="1080" height="680" rx="40" fill="url(#a)"/>
+  <circle cx="910" cy="180" r="125" fill="#E5C98F" fill-opacity=".35"/>
+  <rect x="670" y="250" width="120" height="240" rx="28" fill="#FBF7EF"/>
+  <rect x="760" y="210" width="120" height="280" rx="28" fill="#EFE1BE"/>
+  <rect x="850" y="270" width="120" height="220" rx="28" fill="#FBF7EF"/>
+  <text x="120" y="180" fill="#F4E6C4" font-size="38" font-family="Arial, sans-serif" letter-spacing="4">FORMATION COMPLETE</text>
+  <text x="120" y="270" fill="white" font-size="70" font-weight="700" font-family="Arial, sans-serif">Detox therapeutique</text>
+  <text x="120" y="338" fill="#E7C98E" font-size="40" font-family="Arial, sans-serif">Perte de poids, emonctoires, peau</text>
+  <text x="120" y="418" fill="#EDE5D7" font-size="28" font-family="Arial, sans-serif">Un seul parcours pour une vision globale</text>
+  <defs>
+    <linearGradient id="a" x1="60" y1="60" x2="1140" y2="740" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#163525"/>
+      <stop offset="1" stop-color="#48614B"/>
+    </linearGradient>
+  </defs>
+</svg>

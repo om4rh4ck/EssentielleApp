@@ -54,11 +54,14 @@ interface Course {
   priceEur: number;
   priceTnd?: number;
   priceUsd?: number;
+  priceMinEur?: number;
+  priceMaxEur?: number;
   pricingCurrency?: 'EUR' | 'TND' | 'USD';
   promoEnabled?: boolean;
   promoPriceEur?: number;
   promoPriceTnd?: number;
   promoPriceUsd?: number;
+  certificateOptions?: number[];
   category: string;
   status: CourseStatus;
   presentation?: string;
@@ -110,6 +113,7 @@ interface PublicEnrollmentRequest {
   courseAccess: CourseAccess;
   formulaId?: string;
   formulaTitle?: string;
+  certificateCount?: number;
   name: string;
   email: string;
   phone: string;
@@ -383,6 +387,199 @@ const courses: Course[] = [
     moduleItems: [],
   },
 ];
+
+courses.push(
+  {
+    id: '5',
+    title: 'Formation Reflexologie (oreille / pieds / mains)',
+    instructorId: '2',
+    modules: 8,
+    students: 64,
+    thumbnail: 'formation-reflexologie.svg',
+    description: 'Apprenez les techniques de reflexologie auriculaire, plantaire et palmaire avec un parcours professionnalisant adaptable selon 1 a 3 certificats.',
+    access: 'paid',
+    priceEur: 990,
+    priceMinEur: 990,
+    priceMaxEur: 2900,
+    pricingCurrency: 'EUR',
+    certificateOptions: [1, 2, 3],
+    promoEnabled: false,
+    category: 'Reflexologie',
+    status: 'published',
+    moduleItems: [],
+  },
+  {
+    id: '6',
+    title: 'Formation Kinesiologie (muscles & articulations)',
+    instructorId: '2',
+    modules: 10,
+    students: 41,
+    thumbnail: 'formation-kinesiologie.svg',
+    description: 'Une formation axee sur la lecture musculaire, les articulations et les protocoles de correction, avec tarification selon 1 a 3 certificats.',
+    access: 'paid',
+    priceEur: 1800,
+    priceMinEur: 1800,
+    priceMaxEur: 3860,
+    pricingCurrency: 'EUR',
+    certificateOptions: [1, 2, 3],
+    promoEnabled: false,
+    category: 'Kinesiologie',
+    status: 'published',
+    moduleItems: [],
+  },
+  {
+    id: '7',
+    title: 'Massage visage & cou anti-age',
+    instructorId: '2',
+    modules: 6,
+    students: 92,
+    thumbnail: 'formation-massage-visage.svg',
+    description: 'Maitrisez les protocoles de massage anti-age du visage et du cou pour une pratique esthetique douce et efficace.',
+    access: 'paid',
+    priceEur: 590,
+    priceMinEur: 590,
+    priceMaxEur: 1500,
+    pricingCurrency: 'EUR',
+    certificateOptions: [1, 2, 3],
+    promoEnabled: false,
+    category: 'Massage',
+    status: 'published',
+    moduleItems: [],
+  },
+  {
+    id: '8',
+    title: 'Massage anti-cellulite & drainage lymphatique',
+    instructorId: '2',
+    modules: 7,
+    students: 76,
+    thumbnail: 'formation-drainage.svg',
+    description: 'Un parcours complet pour proposer des soins de drainage, remodelage et accompagnement anti-cellulite avec certifications au choix.',
+    access: 'paid',
+    priceEur: 990,
+    priceMinEur: 990,
+    priceMaxEur: 2500,
+    pricingCurrency: 'EUR',
+    certificateOptions: [1, 2, 3],
+    promoEnabled: false,
+    category: 'Drainage',
+    status: 'published',
+    moduleItems: [],
+  },
+  {
+    id: '9',
+    title: 'Soins infirmiers (pansement, perfusion, suture)',
+    instructorId: '2',
+    modules: 12,
+    students: 38,
+    thumbnail: 'formation-soins-infirmiers.svg',
+    description: 'Renforcez vos gestes techniques autour des pansements, perfusions et sutures avec un programme structure et certifiant.',
+    access: 'paid',
+    priceEur: 1190,
+    priceMinEur: 1190,
+    priceMaxEur: 4500,
+    pricingCurrency: 'EUR',
+    certificateOptions: [1, 2, 3],
+    promoEnabled: false,
+    category: 'Soins infirmiers',
+    status: 'published',
+    moduleItems: [],
+  },
+  {
+    id: '10',
+    title: 'Aide a la personne agee',
+    instructorId: '2',
+    modules: 9,
+    students: 57,
+    thumbnail: 'formation-aide-personne-agee.svg',
+    description: 'Formez-vous a l accompagnement humain, pratique et securise de la personne agee a domicile ou en structure.',
+    access: 'paid',
+    priceEur: 1700,
+    priceMinEur: 1700,
+    priceMaxEur: 3000,
+    pricingCurrency: 'EUR',
+    certificateOptions: [1, 2, 3],
+    promoEnabled: false,
+    category: 'Service a la personne',
+    status: 'published',
+    moduleItems: [],
+  },
+  {
+    id: '11',
+    title: 'Herboristerie & phytotherapie',
+    instructorId: '2',
+    modules: 8,
+    students: 83,
+    thumbnail: 'formation-herboristerie.svg',
+    description: 'Developpez une pratique structuree autour des plantes, des synergies naturelles et des bases de la phytotherapie appliquee.',
+    access: 'paid',
+    priceEur: 990,
+    priceMinEur: 990,
+    priceMaxEur: 3500,
+    pricingCurrency: 'EUR',
+    certificateOptions: [1, 2, 3],
+    promoEnabled: false,
+    category: 'Phytotherapie',
+    status: 'published',
+    moduleItems: [],
+  },
+  {
+    id: '12',
+    title: 'Hijama / Cupping / Ventouses',
+    instructorId: '2',
+    modules: 6,
+    students: 69,
+    thumbnail: 'formation-hijama.svg',
+    description: 'Une formation pratique sur les ventouses, la hijama et les precautions essentielles pour exercer dans un cadre professionnel.',
+    access: 'paid',
+    priceEur: 600,
+    priceMinEur: 600,
+    priceMaxEur: 2000,
+    pricingCurrency: 'EUR',
+    certificateOptions: [1, 2, 3],
+    promoEnabled: false,
+    category: 'Ventouses',
+    status: 'published',
+    moduleItems: [],
+  },
+  {
+    id: '13',
+    title: 'Formation Detox Therapeutique Complete',
+    instructorId: '2',
+    modules: 9,
+    students: 118,
+    thumbnail: 'formation-detox-complete.svg',
+    description: 'Une formation complete incluant detox perte de poids, detox emonctoires et detox peau dans un seul parcours certifiant.',
+    access: 'paid',
+    priceEur: 790,
+    priceMinEur: 790,
+    priceMaxEur: 1590,
+    pricingCurrency: 'EUR',
+    certificateOptions: [1, 2, 3],
+    promoEnabled: false,
+    category: 'Detox',
+    status: 'published',
+    moduleItems: [],
+  },
+  {
+    id: '14',
+    title: 'Formation Nutrition & Pathologies',
+    instructorId: '2',
+    modules: 11,
+    students: 101,
+    thumbnail: 'formation-nutrition-pathologies.svg',
+    description: 'Approfondissez la nutrition fonctionnelle appliquee aux pathologies, avec un parcours avance disponible selon 1 a 3 certificats.',
+    access: 'paid',
+    priceEur: 2590,
+    priceMinEur: 2590,
+    priceMaxEur: 5990,
+    pricingCurrency: 'EUR',
+    certificateOptions: [1, 2, 3],
+    promoEnabled: false,
+    category: 'Nutrition',
+    status: 'published',
+    moduleItems: [],
+  },
+);
 
 const formulas: TrainingFormula[] = [
   {
@@ -1401,9 +1598,16 @@ app.post('/api/public/enrollment-requests', (req, res): any => {
   const country = typeof req.body?.country === 'string' ? req.body.country.trim() : '';
   const message = typeof req.body?.message === 'string' ? req.body.message.trim() : '';
   const formulaId = typeof req.body?.formulaId === 'string' ? req.body.formulaId.trim() : '';
+  const rawCertificateCount = Number(req.body?.certificateCount ?? 0);
+  const certificateCount = Number.isInteger(rawCertificateCount) ? rawCertificateCount : 0;
   const formula = formulaId ? formulas.find((item) => item.id === formulaId && item.status === 'published') : null;
+  const acceptsCertificateSelection = Array.isArray(course.certificateOptions) && course.certificateOptions.length > 0;
 
-  if (course.access === 'paid' && !formula) {
+  if (acceptsCertificateSelection && !course.certificateOptions?.includes(certificateCount)) {
+    return res.status(400).json({ error: 'Veuillez choisir entre 1 et 3 certificats pour cette formation.' });
+  }
+
+  if (course.access === 'paid' && !acceptsCertificateSelection && !formula) {
     return res.status(400).json({ error: 'Veuillez choisir une formule pour cette formation payante.' });
   }
 
@@ -1414,6 +1618,7 @@ app.post('/api/public/enrollment-requests', (req, res): any => {
     courseAccess: course.access,
     formulaId: formula?.id,
     formulaTitle: formula?.title,
+    certificateCount: acceptsCertificateSelection ? certificateCount : undefined,
     name,
     email,
     phone,

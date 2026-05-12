@@ -60,8 +60,14 @@
               <div class="mt-4 flex flex-wrap gap-2">
                 <span class="inline-flex items-center gap-2 rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-[0.18em]" [class.bg-emerald-50]="course.access === 'free'" [class.text-emerald-700]="course.access === 'free'" [class.bg-rose-50]="course.access === 'paid'" [class.text-rose-700]="course.access === 'paid'">
                   <mat-icon class="!h-[14px] !w-[14px] !text-[14px]">{{ course.access === 'free' ? 'check_circle' : 'schedule' }}</mat-icon>
-                  {{ course.access === 'free' ? 'Acces immediat' : 'Validation avec formule' }}
+                  {{ course.access === 'free' ? 'Acces immediat' : (course.certificateOptions?.length ? 'Choix certificats' : 'Validation avec formule') }}
                 </span>
+                @if (courseCertificates(course); as certificates) {
+                  <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-cream)] px-3 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-green-900)]">
+                    <mat-icon class="!h-[14px] !w-[14px] !text-[14px] text-[var(--color-brand-gold-500)]">verified</mat-icon>
+                    {{ certificates }}
+                  </span>
+                }
               </div>
 
               <p class="mt-4 flex-1 text-sm leading-7 text-[var(--color-brand-green-800)]/74">{{ course.description }}</p>
