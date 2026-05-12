@@ -76,7 +76,7 @@ import { AuthService } from '../../services/auth.service';
           }
         </nav>
 
-        <div class="px-4 pb-5 pt-2 lg:border-t lg:border-[var(--color-brand-gold-300)]/16 lg:bg-white lg:px-5 lg:py-5">
+        <div class="hidden px-4 pb-5 pt-2 lg:block lg:border-t lg:border-[var(--color-brand-gold-300)]/16 lg:bg-white lg:px-5 lg:py-5">
           <button
             type="button"
             (click)="auth.logout()"
@@ -89,8 +89,8 @@ import { AuthService } from '../../services/auth.service';
 
       <main class="min-h-screen" [style.marginLeft]="isDesktop() && menuOpen() ? '18rem' : '0'">
         <header class="sticky top-0 z-30 border-b border-[var(--color-brand-gold-300)]/14 bg-[linear-gradient(180deg,rgba(255,252,246,0.96)_0%,rgba(250,244,232,0.93)_100%)] backdrop-blur-xl">
-          <div class="flex min-h-[78px] items-center justify-between gap-4 px-4 py-3 sm:px-5 lg:px-8">
-            <div class="flex min-w-0 items-center gap-3">
+          <div class="flex min-h-[78px] items-center justify-between gap-3 px-4 py-3 sm:px-5 lg:px-8">
+            <div class="flex min-w-0 flex-1 items-center gap-3">
               <button
                 type="button"
                 (click)="toggleMenu()"
@@ -104,16 +104,16 @@ import { AuthService } from '../../services/auth.service';
                 </span>
               </a>
 
-              <div class="min-w-0">
+              <div class="min-w-0 flex-1">
                 <p class="hidden text-[11px] font-bold uppercase tracking-[0.32em] text-[var(--color-brand-gold-700)] sm:block">Dashboard Premium</p>
-                <h2 class="truncate font-serif text-[1.45rem] leading-tight text-[var(--color-brand-green-900)] sm:text-[1.75rem]">{{ title() }}</h2>
+                <h2 class="truncate pr-1 font-serif text-[1.15rem] leading-tight text-[var(--color-brand-green-900)] sm:text-[1.75rem]">{{ title() }}</h2>
               </div>
             </div>
 
-            <div class="flex items-center gap-3">
+            <div class="flex shrink-0 items-center gap-2 sm:gap-3">
               <button
                 type="button"
-                class="relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-[var(--color-brand-gold-300)]/26 bg-[var(--color-brand-cream)] text-[var(--color-brand-gold-700)] shadow-[0_10px_24px_rgba(200,169,106,0.12)] transition hover:text-[var(--color-brand-green-900)]">
+                class="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--color-brand-gold-300)]/26 bg-[var(--color-brand-cream)] text-[var(--color-brand-gold-700)] shadow-[0_10px_24px_rgba(200,169,106,0.12)] transition hover:text-[var(--color-brand-green-900)] sm:h-12 sm:w-12">
                 <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">notifications_none</mat-icon>
                 <span class="absolute right-[11px] top-[11px] h-2.5 w-2.5 rounded-full border-2 border-white bg-[var(--color-brand-green-800)]"></span>
               </button>
