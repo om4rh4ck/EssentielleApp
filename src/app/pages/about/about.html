@@ -1,38 +1,123 @@
-<section class="py-24 bg-white pt-36 pb-36 min-h-[90vh] flex items-center relative">
-  <div class="absolute inset-0 bg-gradient-to-b from-[var(--color-brand-cream)]/50 to-white z-0 pointer-events-none"></div>
-  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
-    <div>
-      <div class="inline-flex items-center gap-2 px-3 py-1 bg-[var(--color-brand-cream)] text-[var(--color-brand-green-900)] text-xs font-bold rounded-full uppercase tracking-widest mb-6 border border-[var(--color-brand-gold-300)]/50">
-        <mat-icon style="font-size: 16px; width: 16px; height: 16px;">info</mat-icon> {{ t({ fr: "Essenti'Elle Santé", en: "Essenti'Elle Health", ar: 'إيسونتيال سانتي' }) }}
+<section class="relative overflow-hidden bg-[linear-gradient(180deg,#fffdf8_0%,#f8f1e5_46%,#ffffff_100%)] pb-24 pt-32">
+  <div class="pointer-events-none absolute inset-0">
+    <div class="absolute left-[-8%] top-14 h-64 w-64 rounded-full bg-[var(--color-brand-gold-300)]/18 blur-3xl"></div>
+    <div class="absolute bottom-0 right-[-6%] h-72 w-72 rounded-full bg-[var(--color-brand-green-800)]/10 blur-3xl"></div>
+  </div>
+
+  <div class="relative mx-auto flex max-w-7xl flex-col gap-10 px-6">
+    <div class="grid items-start gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+      <div class="rounded-[32px] border border-[var(--color-brand-gold-300)]/25 bg-white/90 p-7 shadow-[0_24px_60px_rgba(18,53,36,0.08)] sm:p-10">
+        <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/45 bg-[var(--color-brand-cream)] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.34em] text-[var(--color-brand-green-900)]">
+          <mat-icon style="font-size: 16px; width: 16px; height: 16px;">auto_stories</mat-icon>
+          {{ t({ fr: 'A propos de la fondatrice', en: 'About the founder', ar: 'عن المؤسسة' }) }}
+        </div>
+
+        <h1 class="mt-6 font-serif text-4xl leading-tight text-[var(--color-brand-green-900)] sm:text-5xl">
+          {{ t({ fr: 'Une vision profonde pour les femmes', en: 'A meaningful vision for women', ar: 'رؤية عميقة للنساء' }) }}
+        </h1>
+
+        <div class="mt-8 space-y-5 text-base leading-8 text-[var(--color-brand-green-800)]/82 sm:text-lg">
+          <p>
+            {{ t({
+              fr: "Je m'appelle Linda Chaibi, Francaise d'origine tunisienne, installee a Djerba. Passionnee par le bien-etre, la sante naturelle et la transmission du savoir, j'ai voyage dans plusieurs pays d'Europe et du monde afin d'enrichir mes connaissances en naturopathie, nutrition, dietetique, soins bien-etre et pratiques naturelles.",
+              en: "My name is Linda Chaibi, a French woman of Tunisian origin based in Djerba. Passionate about wellness, natural health and knowledge sharing, I have travelled across Europe and beyond to deepen my expertise in naturopathy, nutrition, dietetics and natural care practices.",
+              ar: 'أنا ليندا الشعيبي، فرنسية من أصول تونسية ومقيمة في جربة. شغفي بالرفاه والصحة الطبيعية ونقل المعرفة قادني إلى السفر والتعلم في مجالات العلاج الطبيعي والتغذية والعناية الطبيعية.'
+            }) }}
+          </p>
+          <p>
+            {{ t({
+              fr: "A travers chaque voyage, chaque formation et chaque rencontre, j'ai construit une vision profonde: aider les femmes a croire en elles, a evoluer et a devenir independantes.",
+              en: "Through every journey, every training and every encounter, I built a clear vision: helping women believe in themselves, grow and become independent.",
+              ar: 'ومن خلال كل رحلة وكل تكوين وكل لقاء، بنيت رؤية واضحة: مساعدة النساء على الإيمان بأنفسهن والتطور وتحقيق الاستقلال.'
+            }) }}
+          </p>
+          <p>
+            {{ t({
+              fr: "J'ai cree cette plateforme pour toutes les femmes, celles qui souhaitent travailler depuis chez elles, gagner en liberte financiere, completer leurs connaissances ou entreprendre une reconversion professionnelle dans un domaine humain, passionnant et porteur d'avenir.",
+              en: "I created this platform for women who want to work from home, gain more financial freedom, expand their knowledge or start a professional transition in a human, inspiring and future-oriented field.",
+              ar: 'أنشأت هذه المنصة لكل امرأة ترغب في العمل من بيتها أو زيادة حريتها المالية أو تطوير معارفها أو بدء مسار مهني جديد في مجال إنساني وواعد.'
+            }) }}
+          </p>
+          <p>
+            {{ t({
+              fr: "Mon objectif est de vous transmettre bien plus qu'une formation: un vrai savoir, une confiance, une qualification et l'ouverture vers de nouvelles opportunites, en France comme a l'international.",
+              en: "My goal is to offer far more than training: real know-how, confidence, qualification and access to new opportunities in France and internationally.",
+              ar: 'هدفي أن أنقل لكن أكثر من مجرد تكوين: معرفة حقيقية وثقة وتأهيل وفرصا جديدة في فرنسا وعلى المستوى الدولي.'
+            }) }}
+          </p>
+          <p class="font-semibold text-[var(--color-brand-green-900)]">
+            {{ t({
+              fr: "Parce qu'une femme qui apprend, evolue et ose changer sa vie devient une femme puissante.",
+              en: "Because a woman who learns, grows and dares to change her life becomes a powerful woman.",
+              ar: 'لأن المرأة التي تتعلم وتتطور وتجرؤ على تغيير حياتها تصبح امرأة قوية.'
+            }) }}
+          </p>
+        </div>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a routerLink="/formations" class="inline-flex items-center gap-2 rounded-2xl bg-[var(--color-brand-green-900)] px-6 py-3 text-sm font-bold text-white shadow-[0_14px_28px_rgba(18,53,36,0.16)] transition-colors hover:bg-[var(--color-brand-green-800)]">
+            {{ t({ fr: 'Decouvrir nos formations', en: 'Discover our programs', ar: 'اكتشفي برامجنا' }) }}
+            <mat-icon style="font-size: 18px; width: 18px; height: 18px;">arrow_forward</mat-icon>
+          </a>
+          <a routerLink="/contact" class="inline-flex items-center gap-2 rounded-2xl border border-[var(--color-brand-gold-300)]/55 bg-[var(--color-brand-cream)] px-6 py-3 text-sm font-bold text-[var(--color-brand-green-900)] transition-colors hover:border-[var(--color-brand-gold-500)] hover:bg-white">
+            {{ t({ fr: 'Nous contacter', en: 'Contact us', ar: 'تواصلي معنا' }) }}
+            <mat-icon style="font-size: 18px; width: 18px; height: 18px;">call_made</mat-icon>
+          </a>
+        </div>
       </div>
-      <h1 class="font-serif text-4xl lg:text-5xl text-[var(--color-brand-green-900)] mb-6">{{ t({ fr: 'Notre Concept', en: 'Our Concept', ar: 'مفهومنا' }) }}</h1>
-      <p class="font-sans text-[var(--color-brand-green-800)]/80 text-lg leading-relaxed mb-6">
-        {{ t({ fr: "Essenti'Elle Santé est un institut de formation et d'expertise en bien-être féminin international, pensé pour les femmes qui souhaitent se former dans les domaines du bien-être, de la santé naturelle et des pratiques paramédicales.", en: "Essenti'Elle Santé is an international women’s wellness training and expertise institute designed for women who want to train in wellness, natural health and paramedical practices.", ar: 'إيسونتيال سانتي معهد دولي للتكوين والخبرة في الرفاه النسائي، مخصص للنساء الراغبات في التكوين في مجالات الرفاه والصحة الطبيعية والممارسات شبه الطبية.' }) }}
-      </p>
-      <p class="font-sans text-[var(--color-brand-green-800)]/80 text-lg leading-relaxed mb-6">
-        {{ t({ fr: "Je suis Française, basée à Djerba, et j'ai conçu cette plateforme pour former des femmes à devenir expertes du bien-être et indépendantes financièrement, dans un cadre sérieux, élégant et accessible.", en: "I am French, based in Djerba, and I created this platform to train women to become wellness experts and financially independent in a serious, elegant and accessible environment.", ar: 'أنا فرنسية ومقيمة في جربة، وقد أنشأت هذه المنصة لتكوين النساء حتى يصبحن خبيرات في الرفاه ومستقلات مالياً في إطار جاد وأنيق ومتاح.' }) }}
-      </p>
-      <p class="font-sans text-[var(--color-brand-green-800)]/80 text-lg leading-relaxed mb-8">
-        {{ t({ fr: "Avec la méthode Essenti’Elle, vous avez une compétence concrète, une possibilité de revenus et un accompagnement réel. C’est une vraie opportunité de changement, avec des places limitées pour garantir la qualité de chaque parcours.", en: "With the Essenti’Elle method, you gain practical skills, income potential and real support. It is a genuine opportunity for change, with limited seats to guarantee quality.", ar: 'مع طريقة إيسونتيال، تحصلين على مهارة عملية وفرصة دخل ومرافقة حقيقية. إنها فرصة تغيير حقيقية مع عدد أماكن محدود لضمان جودة كل مسار.' }) }}
-      </p>
-      <a routerLink="/formations" class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-brand-green-900)] text-white font-bold rounded-lg hover:bg-[var(--color-brand-gold-500)] transition-colors">
-        {{ t({ fr: 'Découvrir nos formations', en: 'Discover our programs', ar: 'اكتشفي برامجنا' }) }} <mat-icon style="font-size: 18px; width: 18px; height: 18px;">arrow_forward</mat-icon>
-      </a>
-    </div>
-    <div class="relative">
-      <div class="absolute inset-0 bg-gradient-to-tr from-[var(--color-brand-gold-300)] to-[var(--color-brand-green-800)] opacity-20 blur-2xl rounded-3xl"></div>
-      <div class="relative flex items-center justify-center rounded-2xl shadow-xl w-full h-[500px] bg-[var(--color-brand-cream)] border border-[var(--color-brand-gold-300)]/30 p-10">
-        <img
-          #conceptLogo
-          src="lo2 originale.png"
-          alt="Logo original Essenti'Elle Sant&eacute;"
-          class="max-w-full max-h-full object-contain cursor-pointer select-none"
-          tabindex="0"
-          role="button"
-          (click)="onLogoClick()"
-          (keydown.enter)="onLogoClick()"
-          (keydown.space)="onLogoClick()"
-        >
+
+      <div class="space-y-6">
+        <div class="relative overflow-hidden rounded-[32px] border border-[var(--color-brand-gold-300)]/28 bg-[linear-gradient(145deg,#18392b_0%,#214b39_56%,#315a48_100%)] p-8 text-white shadow-[0_28px_70px_rgba(18,53,36,0.18)]">
+          <div class="absolute inset-x-0 top-0 h-32 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.22),transparent_60%)]"></div>
+          <div class="relative">
+            <div class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-500)]">
+              <mat-icon style="font-size: 15px; width: 15px; height: 15px;">workspace_premium</mat-icon>
+              {{ t({ fr: 'Parcours international', en: 'International journey', ar: 'مسار دولي' }) }}
+            </div>
+
+            <div class="mt-8 flex items-center justify-center rounded-[28px] border border-white/10 bg-white/6 p-8 backdrop-blur-sm">
+              <img
+                #conceptLogo
+                src="lo2 originale.png"
+                alt="Logo original Essenti'Elle Sant&eacute;"
+                class="max-h-[240px] w-auto cursor-pointer select-none object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.25)]"
+                tabindex="0"
+                role="button"
+                (click)="onLogoClick()"
+                (keydown.enter)="onLogoClick()"
+                (keydown.space)="onLogoClick()"
+              >
+            </div>
+
+            <div class="mt-8 grid gap-3 sm:grid-cols-3">
+              <div class="rounded-2xl border border-white/10 bg-white/8 p-4">
+                <p class="text-[11px] uppercase tracking-[0.28em] text-white/60">{{ t({ fr: 'Mission', en: 'Mission', ar: 'الرسالة' }) }}</p>
+                <p class="mt-2 text-sm font-semibold leading-6">{{ t({ fr: 'Former avec exigence et humanite', en: 'Train with excellence and humanity', ar: 'التكوين بتميز وإنسانية' }) }}</p>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/8 p-4">
+                <p class="text-[11px] uppercase tracking-[0.28em] text-white/60">{{ t({ fr: 'Vision', en: 'Vision', ar: 'الرؤية' }) }}</p>
+                <p class="mt-2 text-sm font-semibold leading-6">{{ t({ fr: 'Rendre les femmes plus libres et plus fortes', en: 'Help women become freer and stronger', ar: 'تمكين النساء ليصبحن أقوى وأكثر حرية' }) }}</p>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/8 p-4">
+                <p class="text-[11px] uppercase tracking-[0.28em] text-white/60">{{ t({ fr: 'Impact', en: 'Impact', ar: 'الأثر' }) }}</p>
+                <p class="mt-2 text-sm font-semibold leading-6">{{ t({ fr: 'Des competences utiles et des opportunites reelles', en: 'Useful skills and real opportunities', ar: 'مهارات نافعة وفرص حقيقية' }) }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-[28px] border border-[var(--color-brand-gold-300)]/25 bg-white/90 p-6 shadow-[0_18px_40px_rgba(18,53,36,0.06)]">
+          <p class="text-[11px] font-bold uppercase tracking-[0.34em] text-[var(--color-brand-gold-700)]">
+            {{ t({ fr: 'Note personnelle', en: 'Personal note', ar: 'رسالة شخصية' }) }}
+          </p>
+          <p class="mt-4 font-serif text-2xl leading-relaxed text-[var(--color-brand-green-900)]">
+            {{ t({
+              fr: "Chaque femme merite un savoir solide, une confiance durable et un avenir qu'elle choisit.",
+              en: 'Every woman deserves strong knowledge, lasting confidence and a future she chooses.',
+              ar: 'كل امرأة تستحق معرفة راسخة وثقة دائمة ومستقبلا تختاره بنفسها.'
+            }) }}
+          </p>
+        </div>
       </div>
     </div>
   </div>

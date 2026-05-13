@@ -32,7 +32,7 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
 
                 <div>
                   <h1 class="font-serif text-4xl text-[var(--color-brand-green-900)]">{{ selectedCourse.title }}</h1>
-                  <p class="mt-4 text-sm leading-7 text-[var(--color-brand-green-800)]/75">{{ selectedCourse.description }}</p>
+                  <p class="mt-4 text-sm leading-7 text-[var(--color-brand-green-800)]/75">{{ selectedCourse.presentation || selectedCourse.description }}</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 rounded-[24px] bg-[var(--color-brand-cream)] p-4">
@@ -46,12 +46,41 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                   </div>
                 </div>
 
+                @if (selectedCourse.objectives?.length) {
+                  <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/22 bg-[var(--color-brand-cream)]/55 p-5">
+                    <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Objectifs de la formation</h2>
+                    <ul class="mt-4 space-y-3 text-sm text-[var(--color-brand-green-800)]/78">
+                      @for (objective of selectedCourse.objectives; track objective) {
+                        <li class="flex items-start gap-3">
+                          <mat-icon class="!h-[18px] !w-[18px] !text-[18px] text-[var(--color-brand-gold-500)]">check_circle</mat-icon>
+                          <span>{{ objective }}</span>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
+
                 @if (selectedCourse.certificateOptions?.length) {
                   <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-[#fffaf2] p-5">
                     <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Option 1 a 3 certificats</h2>
                     <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/72">
                       Le prix final depend du nombre de certificats choisis. Selectionnez 1, 2 ou 3 certificats dans votre demande.
                     </p>
+
+                    @if (selectedCourse.id === '13') {
+                      <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                        <div class="rounded-2xl bg-white p-4 shadow-[0_10px_22px_rgba(18,53,36,0.04)]">
+                          <div class="text-[11px] uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Certification</div>
+                          <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">France</div>
+                          <div class="mt-1 text-sm text-[var(--color-brand-green-800)]/70">790 EUR</div>
+                        </div>
+                        <div class="rounded-2xl bg-white p-4 shadow-[0_10px_22px_rgba(18,53,36,0.04)]">
+                          <div class="text-[11px] uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Certification</div>
+                          <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">France + Tunisie</div>
+                          <div class="mt-1 text-sm text-[var(--color-brand-green-800)]/70">1590 EUR</div>
+                        </div>
+                      </div>
+                    }
                   </div>
                 }
 
@@ -135,6 +164,46 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
               </form>
             </section>
           </div>
+
+          @if (programModules().length) {
+            <section class="mt-6 rounded-[32px] border border-[var(--color-brand-gold-300)]/26 bg-white p-6 shadow-[0_24px_54px_rgba(18,53,36,0.08)] sm:p-8">
+              <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/35 bg-[var(--color-brand-cream)] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                    <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">library_books</mat-icon>
+                    Programme detaille
+                  </div>
+                  <h2 class="mt-4 font-serif text-3xl text-[var(--color-brand-green-900)]">10 modules - 5 chapitres par module</h2>
+                  <p class="mt-2 text-sm leading-7 text-[var(--color-brand-green-800)]/68">
+                    Le contenu de la formation est deja structure ici. Vous pourrez ajouter les PDF ensuite, module par module.
+                  </p>
+                </div>
+              </div>
+
+              <div class="mt-8 grid gap-4 lg:grid-cols-2">
+                @for (module of programModules(); track module.id) {
+                  <details class="group rounded-[24px] border border-[var(--color-brand-gold-300)]/20 bg-[linear-gradient(180deg,#fffdf9_0%,#f8f1e5_100%)] p-5" [open]="$first">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
+                      <div>
+                        <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)]">{{ module.title }}</h3>
+                        <p class="mt-2 text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-gold-700)]">{{ module.chapters.length }} chapitres</p>
+                      </div>
+                      <mat-icon class="!h-[22px] !w-[22px] !text-[22px] text-[var(--color-brand-green-900)] transition-transform group-open:rotate-180">expand_more</mat-icon>
+                    </summary>
+
+                    <ul class="mt-5 space-y-3 border-t border-[var(--color-brand-gold-300)]/18 pt-5">
+                      @for (chapter of module.chapters; track chapter) {
+                        <li class="flex items-start gap-3 text-sm leading-6 text-[var(--color-brand-green-800)]/78">
+                          <span class="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-green-900)] text-[11px] font-bold text-white">{{ $index + 1 }}</span>
+                          <span>{{ chapter }}</span>
+                        </li>
+                      }
+                    </ul>
+                  </details>
+                }
+              </div>
+            </section>
+          }
         } @else {
           <div class="mt-8 rounded-[28px] bg-white p-8 text-center shadow-[0_24px_54px_rgba(18,53,36,0.08)]">
             <h2 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Formation introuvable</h2>
@@ -168,6 +237,7 @@ export class FormationEnrollmentComponent implements OnInit {
   });
 
   readonly selectedFormula = computed(() => this.formulas().find((item) => item.id === this.form.controls.formulaId.value) ?? null);
+  readonly programModules = computed(() => this.course()?.programModules ?? []);
 
   ngOnInit(): void {
     this.catalog.getCatalog().subscribe((data) => {

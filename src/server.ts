@@ -76,6 +76,11 @@ interface Course {
     title: string;
     content: string;
   }>;
+  programModules?: Array<{
+    id: string;
+    title: string;
+    chapters: string[];
+  }>;
   moduleItems?: Array<{
     id: string;
     title: string;
@@ -452,7 +457,7 @@ courses.push(
     instructorId: '2',
     modules: 7,
     students: 76,
-    thumbnail: 'formation-drainage.svg',
+    thumbnail: 'formation massage anti.jpeg',
     description: 'Un parcours complet pour proposer des soins de drainage, remodelage et accompagnement anti-cellulite avec certifications au choix.',
     access: 'paid',
     priceEur: 990,
@@ -545,10 +550,10 @@ courses.push(
     id: '13',
     title: 'Formation Detox Therapeutique Complete',
     instructorId: '2',
-    modules: 9,
+    modules: 10,
     students: 118,
-    thumbnail: 'formation-detox-complete.svg',
-    description: 'Une formation complete incluant detox perte de poids, detox emonctoires et detox peau dans un seul parcours certifiant.',
+    thumbnail: 'formationdétoxe.jpeg',
+    description: 'Purifiez votre corps, retrouvez votre energie, revelez votre eclat avec une formation detox complete incluant perte de poids, detox des 5 emonctoires et detox peau.',
     access: 'paid',
     priceEur: 790,
     priceMinEur: 790,
@@ -558,6 +563,136 @@ courses.push(
     promoEnabled: false,
     category: 'Detox',
     status: 'published',
+    presentation: 'Formation detox complete incluant detox perte de poids, detox des 5 emonctoires et detox peau pour accompagner la purification du corps, l energie, la vitalite et l eclat naturel.',
+    objectives: [
+      'Eliminer les toxines',
+      'Retrouver votre legerete',
+      'Reveler votre eclat naturel',
+      'Retrouver energie et vitalite',
+    ],
+    contentItems: [
+      { id: 'content-13-1', text: '10 modules' },
+      { id: 'content-13-2', text: '5 chapitres par module' },
+      { id: 'content-13-3', text: 'Detox perte de poids' },
+      { id: 'content-13-4', text: 'Detox des 5 emonctoires' },
+      { id: 'content-13-5', text: 'Detox peau' },
+    ],
+    chapters: [
+      { id: 'chapter-13-1', title: 'Certification France', content: '790 EUR' },
+      { id: 'chapter-13-2', title: 'Certification France + Tunisie', content: '1590 EUR' },
+    ],
+    programModules: [
+      {
+        id: 'detox-module-1',
+        title: 'Module 1 / Les bases de la detox',
+        chapters: [
+          'Chapitre 1 : Qu est-ce que la detox ?',
+          'Chapitre 2 : Pourquoi detoxifier son corps ?',
+          'Chapitre 3 : Les bienfaits d une detox',
+          'Chapitre 4 : Les bonnes pratiques',
+          'Chapitre 5 : Plan de detox personnalise',
+        ],
+      },
+      {
+        id: 'detox-module-2',
+        title: 'Module 2 / Detox perte de poids',
+        chapters: [
+          'Chapitre 1 : Comprendre la prise de poids',
+          'Chapitre 2 : Aliments detox brule-graisses',
+          'Chapitre 3 : Menus detox perte de poids',
+          'Chapitre 4 : Activite physique et detox',
+          'Chapitre 5 : Conseils pratiques pour mincir durablement',
+        ],
+      },
+      {
+        id: 'detox-module-3',
+        title: 'Module 3 / Les 5 emonctoires',
+        chapters: [
+          'Chapitre 1 : Les 5 emonctoires et leurs roles',
+          'Chapitre 2 : Le foie',
+          'Chapitre 3 : Les reins',
+          'Chapitre 4 : Les intestins',
+          'Chapitre 5 : Les poumons et la peau',
+        ],
+      },
+      {
+        id: 'detox-module-4',
+        title: 'Module 4 / Detox foie',
+        chapters: [
+          'Chapitre 1 : Role du foie',
+          'Chapitre 2 : Signes d un foie surcharge',
+          'Chapitre 3 : Aliments drainants pour le foie',
+          'Chapitre 4 : Plantes et tisanes depuratives',
+          'Chapitre 5 : Programme detox foie',
+        ],
+      },
+      {
+        id: 'detox-module-5',
+        title: 'Module 5 / Detox reins',
+        chapters: [
+          'Chapitre 1 : Role des reins',
+          'Chapitre 2 : Signes de surcharge renale',
+          'Chapitre 3 : Aliments et boissons diuretiques',
+          'Chapitre 4 : Plantes detoxifiantes',
+          'Chapitre 5 : Programme detox reins',
+        ],
+      },
+      {
+        id: 'detox-module-6',
+        title: 'Module 6 / Detox intestinale',
+        chapters: [
+          'Chapitre 1 : Role de l intestin',
+          'Chapitre 2 : Signes d un intestin encrasse',
+          'Chapitre 3 : Aliments riches en fibres',
+          'Chapitre 4 : Probiotiques et prebiotiques',
+          'Chapitre 5 : Programme detox intestinale',
+        ],
+      },
+      {
+        id: 'detox-module-7',
+        title: 'Module 7 / Detox poumons',
+        chapters: [
+          'Chapitre 1 : Role des poumons',
+          'Chapitre 2 : Polluants et toxines respiratoires',
+          'Chapitre 3 : Aliments et plantes expectorantes',
+          'Chapitre 4 : Respiration et exercices',
+          'Chapitre 5 : Programme detox poumons',
+        ],
+      },
+      {
+        id: 'detox-module-8',
+        title: 'Module 8 / Detox peau',
+        chapters: [
+          'Chapitre 1 : La peau, miroir de l interieur',
+          'Chapitre 2 : Causes des problemes de peau',
+          'Chapitre 3 : Aliments pour une peau saine',
+          'Chapitre 4 : Soins naturels detoxifiants',
+          'Chapitre 5 : Programme detox peau',
+        ],
+      },
+      {
+        id: 'detox-module-9',
+        title: 'Module 9 / Alimentation detox',
+        chapters: [
+          'Chapitre 1 : Principes d une alimentation detox',
+          'Chapitre 2 : Aliments a privilegier',
+          'Chapitre 3 : Aliments a limiter ou eviter',
+          'Chapitre 4 : Idees de menus detox',
+          'Chapitre 5 : Organisation et batch cooking',
+        ],
+      },
+      {
+        id: 'detox-module-10',
+        title: 'Module 10 / Suivi et maintien apres detox',
+        chapters: [
+          'Chapitre 1 : Reprise alimentaire en douceur',
+          'Chapitre 2 : Habitudes saines a garder',
+          'Chapitre 3 : Gerer les ecarts',
+          'Chapitre 4 : Energie et vitalite au quotidien',
+          'Chapitre 5 : Plan d entretien personnalise',
+        ],
+      },
+    ],
     moduleItems: [],
   },
   {
@@ -566,7 +701,7 @@ courses.push(
     instructorId: '2',
     modules: 11,
     students: 101,
-    thumbnail: 'formation-nutrition-pathologies.svg',
+    thumbnail: 'formation nutrition.jpeg',
     description: 'Approfondissez la nutrition fonctionnelle appliquee aux pathologies, avec un parcours avance disponible selon 1 a 3 certificats.',
     access: 'paid',
     priceEur: 2590,

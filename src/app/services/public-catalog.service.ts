@@ -35,6 +35,11 @@ export interface PublicCatalogCourse {
     title: string;
     content: string;
   }>;
+  programModules?: Array<{
+    id: string;
+    title: string;
+    chapters: string[];
+  }>;
   moduleItems?: Array<{
     id: string;
     title: string;
