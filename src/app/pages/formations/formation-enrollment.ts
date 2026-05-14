@@ -67,18 +67,15 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                       Le prix final depend du nombre de certificats choisis. Selectionnez 1, 2 ou 3 certificats dans votre demande.
                     </p>
 
-                    @if (selectedCourse.id === '13') {
+                    @if (selectedCourse.chapters?.length) {
                       <div class="mt-4 grid gap-3 sm:grid-cols-2">
-                        <div class="rounded-2xl bg-white p-4 shadow-[0_10px_22px_rgba(18,53,36,0.04)]">
-                          <div class="text-[11px] uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Certification</div>
-                          <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">France</div>
-                          <div class="mt-1 text-sm text-[var(--color-brand-green-800)]/70">790 EUR</div>
-                        </div>
-                        <div class="rounded-2xl bg-white p-4 shadow-[0_10px_22px_rgba(18,53,36,0.04)]">
-                          <div class="text-[11px] uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Certification</div>
-                          <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">France + Tunisie</div>
-                          <div class="mt-1 text-sm text-[var(--color-brand-green-800)]/70">1590 EUR</div>
-                        </div>
+                        @for (chapter of selectedCourse.chapters; track chapter.id) {
+                          <div class="rounded-2xl bg-white p-4 shadow-[0_10px_22px_rgba(18,53,36,0.04)]">
+                            <div class="text-[11px] uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Certification</div>
+                            <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ chapter.title.replace('Certification ', '') }}</div>
+                            <div class="mt-1 text-sm text-[var(--color-brand-green-800)]/70">{{ chapter.content }}</div>
+                          </div>
+                        }
                       </div>
                     }
                   </div>
