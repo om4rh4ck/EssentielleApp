@@ -292,9 +292,9 @@ let useMemoryStore = false;
 let serverStarted = false;
 
 const memoryUsers: StoredUser[] = [
-  makeStoredUser('1', 'Admin User', 'admin@essentielle.com', 'admin', 'password123'),
-  makeStoredUser('2', 'Dr. Expert', 'instructor@essentielle.com', 'instructor', 'password123'),
-  makeStoredUser('3', 'Jane Doe', 'student@essentielle.com', 'student', 'password123'),
+  makeStoredUser('1', 'Admin User', 'admin@lessentielle-sante.site', 'admin', 'password123'),
+  makeStoredUser('2', 'Dr. Expert', 'instructor@lessentielle-sante.site', 'instructor', 'password123'),
+  makeStoredUser('3', 'Jane Doe', 'student@lessentielle-sante.site', 'student', 'password123'),
 ];
 
 const courses: Course[] = [
@@ -1349,9 +1349,9 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
   await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS objective TEXT NULL');
   await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS bio TEXT NULL');
 
-  await insertSeedUser(pool, 'Admin User', 'admin@essentielle.com', 'admin', 'password123');
-  await insertSeedUser(pool, 'Dr. Expert', 'instructor@essentielle.com', 'instructor', 'password123');
-  await insertSeedUser(pool, 'Jane Doe', 'student@essentielle.com', 'student', 'password123');
+  await insertSeedUser(pool, 'Admin User', 'admin@lessentielle-sante.site', 'admin', 'password123');
+  await insertSeedUser(pool, 'Dr. Expert', 'instructor@lessentielle-sante.site', 'instructor', 'password123');
+  await insertSeedUser(pool, 'Jane Doe', 'student@lessentielle-sante.site', 'student', 'password123');
 }
 
 async function insertSeedUser(pool: Pool, name: string, email: string, role: UserRole, password: string): Promise<void> {

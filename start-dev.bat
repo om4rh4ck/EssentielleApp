@@ -21,9 +21,9 @@ echo    - URL: http://localhost:3000
 echo    - Mode: Développement avec SSR
 echo.
 echo 📋 Comptes de test disponibles:
-echo    - Admin: admin@essentielle.com / password123
-echo    - Instructeur: instructor@essentielle.com / password123
-echo    - Étudiant: student@essentielle.com / password123
+echo    - Admin: admin@lessentielle-sante.site / password123
+echo    - Instructeur: instructor@lessentielle-sante.site / password123
+echo    - Étudiant: student@lessentielle-sante.site / password123
 echo.
 echo 🚀 Démarrage du serveur...
 echo    Appuyez sur Ctrl+C pour arrêter

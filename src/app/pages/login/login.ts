@@ -55,13 +55,13 @@ import { MatIconModule } from '@angular/material/icon';
           <div class="mt-8 flex flex-col gap-3 pt-6 border-t border-[var(--color-brand-gold-300)]/30">
             <p class="text-[10px] text-[var(--color-brand-green-800)]/50 uppercase tracking-widest text-center mb-1">Comptes de test</p>
             <button type="button" (click)="fillDemo('admin')" class="text-xs py-2 bg-gray-50 hover:bg-gray-100 text-[var(--color-brand-green-800)] font-medium transition uppercase tracking-wider border border-gray-200">
-              Admin (admin&#64;essentielle.com)
+              Admin (admin&#64;lessentielle-sante.site)
             </button>
             <button type="button" (click)="fillDemo('instructor')" class="text-xs py-2 bg-gray-50 hover:bg-gray-100 text-[var(--color-brand-green-800)] font-medium transition uppercase tracking-wider border border-gray-200">
-              Formatrice (instructor&#64;essentielle.com)
+              Formatrice (instructor&#64;lessentielle-sante.site)
             </button>
             <button type="button" (click)="fillDemo('student')" class="text-xs py-2 bg-gray-50 hover:bg-gray-100 text-[var(--color-brand-green-800)] font-medium transition uppercase tracking-wider border border-gray-200">
-              Étudiante (student&#64;essentielle.com)
+              Étudiante (student&#64;lessentielle-sante.site)
             </button>
           </div>
         </form>
@@ -99,7 +99,7 @@ export class LoginComponent {
 
   fillDemo(role: 'admin' | 'instructor' | 'student') {
     this.loginForm.patchValue({
-      email: role + '@essentielle.com',
+      email: role + '@lessentielle-sante.site',
       password: 'password123'
     });
     this.onSubmit();

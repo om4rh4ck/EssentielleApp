@@ -68,9 +68,9 @@ npx ng serve --port 3000 --host 0.0.0.0
 
 ## Comptes de test
 Le serveur crée automatiquement ces comptes au démarrage (avec hash sécurisé):
-- `admin@essentielle.com` / `password123`
-- `instructor@essentielle.com` / `password123`
-- `student@essentielle.com` / `password123`
+- `admin@lessentielle-sante.site` / `password123`
+- `instructor@lessentielle-sante.site` / `password123`
+- `student@lessentielle-sante.site` / `password123`
 
 ## Flux attendu
 - Inscription réussie => connexion automatique => dashboard étudiant
