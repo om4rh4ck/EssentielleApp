@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
@@ -80,7 +80,7 @@ import { AuthService } from '../../services/auth.service';
               class="px-4 py-3 bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-[var(--color-brand-gold-500)] focus:border-[var(--color-brand-gold-500)] transition-all text-sm rounded-xl resize-none"
               placeholder="Votre projet dans le bien-etre feminin"></textarea>
           </div>
-          
+
           <div class="flex flex-col gap-1.5">
             <label for="reg-pwd" class="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand-green-900)]">Mot de passe</label>
             <input type="password" id="reg-pwd" formControlName="password"
@@ -95,7 +95,7 @@ import { AuthService } from '../../services/auth.service';
         </form>
 
         <p class="text-center text-sm font-light text-[var(--color-brand-green-800)]/70 mt-8">
-          Deja un compte ? <a routerLink="/login" class="text-[var(--color-brand-gold-500)] font-medium hover:underline">Se connecter</a>
+          Deja un compte ? <a routerLink="/login" [queryParams]="loginQueryParams()" class="text-[var(--color-brand-gold-500)] font-medium hover:underline">Se connecter</a>
         </p>
       </div>
 
@@ -116,6 +116,7 @@ export class RegisterComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   registerForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
@@ -130,6 +131,11 @@ export class RegisterComponent {
   loading = signal(false);
   errorMsg = signal<string | null>(null);
   successMsg = signal<string | null>(null);
+
+  loginQueryParams(): { redirectTo?: string } {
+    const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo');
+    return redirectTo ? { redirectTo } : {};
+  }
 
   onSubmit() {
     if (this.registerForm.invalid) {
@@ -154,6 +160,11 @@ export class RegisterComponent {
       next: (res) => {
         this.loading.set(false);
         this.successMsg.set('Compte cree avec succes. Redirection vers votre espace...');
+        const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo');
+        if (res.user.role === 'student' && redirectTo?.startsWith('/')) {
+          void this.router.navigateByUrl(redirectTo);
+          return;
+        }
         if (res.user.role === 'admin') this.router.navigate(['/admin']);
         else if (res.user.role === 'instructor') this.router.navigate(['/instructor']);
         else this.router.navigate(['/student']);

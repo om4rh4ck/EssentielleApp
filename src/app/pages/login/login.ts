@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
+import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
@@ -67,7 +67,7 @@ import { MatIconModule } from '@angular/material/icon';
         </form>
 
         <p class="text-center text-sm text-[var(--color-brand-green-800)]/70 font-light mt-8">
-          Pas encore de compte ? <a routerLink="/register" class="text-[var(--color-brand-gold-500)] font-medium hover:underline">S'inscrire</a>
+          Pas encore de compte ? <a routerLink="/register" [queryParams]="registerQueryParams()" class="text-[var(--color-brand-gold-500)] font-medium hover:underline">S'inscrire</a>
         </p>
       </div>
 
@@ -88,6 +88,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -96,6 +97,11 @@ export class LoginComponent {
 
   loading = signal(false);
   errorMsg = signal<string | null>(null);
+
+  registerQueryParams(): { redirectTo?: string } {
+    const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo');
+    return redirectTo ? { redirectTo } : {};
+  }
 
   fillDemo(role: 'admin' | 'instructor' | 'student') {
     this.loginForm.patchValue({
@@ -114,6 +120,11 @@ export class LoginComponent {
       this.auth.login(email!, password!).subscribe({
         next: (res) => {
           this.loading.set(false);
+          const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo');
+          if (res.user.role === 'student' && redirectTo?.startsWith('/')) {
+            void this.router.navigateByUrl(redirectTo);
+            return;
+          }
           if (res.user.role === 'admin') this.router.navigate(['/admin']);
           else if (res.user.role === 'instructor') this.router.navigate(['/instructor']);
           else this.router.navigate(['/student']);

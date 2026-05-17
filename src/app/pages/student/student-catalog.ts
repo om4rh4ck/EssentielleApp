@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DashboardLayoutComponent } from '../../components/dashboard-layout/dashboard-layout';
 import { StudentCourse, StudentPortalService } from '../../services/student-portal.service';
 import { STUDENT_MENU_ITEMS } from './student-menu';
@@ -17,7 +17,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
         <div class="rounded-[28px] border border-[var(--color-brand-gold-300)]/35 bg-white p-8 shadow-[0_24px_50px_rgba(0,0,0,0.04)]">
           <h2 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Les formations disponibles</h2>
           <p class="mt-3 max-w-3xl text-sm leading-7 text-[var(--color-brand-green-800)]/70">
-            Les formations gratuites peuvent être rejointes immédiatement. Les formations payantes sont visibles dans votre catalogue pour présentation commerciale et seront activées après paiement.
+            Les formations gratuites peuvent etre rejointes immediatement. Les formations payantes peuvent maintenant etre demandees directement depuis votre catalogue et seront activees apres validation par l'administration.
           </p>
         </div>
 
@@ -44,7 +44,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                   <div class="shrink-0 rounded-2xl bg-[var(--color-brand-cream)] px-4 py-3 text-right">
                     <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Prix</div>
                     <div class="mt-1 text-lg font-bold text-[var(--color-brand-green-900)]">
-                      {{ course.access === 'free' ? 'Accès libre' : (course.priceEur | currency:'EUR':'symbol':'1.0-0') }}
+                      {{ course.access === 'free' ? 'Acces libre' : (course.priceEur | currency:'EUR':'symbol':'1.0-0') }}
                     </div>
                   </div>
                 </div>
@@ -75,15 +75,20 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                       S'inscrire gratuitement
                       <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">how_to_reg</mat-icon>
                     </button>
+                  } @else if (course.enrollmentRequestStatus === 'pending') {
+                    <button type="button" disabled class="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-5 py-3 text-sm font-bold text-amber-700 opacity-90">
+                      Demande envoyee
+                      <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">schedule</mat-icon>
+                    </button>
                   } @else {
-                    <button type="button" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-[var(--color-brand-green-900)]">
-                      Paiement requis
-                      <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">lock</mat-icon>
+                    <button type="button" (click)="requestEnrollment(course.id)" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-[var(--color-brand-green-900)] transition hover:bg-[var(--color-brand-green-900)] hover:text-white">
+                      Demander l'inscription
+                      <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">assignment</mat-icon>
                     </button>
                   }
 
                   <span class="inline-flex items-center rounded-full bg-[var(--color-brand-cream)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/60">
-                    {{ course.enrolled ? 'Déjà inscrite' : 'Disponible' }}
+                    {{ course.enrolled ? 'Deja inscrite' : (course.enrollmentRequestStatus === 'pending' ? 'En attente' : 'Disponible') }}
                   </span>
                 </div>
               </div>
@@ -96,6 +101,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
 })
 export class StudentCatalogComponent implements OnInit {
   private portal = inject(StudentPortalService);
+  private router = inject(Router);
 
   menuItems = [...STUDENT_MENU_ITEMS];
   courses = signal<StudentCourse[]>([]);
@@ -110,5 +116,11 @@ export class StudentCatalogComponent implements OnInit {
 
   enroll(courseId: string): void {
     this.portal.enrollInCourse(courseId).subscribe(() => this.loadCatalog());
+  }
+
+  requestEnrollment(courseId: string): void {
+    void this.router.navigate(['/formations', courseId, 'inscription'], {
+      queryParams: { returnTo: '/student/catalog' },
+    });
   }
 }

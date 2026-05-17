@@ -1,7 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CurrencyCode, DisplayPreferencesService, LocalizedText } from '../../shared/services/display-preferences.service';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from '../../services/public-catalog.service';
 
 @Component({
@@ -13,10 +14,12 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
 export class FormationsComponent implements OnInit {
   private readonly preferences = inject(DisplayPreferencesService);
   private readonly catalog = inject(PublicCatalogService);
+  private readonly auth = inject(AuthService);
 
   readonly currency = this.preferences.currency;
   readonly courses = signal<PublicCatalogCourse[]>([]);
   readonly formulas = signal<PublicCatalogFormula[]>([]);
+  readonly currentUser = computed(() => this.auth.currentUser());
 
   ngOnInit(): void {
     this.catalog.getCatalog().subscribe((data) => {
@@ -88,6 +91,18 @@ export class FormationsComponent implements OnInit {
     const min = Math.min(...course.certificateOptions);
     const max = Math.max(...course.certificateOptions);
     return `${min} - ${max} certificat${max > 1 ? 's' : ''}`;
+  }
+
+  enrollmentLink(courseId: string): string[] {
+    return ['/formations', courseId, 'inscription'];
+  }
+
+  registerLink(courseId: string): string[] {
+    return ['/register'];
+  }
+
+  redirectToEnrollment(courseId: string): string {
+    return `/formations/${courseId}/inscription`;
   }
 
   private getLocale(currency: CurrencyCode): string {

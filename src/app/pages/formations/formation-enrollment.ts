@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
@@ -178,10 +178,10 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                   Connectez-vous ou creez d'abord votre compte etudiante, puis revenez envoyer la demande avec ce meme email.
                 </div>
                 <div class="mt-4 flex flex-wrap gap-3">
-                  <a routerLink="/login" class="inline-flex items-center justify-center rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)]">
+                  <a routerLink="/login" [queryParams]="authRedirectQueryParams()" class="inline-flex items-center justify-center rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)]">
                     Se connecter
                   </a>
-                  <a routerLink="/register" class="inline-flex items-center justify-center rounded-full border border-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-[var(--color-brand-green-900)] transition hover:bg-white">
+                  <a routerLink="/register" [queryParams]="authRedirectQueryParams()" class="inline-flex items-center justify-center rounded-full border border-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-[var(--color-brand-green-900)] transition hover:bg-white">
                     Creer un compte etudiante
                   </a>
                 </div>
@@ -285,6 +285,7 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
 })
 export class FormationEnrollmentComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private fb = inject(FormBuilder);
   private catalog = inject(PublicCatalogService);
   private auth = inject(AuthService);
@@ -313,6 +314,10 @@ export class FormationEnrollmentComponent implements OnInit {
   readonly currentUser = computed(() => this.auth.currentUser());
   readonly isStudentLoggedIn = computed(() => this.currentUser()?.role === 'student');
   readonly mustLoginForPaidCourse = computed(() => this.course()?.access === 'paid' && !this.isStudentLoggedIn());
+
+  authRedirectQueryParams(): { redirectTo: string } {
+    return { redirectTo: this.router.url };
+  }
 
   ngOnInit(): void {
     const currentUser = this.auth.currentUser();
@@ -378,6 +383,10 @@ export class FormationEnrollmentComponent implements OnInit {
         this.loading.set(false);
         this.successMsg.set(response.message);
         this.form.patchValue({ message: '' });
+        const returnTo = this.route.snapshot.queryParamMap.get('returnTo');
+        if (this.isStudentLoggedIn() && returnTo?.startsWith('/')) {
+          setTimeout(() => void this.router.navigateByUrl(returnTo), 800);
+        }
       },
       error: (err) => {
         this.loading.set(false);

@@ -26,6 +26,8 @@ export interface StudentCourse {
   category: string;
   enrolled: boolean;
   progress: number;
+  enrollmentRequestStatus?: 'pending' | 'approved' | null;
+  enrollmentRequestId?: string | null;
   presentation?: string;
   warning?: string;
   objectives?: string[];

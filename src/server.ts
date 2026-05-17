@@ -1702,12 +1702,23 @@ function serializeCatalog(user: PublicUser) {
   return courses
     .filter((course) => course.status === 'published')
     .map((course) => {
-    const enrollment = workspace.enrollments.find((item) => item.courseId === course.id);
-    return {
-      ...course,
-      enrolled: Boolean(enrollment),
-      progress: enrollment?.progress ?? 0,
-    };
+      const enrollment = workspace.enrollments.find((item) => item.courseId === course.id);
+      const pendingRequest = publicEnrollmentRequests.find((request) =>
+        request.courseId === course.id &&
+        request.status === 'pending' &&
+        (
+          request.studentId === user.id ||
+          normalizeEmail(request.email) === normalizeEmail(user.email)
+        )
+      );
+
+      return {
+        ...course,
+        enrolled: Boolean(enrollment),
+        progress: enrollment?.progress ?? 0,
+        enrollmentRequestStatus: pendingRequest?.status ?? null,
+        enrollmentRequestId: pendingRequest?.id ?? null,
+      };
     });
 }
 

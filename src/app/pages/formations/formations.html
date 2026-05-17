@@ -41,9 +41,12 @@
                   <mat-icon class="!h-[14px] !w-[14px] !text-[14px] text-[var(--color-brand-gold-500)]">{{ course.access === 'free' ? 'how_to_reg' : 'workspace_premium' }}</mat-icon>
                   {{ course.access === 'free' ? 'Inscription directe' : 'Choix formule' }}
                 </span>
-                <a [routerLink]="['/formations', course.id, 'inscription']" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white shadow-[0_14px_28px_rgba(18,53,36,0.24)] transition hover:bg-[var(--color-brand-gold-500)]">
+                <a
+                  [routerLink]="currentUser()?.role === 'student' ? enrollmentLink(course.id) : registerLink(course.id)"
+                  [queryParams]="currentUser()?.role === 'student' ? null : { redirectTo: redirectToEnrollment(course.id) }"
+                  class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white shadow-[0_14px_28px_rgba(18,53,36,0.24)] transition hover:bg-[var(--color-brand-gold-500)]">
                   <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">{{ course.access === 'free' ? 'arrow_forward' : 'payments' }}</mat-icon>
-                  {{ course.access === 'free' ? 'S inscrire' : 'Reserver' }}
+                  {{ currentUser()?.role === 'student' ? (course.access === 'free' ? 'S inscrire' : 'Reserver') : 'Creer mon espace' }}
                 </a>
               </div>
             </div>
@@ -84,9 +87,12 @@
               </div>
 
               <div class="mt-5 flex flex-wrap gap-3">
-                <a [routerLink]="['/formations', course.id, 'inscription']" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_34px_rgba(18,53,36,0.18)] transition hover:-translate-y-0.5 hover:bg-[var(--color-brand-gold-500)]">
+                <a
+                  [routerLink]="currentUser()?.role === 'student' ? enrollmentLink(course.id) : registerLink(course.id)"
+                  [queryParams]="currentUser()?.role === 'student' ? null : { redirectTo: redirectToEnrollment(course.id) }"
+                  class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_34px_rgba(18,53,36,0.18)] transition hover:-translate-y-0.5 hover:bg-[var(--color-brand-gold-500)]">
                   <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">{{ course.access === 'free' ? 'how_to_reg' : 'payments' }}</mat-icon>
-                  {{ course.access === 'free' ? 'S inscrire maintenant' : 'Choisir cette formation' }}
+                  {{ currentUser()?.role === 'student' ? (course.access === 'free' ? 'S inscrire maintenant' : 'Choisir cette formation') : 'Creer mon compte et continuer' }}
                 </a>
               </div>
             </div>
