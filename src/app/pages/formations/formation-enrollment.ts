@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../services/auth.service';
 import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from '../../services/public-catalog.service';
 
 @Component({
@@ -166,6 +167,26 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                 </div>
               </div>
 
+              @if (selectedCourse.access === 'paid') {
+                <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+                  La demande payante doit etre envoyee depuis un compte etudiante connecte avec le meme email que celui qui recevra l'acces.
+                </div>
+              }
+
+              @if (mustLoginForPaidCourse()) {
+                <div class="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800">
+                  Connectez-vous ou creez d'abord votre compte etudiante, puis revenez envoyer la demande avec ce meme email.
+                </div>
+                <div class="mt-4 flex flex-wrap gap-3">
+                  <a routerLink="/login" class="inline-flex items-center justify-center rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)]">
+                    Se connecter
+                  </a>
+                  <a routerLink="/register" class="inline-flex items-center justify-center rounded-full border border-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-[var(--color-brand-green-900)] transition hover:bg-white">
+                    Creer un compte etudiante
+                  </a>
+                </div>
+              }
+
               @if (successMsg()) {
                 <div class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">{{ successMsg() }}</div>
               }
@@ -175,9 +196,9 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
               }
 
               <form [formGroup]="form" (ngSubmit)="submit()" class="mt-6 space-y-4">
-                <input formControlName="name" placeholder="Nom complet" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
+                <input formControlName="name" [readonly]="isStudentLoggedIn()" placeholder="Nom complet" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
                 <div class="grid gap-4 md:grid-cols-2">
-                  <input formControlName="email" placeholder="Email" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
+                  <input formControlName="email" [readonly]="isStudentLoggedIn()" placeholder="Email" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
                   <input formControlName="phone" placeholder="Telephone" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
                 </div>
                 <div class="grid gap-4 md:grid-cols-2">
@@ -205,7 +226,7 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
 
                 <textarea formControlName="message" rows="5" placeholder="Message ou precision sur votre demande" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none"></textarea>
 
-                <button type="submit" [disabled]="loading()" class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white transition hover:bg-[var(--color-brand-gold-500)] disabled:opacity-60">
+                <button type="submit" [disabled]="loading() || mustLoginForPaidCourse()" class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white transition hover:bg-[var(--color-brand-gold-500)] disabled:opacity-60">
                   <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">{{ selectedCourse.access === 'free' ? 'how_to_reg' : 'payments' }}</mat-icon>
                   {{ loading() ? 'Envoi en cours...' : (selectedCourse.access === 'free' ? 'Envoyer mon inscription' : 'Envoyer ma demande') }}
                 </button>
@@ -266,6 +287,7 @@ export class FormationEnrollmentComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
   private catalog = inject(PublicCatalogService);
+  private auth = inject(AuthService);
 
   course = signal<PublicCatalogCourse | null>(null);
   formulas = signal<PublicCatalogFormula[]>([]);
@@ -288,8 +310,19 @@ export class FormationEnrollmentComponent implements OnInit {
   readonly programModules = computed(() => this.course()?.programModules ?? []);
   readonly galleryImages = computed(() => this.course()?.galleryImages ?? []);
   readonly moduleItems = computed(() => this.course()?.moduleItems ?? []);
+  readonly currentUser = computed(() => this.auth.currentUser());
+  readonly isStudentLoggedIn = computed(() => this.currentUser()?.role === 'student');
+  readonly mustLoginForPaidCourse = computed(() => this.course()?.access === 'paid' && !this.isStudentLoggedIn());
 
   ngOnInit(): void {
+    const currentUser = this.auth.currentUser();
+    if (currentUser?.role === 'student') {
+      this.form.patchValue({
+        name: currentUser.name,
+        email: currentUser.email,
+      });
+    }
+
     this.catalog.getCatalog().subscribe((data) => {
       const id = this.route.snapshot.paramMap.get('id');
       this.course.set(data.courses.find((course) => course.id === id) ?? null);
@@ -301,6 +334,11 @@ export class FormationEnrollmentComponent implements OnInit {
     const selectedCourse = this.course();
     if (!selectedCourse) {
       this.errorMsg.set('Formation introuvable.');
+      return;
+    }
+
+    if (selectedCourse.access === 'paid' && !this.isStudentLoggedIn()) {
+      this.errorMsg.set('Connectez-vous ou creez votre compte etudiante avant d envoyer une demande payante.');
       return;
     }
 

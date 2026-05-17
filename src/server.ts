@@ -1939,10 +1939,10 @@ app.post('/api/public/enrollment-requests', (req, res): any => {
   if (!course) return res.status(404).json({ error: 'Formation introuvable.' });
   const studentUser = getCurrentUser(req, ['student']);
 
-  const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
+  const name = studentUser?.name ?? (typeof req.body?.name === 'string' ? req.body.name.trim() : '');
   if (name.length < 2) return res.status(400).json({ error: 'Le nom est obligatoire.' });
 
-  const email = typeof req.body?.email === 'string' ? req.body.email.trim() : '';
+  const email = studentUser?.email ?? (typeof req.body?.email === 'string' ? req.body.email.trim() : '');
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email invalide.' });
 
   const phone = typeof req.body?.phone === 'string' ? req.body.phone.trim() : '';
@@ -1963,6 +1963,12 @@ app.post('/api/public/enrollment-requests', (req, res): any => {
 
   if (course.access === 'paid' && !acceptsCertificateSelection && !formula) {
     return res.status(400).json({ error: 'Veuillez choisir une formule pour cette formation payante.' });
+  }
+
+  if (course.access === 'paid' && !studentUser) {
+    return res.status(401).json({
+      error: 'Connectez-vous ou creez votre compte etudiante avec ce meme email avant d envoyer une demande pour une formation payante.',
+    });
   }
 
   const request: PublicEnrollmentRequest = {
