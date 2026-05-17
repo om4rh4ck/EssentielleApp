@@ -81,6 +81,7 @@ interface Course {
     title: string;
     chapters: string[];
   }>;
+  galleryImages?: string[];
   moduleItems?: Array<{
     id: string;
     title: string;
@@ -552,7 +553,7 @@ courses.push(
     instructorId: '2',
     modules: 10,
     students: 118,
-    thumbnail: 'formationdétoxe.jpeg',
+    thumbnail: 'formation%20detox/im1.jpeg',
     description: 'Purifiez votre corps, retrouvez votre energie, revelez votre eclat avec une formation detox complete incluant perte de poids, detox des 5 emonctoires et detox peau.',
     access: 'paid',
     priceEur: 790,
@@ -564,6 +565,16 @@ courses.push(
     category: 'Detox',
     status: 'published',
     presentation: 'Formation detox complete incluant detox perte de poids, detox des 5 emonctoires et detox peau pour accompagner la purification du corps, l energie, la vitalite et l eclat naturel.',
+    galleryImages: [
+      'formation%20detox/im1.jpeg',
+      'formation%20detox/im2.jpeg',
+      'formation%20detox/im3.jpeg',
+      'formation%20detox/im4.jpeg',
+      'formation%20detox/im5.jpeg',
+      'formation%20detox/im6.jpeg',
+      'formation%20detox/im7.jpeg',
+      'formation%20detox/im8.jpeg',
+    ],
     objectives: [
       'Eliminer les toxines',
       'Retrouver votre legerete',
@@ -693,7 +704,14 @@ courses.push(
         ],
       },
     ],
-    moduleItems: [],
+    moduleItems: [
+      {
+        id: 'module-13-1',
+        title: 'Formation Detox Complete - PDF integral',
+        pdfName: 'FORMATION DETOX COMPLETE.pdf',
+        pdfDataUrl: 'formation%20detox/FORMATION%20D%C3%89TOX%20COMPL%C3%88TE.pdf',
+      },
+    ],
   },
   {
     id: '14',
@@ -1654,7 +1672,7 @@ function serializePublicCatalog() {
       .filter((course) => course.status === 'published')
       .map((course) => ({
         ...course,
-        modules: course.moduleItems?.length || course.modules,
+        modules: Math.max(course.moduleItems?.length ?? 0, course.modules),
       })),
     formulas: formulas
       .filter((formula) => formula.status === 'published')

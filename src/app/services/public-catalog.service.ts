@@ -40,6 +40,7 @@ export interface PublicCatalogCourse {
     title: string;
     chapters: string[];
   }>;
+  galleryImages?: string[];
   moduleItems?: Array<{
     id: string;
     title: string;

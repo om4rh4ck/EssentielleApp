@@ -46,6 +46,48 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                   </div>
                 </div>
 
+                @if (galleryImages().length) {
+                  <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/22 bg-white p-5">
+                    <div class="flex items-center justify-between gap-4">
+                      <div>
+                        <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Galerie de la formation</h2>
+                        <p class="mt-2 text-sm leading-7 text-[var(--color-brand-green-800)]/70">Les 8 visuels ajoutes pour presenter la formation Detox complete.</p>
+                      </div>
+                    </div>
+
+                    <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      @for (image of galleryImages(); track image) {
+                        <a [href]="image" target="_blank" rel="noopener" class="group overflow-hidden rounded-[20px] border border-[var(--color-brand-gold-300)]/20 bg-[var(--color-brand-cream)]">
+                          <img [src]="image" alt="Visuel de la formation Detox" class="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-105" referrerpolicy="no-referrer" />
+                        </a>
+                      }
+                    </div>
+                  </div>
+                }
+
+                @if (moduleItems().length) {
+                  <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/22 bg-[var(--color-brand-cream)]/55 p-5">
+                    <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Support PDF</h2>
+                    <div class="mt-4 space-y-3">
+                      @for (module of moduleItems(); track module.id) {
+                        <a [href]="module.pdfDataUrl" target="_blank" rel="noopener" class="flex items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-[0_10px_22px_rgba(18,53,36,0.04)] transition hover:-translate-y-0.5">
+                          <div class="flex items-center gap-3">
+                            <mat-icon class="!h-[22px] !w-[22px] !text-[22px] text-[#c62828]">picture_as_pdf</mat-icon>
+                            <div>
+                              <div class="font-bold text-[var(--color-brand-green-900)]">{{ module.title }}</div>
+                              <div class="mt-1 text-sm text-[var(--color-brand-green-800)]/70">{{ module.pdfName }}</div>
+                            </div>
+                          </div>
+                          <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white">
+                            Ouvrir
+                            <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">open_in_new</mat-icon>
+                          </span>
+                        </a>
+                      }
+                    </div>
+                  </div>
+                }
+
                 @if (selectedCourse.objectives?.length) {
                   <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/22 bg-[var(--color-brand-cream)]/55 p-5">
                     <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Objectifs de la formation</h2>
@@ -235,6 +277,8 @@ export class FormationEnrollmentComponent implements OnInit {
 
   readonly selectedFormula = computed(() => this.formulas().find((item) => item.id === this.form.controls.formulaId.value) ?? null);
   readonly programModules = computed(() => this.course()?.programModules ?? []);
+  readonly galleryImages = computed(() => this.course()?.galleryImages ?? []);
+  readonly moduleItems = computed(() => this.course()?.moduleItems ?? []);
 
   ngOnInit(): void {
     this.catalog.getCatalog().subscribe((data) => {
