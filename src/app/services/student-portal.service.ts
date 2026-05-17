@@ -38,6 +38,12 @@ export interface StudentCourse {
     title: string;
     content: string;
   }>;
+  programModules?: Array<{
+    id: string;
+    title: string;
+    chapters: string[];
+  }>;
+  galleryImages?: string[];
   moduleItems?: Array<{
     id: string;
     title: string;

@@ -117,6 +117,7 @@ interface PublicEnrollmentRequest {
   courseId: string;
   courseTitle: string;
   courseAccess: CourseAccess;
+  studentId?: string;
   formulaId?: string;
   formulaTitle?: string;
   certificateCount?: number;
@@ -126,7 +127,10 @@ interface PublicEnrollmentRequest {
   city: string;
   country: string;
   message: string;
+  status: 'pending' | 'approved';
   requestedAt: string;
+  approvedAt?: string;
+  approvedBy?: string;
 }
 
 interface RevenueRow {
@@ -1592,6 +1596,23 @@ function getCourseTitle(courseId: string): string {
   return courses.find((course) => course.id === courseId)?.title ?? 'Formation';
 }
 
+function estimateEnrollmentAmount(course: Course, request?: PublicEnrollmentRequest): number {
+  if (request?.formulaId) {
+    const formula = formulas.find((item) => item.id === request.formulaId);
+    if (formula) {
+      return formula.priceEur;
+    }
+  }
+
+  if (request?.certificateCount && course.priceMinEur && course.priceMaxEur) {
+    if (request.certificateCount <= 1) return course.priceMinEur;
+    if (request.certificateCount >= 3) return course.priceMaxEur;
+    return Math.round((course.priceMinEur + course.priceMaxEur) / 2);
+  }
+
+  return course.priceEur;
+}
+
 function getInstructorOwnerIds(user: PublicUser): string[] {
   if (user.role !== 'instructor') return [user.id];
 
@@ -1916,6 +1937,7 @@ app.post('/api/public/enrollment-requests', (req, res): any => {
   const courseId = String(req.body?.courseId ?? '').trim();
   const course = courses.find((item) => item.id === courseId && item.status === 'published');
   if (!course) return res.status(404).json({ error: 'Formation introuvable.' });
+  const studentUser = getCurrentUser(req, ['student']);
 
   const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
   if (name.length < 2) return res.status(400).json({ error: 'Le nom est obligatoire.' });
@@ -1948,6 +1970,7 @@ app.post('/api/public/enrollment-requests', (req, res): any => {
     courseId: course.id,
     courseTitle: course.title,
     courseAccess: course.access,
+    studentId: studentUser?.id,
     formulaId: formula?.id,
     formulaTitle: formula?.title,
     certificateCount: acceptsCertificateSelection ? certificateCount : undefined,
@@ -1957,6 +1980,7 @@ app.post('/api/public/enrollment-requests', (req, res): any => {
     city,
     country,
     message,
+    status: 'pending',
     requestedAt: new Date().toISOString(),
   };
 
@@ -2773,11 +2797,13 @@ app.get('/api/admin/overview', async (req, res): Promise<any> => {
     activeCourses: courses.length,
     totalRevenue: paymentRecords.filter((payment) => payment.status === 'paid').reduce((sum, payment) => sum + payment.amountEur, 0),
     revenueData: revenue,
-    pendingApprovals: paymentRecords.filter((payment) => payment.status === 'pending').map((payment) => ({
-      id: payment.id,
-      name: payment.studentName,
-      type: getCourseTitle(payment.courseId),
-    })),
+    pendingApprovals: publicEnrollmentRequests
+      .filter((request) => request.status === 'pending')
+      .map((request) => ({
+        id: request.id,
+        name: request.name,
+        type: request.courseTitle,
+      })),
   });
 });
 
@@ -3004,6 +3030,104 @@ app.get('/api/admin/payments', (req, res): any => {
   const user = getCurrentUser(req, ['admin']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });
   res.json(paymentRecords.map((payment) => ({ ...payment, courseTitle: getCourseTitle(payment.courseId) })));
+});
+
+app.get('/api/admin/enrollment-requests', async (req, res): Promise<any> => {
+  const user = getCurrentUser(req, ['admin']);
+  if (!user) return res.status(401).json({ error: 'Authentification requise.' });
+
+  const users = await getAllUsers();
+  res.json(
+    publicEnrollmentRequests.map((request) => {
+      const matchedStudent = users.find((item) =>
+        item.role === 'student' && (
+          item.id === request.studentId ||
+          normalizeEmail(item.email) === normalizeEmail(request.email)
+        )
+      );
+
+      return {
+        ...request,
+        matchedStudentId: matchedStudent?.id,
+        matchedStudentName: matchedStudent?.name ?? null,
+      };
+    })
+  );
+});
+
+app.post('/api/admin/enrollment-requests/:requestId/approve', async (req, res): Promise<any> => {
+  const user = getCurrentUser(req, ['admin']);
+  if (!user) return res.status(401).json({ error: 'Authentification requise.' });
+
+  const request = publicEnrollmentRequests.find((item) => item.id === req.params.requestId);
+  if (!request) return res.status(404).json({ error: 'Demande introuvable.' });
+  if (request.status === 'approved') return res.json(request);
+
+  const course = courses.find((item) => item.id === request.courseId);
+  if (!course) return res.status(404).json({ error: 'Formation introuvable.' });
+
+  const users = await getAllUsers();
+  const student = users.find((item) =>
+    item.role === 'student' && (
+      item.id === request.studentId ||
+      normalizeEmail(item.email) === normalizeEmail(request.email)
+    )
+  );
+
+  if (!student) {
+    return res.status(400).json({ error: 'Aucun compte etudiante ne correspond a cette demande. Connectez-vous avec le meme email ou creez ce compte etudiante avant validation.' });
+  }
+
+  const workspace = ensureStudentWorkspace(student);
+  if (!workspace.enrollments.some((item) => item.courseId === course.id)) {
+    workspace.enrollments.push({ courseId: course.id, progress: 0 });
+    course.students += 1;
+  }
+
+  request.studentId = student.id;
+  request.status = 'approved';
+  request.approvedAt = new Date().toISOString();
+  request.approvedBy = user.name;
+
+  if (course.access === 'paid') {
+    const existingPayment = paymentRecords.find((payment) =>
+      payment.studentId === student.id &&
+      payment.courseId === course.id
+    );
+
+    if (existingPayment) {
+      existingPayment.status = 'paid';
+      existingPayment.paidAt = new Date().toISOString();
+      existingPayment.amountEur = estimateEnrollmentAmount(course, request);
+    } else {
+      paymentRecords.unshift({
+        id: `pay-${Date.now()}`,
+        studentId: student.id,
+        studentName: student.name,
+        courseId: course.id,
+        amountEur: estimateEnrollmentAmount(course, request),
+        status: 'paid',
+        paidAt: new Date().toISOString(),
+      });
+    }
+  }
+
+  messages.unshift({
+    id: `msg-enroll-${Date.now()}`,
+    studentId: student.id,
+    studentName: student.name,
+    senderId: user.id,
+    senderRole: 'admin',
+    senderName: user.name,
+    recipientId: student.id,
+    recipientRole: 'student',
+    recipientName: student.name,
+    subject: `Acces valide - ${course.title}`,
+    content: `Votre demande pour la formation ${course.title} a ete acceptee. La formation est maintenant accessible dans votre espace etudiante.`,
+    sentAt: new Date().toISOString(),
+  });
+
+  res.json(request);
 });
 
 app.get('/api/admin/stats', async (req, res): Promise<any> => {

@@ -46,7 +46,7 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                   </div>
                 </div>
 
-                @if (galleryImages().length) {
+                @if (selectedCourse.access === 'free' && galleryImages().length) {
                   <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/22 bg-white p-5">
                     <div class="flex items-center justify-between gap-4">
                       <div>
@@ -65,7 +65,7 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                   </div>
                 }
 
-                @if (moduleItems().length) {
+                @if (selectedCourse.access === 'free' && moduleItems().length) {
                   <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/22 bg-[var(--color-brand-cream)]/55 p-5">
                     <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Support PDF</h2>
                     <div class="mt-4 space-y-3">
@@ -85,6 +85,15 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                         </a>
                       }
                     </div>
+                  </div>
+                }
+
+                @if (selectedCourse.access === 'paid') {
+                  <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-[#fffaf2] p-5">
+                    <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Contenu complet apres validation</h2>
+                    <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/72">
+                      Le support PDF integral, les images detaillees, les modules et tous les chapitres deviennent accessibles dans l'espace etudiante apres acceptation de la demande par l'administration.
+                    </p>
                   </div>
                 }
 
@@ -204,7 +213,7 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
             </section>
           </div>
 
-          @if (programModules().length) {
+          @if (selectedCourse.access === 'free' && programModules().length) {
             <section class="mt-6 rounded-[32px] border border-[var(--color-brand-gold-300)]/26 bg-white p-6 shadow-[0_24px_54px_rgba(18,53,36,0.08)] sm:p-8">
               <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>

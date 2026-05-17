@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 export interface PublicCatalogCourse {
   id: string;
@@ -97,12 +98,20 @@ export interface PublicEnrollmentResponse {
 @Injectable({ providedIn: 'root' })
 export class PublicCatalogService {
   private http = inject(HttpClient);
+  private auth = inject(AuthService);
+
+  private authHeaders(): { headers?: HttpHeaders } {
+    const token = this.auth.getToken();
+    return {
+      headers: token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined,
+    };
+  }
 
   getCatalog(): Observable<PublicCatalogResponse> {
     return this.http.get<PublicCatalogResponse>('/api/public/formations');
   }
 
   createEnrollmentRequest(payload: PublicEnrollmentPayload): Observable<PublicEnrollmentResponse> {
-    return this.http.post<PublicEnrollmentResponse>('/api/public/enrollment-requests', payload);
+    return this.http.post<PublicEnrollmentResponse>('/api/public/enrollment-requests', payload, this.authHeaders());
   }
 }

@@ -18,6 +18,46 @@
             }
           </section>
 
+          @if (galleryImages().length > 0) {
+            <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+              <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-4 flex items-center gap-2">
+                <mat-icon class="text-[var(--color-brand-gold-500)]">photo_library</mat-icon> Galerie
+              </h2>
+              <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                @for (image of galleryImages(); track image) {
+                  <a [href]="image" target="_blank" rel="noopener" class="group overflow-hidden rounded-[20px] border border-[var(--color-brand-gold-300)]/20 bg-[var(--color-brand-cream)]">
+                    <img [src]="image" alt="Illustration de la formation" class="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-105" referrerpolicy="no-referrer" />
+                  </a>
+                }
+              </div>
+            </section>
+          }
+
+          @if (moduleItems().length > 0) {
+            <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+              <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-4 flex items-center gap-2">
+                <mat-icon class="text-[var(--color-brand-gold-500)]">picture_as_pdf</mat-icon> Support PDF
+              </h2>
+              <div class="space-y-4">
+                @for (module of moduleItems(); track module.id) {
+                  <a [href]="module.pdfDataUrl" target="_blank" rel="noopener" class="flex flex-col gap-4 rounded-2xl bg-[var(--color-brand-cream)] p-5 shadow-sm md:flex-row md:items-center md:justify-between">
+                    <div class="flex items-center gap-3">
+                      <mat-icon class="text-[#c62828]">picture_as_pdf</mat-icon>
+                      <div>
+                        <div class="font-bold text-[var(--color-brand-green-900)]">{{ module.title }}</div>
+                        <div class="text-sm text-[var(--color-brand-green-800)]/70">{{ module.pdfName }}</div>
+                      </div>
+                    </div>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white">
+                      Ouvrir
+                      <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">open_in_new</mat-icon>
+                    </span>
+                  </a>
+                }
+              </div>
+            </section>
+          }
+
           @if (objectives().length > 0) {
             <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
               <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-4 flex items-center gap-2">
@@ -49,24 +89,57 @@
                 <div>{{ item.text }}</div>
               </li>
             }
-            @if (chapters().length > 0) {
+            @if (programModules().length > 0) {
               <li class="flex items-start gap-3 text-sm text-gray-700">
                 <mat-icon class="text-gray-400">library_books</mat-icon>
-                <div>{{ chapters().length }} chapitre(s) dans le programme</div>
+                <div>{{ programModules().length }} modules detailles</div>
+              </li>
+            }
+            @if (moduleItems().length > 0) {
+              <li class="flex items-start gap-3 text-sm text-gray-700">
+                <mat-icon class="text-gray-400">attachment</mat-icon>
+                <div>{{ moduleItems().length }} support(s) PDF</div>
               </li>
             }
           </ul>
-
-          <button class="w-full mt-6 py-3 bg-[var(--color-brand-green-900)] text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[var(--color-brand-gold-500)] transition-colors">
-            <mat-icon>play_arrow</mat-icon> Commencer
-          </button>
         </aside>
       </div>
+
+      @if (programModules().length > 0) {
+        <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+          <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-6 flex items-center gap-2">
+            <mat-icon class="text-[var(--color-brand-gold-500)]">format_list_bulleted</mat-icon> Programme complet
+          </h2>
+
+          <div class="grid gap-4 lg:grid-cols-2">
+            @for (module of programModules(); track module.id) {
+              <details class="group rounded-[24px] border border-[var(--color-brand-gold-300)]/20 bg-[linear-gradient(180deg,#fffdf9_0%,#f8f1e5_100%)] p-5" [open]="$first">
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
+                  <div>
+                    <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)]">{{ module.title }}</h3>
+                    <p class="mt-2 text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-gold-700)]">{{ module.chapters.length }} chapitres</p>
+                  </div>
+                  <mat-icon class="!h-[22px] !w-[22px] !text-[22px] text-[var(--color-brand-green-900)] transition-transform group-open:rotate-180">expand_more</mat-icon>
+                </summary>
+
+                <ul class="mt-5 space-y-3 border-t border-[var(--color-brand-gold-300)]/18 pt-5">
+                  @for (chapter of module.chapters; track chapter) {
+                    <li class="flex items-start gap-3 text-sm leading-6 text-[var(--color-brand-green-800)]/78">
+                      <span class="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-green-900)] text-[11px] font-bold text-white">{{ $index + 1 }}</span>
+                      <span>{{ chapter }}</span>
+                    </li>
+                  }
+                </ul>
+              </details>
+            }
+          </div>
+        </section>
+      }
 
       @if (chapters().length > 0) {
         <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
           <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-6 flex items-center gap-2">
-            <mat-icon class="text-[var(--color-brand-gold-500)]">format_list_bulleted</mat-icon> Programme : {{ currentCourse.title }}
+            <mat-icon class="text-[var(--color-brand-gold-500)]">verified</mat-icon> Informations complementaires
           </h2>
 
           <div class="space-y-4">
@@ -86,7 +159,7 @@
       }
     } @else {
       <section class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center text-[var(--color-brand-green-800)]/70">
-        Formation introuvable.
+        Cette formation n'est pas encore accessible dans votre espace etudiante. Demandez a l'administration de valider votre inscription.
       </section>
     }
   </div>

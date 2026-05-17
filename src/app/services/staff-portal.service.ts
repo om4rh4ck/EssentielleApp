@@ -217,6 +217,29 @@ export interface PaymentRecord {
   paidAt: string;
 }
 
+export interface EnrollmentRequestRecord {
+  id: string;
+  courseId: string;
+  courseTitle: string;
+  courseAccess: 'free' | 'paid';
+  studentId?: string;
+  formulaId?: string;
+  formulaTitle?: string;
+  certificateCount?: number;
+  name: string;
+  email: string;
+  phone: string;
+  city: string;
+  country: string;
+  message: string;
+  status: 'pending' | 'approved';
+  requestedAt: string;
+  approvedAt?: string;
+  approvedBy?: string;
+  matchedStudentId?: string | null;
+  matchedStudentName?: string | null;
+}
+
 export interface RoleProfile {
   id: string;
   name: string;
@@ -375,6 +398,14 @@ export class StaffPortalService {
 
   getAdminPayments(): Observable<PaymentRecord[]> {
     return this.http.get<PaymentRecord[]>('/api/admin/payments', this.authHeaders());
+  }
+
+  getAdminEnrollmentRequests(): Observable<EnrollmentRequestRecord[]> {
+    return this.http.get<EnrollmentRequestRecord[]>('/api/admin/enrollment-requests', this.authHeaders());
+  }
+
+  approveAdminEnrollmentRequest(requestId: string): Observable<EnrollmentRequestRecord> {
+    return this.http.post<EnrollmentRequestRecord>(`/api/admin/enrollment-requests/${requestId}/approve`, {}, this.authHeaders());
   }
 
   getAdminStats(): Observable<AdminStatsData> {
