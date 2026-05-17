@@ -1592,6 +1592,30 @@ function getCourseTitle(courseId: string): string {
   return courses.find((course) => course.id === courseId)?.title ?? 'Formation';
 }
 
+function getInstructorOwnerIds(user: PublicUser): string[] {
+  if (user.role !== 'instructor') return [user.id];
+
+  const ownerIds = new Set<string>([user.id]);
+  const normalizedEmail = normalizeEmail(user.email);
+  const isLegacySeedInstructor =
+    normalizedEmail === 'instructor@lessentielle-sante.site' ||
+    user.name.trim().toLowerCase() === 'dr. expert';
+
+  if (isLegacySeedInstructor) {
+    ownerIds.add('2');
+  }
+
+  return Array.from(ownerIds);
+}
+
+function instructorOwnsCourse(user: PublicUser, course: Course): boolean {
+  return getInstructorOwnerIds(user).includes(course.instructorId);
+}
+
+function instructorOwnsFormula(user: PublicUser, formula: TrainingFormula): boolean {
+  return getInstructorOwnerIds(user).includes(formula.instructorId);
+}
+
 function getFormulaPrice(formula: TrainingFormula, currency: 'EUR' | 'TND' | 'USD'): number {
   if (formula.promoEnabled) {
     if (currency === 'TND' && formula.promoPriceTnd && formula.promoPriceTnd > 0) return formula.promoPriceTnd;
@@ -2128,7 +2152,7 @@ app.get('/api/instructor/overview', (req, res): any => {
   const user = getCurrentUser(req, ['instructor']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });
 
-  const ownCourses = courses.filter((course) => course.instructorId === user.id);
+  const ownCourses = courses.filter((course) => instructorOwnsCourse(user, course));
   const studentIds = Array.from(new Set(ownCourses.flatMap((course) => getStudentIdsForCourse(course.id))));
   res.json({
     totalStudents: studentIds.length,
@@ -2142,13 +2166,13 @@ app.get('/api/instructor/overview', (req, res): any => {
 app.get('/api/instructor/courses', (req, res): any => {
   const user = getCurrentUser(req, ['instructor']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });
-  res.json(courses.filter((course) => course.instructorId === user.id));
+  res.json(courses.filter((course) => instructorOwnsCourse(user, course)));
 });
 
 app.get('/api/instructor/formulas', (req, res): any => {
   const user = getCurrentUser(req, ['instructor']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });
-  res.json(formulas.filter((formula) => formula.instructorId === user.id));
+  res.json(formulas.filter((formula) => instructorOwnsFormula(user, formula)));
 });
 
 app.post('/api/instructor/courses', (req, res): any => {
@@ -2230,7 +2254,7 @@ app.put('/api/instructor/courses/:courseId', (req, res): any => {
     const user = getCurrentUser(req, ['instructor']);
     if (!user) return res.status(401).json({ error: 'Authentification requise.' });
 
-    const course = courses.find((item) => item.id === req.params.courseId && item.instructorId === user.id);
+    const course = courses.find((item) => item.id === req.params.courseId && instructorOwnsCourse(user, item));
     if (!course) return res.status(404).json({ error: 'Formation introuvable.' });
 
     // Valider et mettre à jour le titre
@@ -2306,7 +2330,7 @@ app.delete('/api/instructor/courses/:courseId', (req, res): any => {
   const user = getCurrentUser(req, ['instructor']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });
 
-  const index = courses.findIndex((item) => item.id === req.params.courseId && item.instructorId === user.id);
+  const index = courses.findIndex((item) => item.id === req.params.courseId && instructorOwnsCourse(user, item));
   if (index === -1) return res.status(404).json({ error: 'Formation introuvable.' });
   courses.splice(index, 1);
   res.status(204).send();
@@ -2358,7 +2382,7 @@ app.put('/api/instructor/formulas/:formulaId', (req, res): any => {
     const user = getCurrentUser(req, ['instructor']);
     if (!user) return res.status(401).json({ error: 'Authentification requise.' });
 
-    const formula = formulas.find((item) => item.id === req.params.formulaId && item.instructorId === user.id);
+    const formula = formulas.find((item) => item.id === req.params.formulaId && instructorOwnsFormula(user, item));
     if (!formula) return res.status(404).json({ error: 'Formule introuvable.' });
 
     if (req.body?.title !== undefined) {
@@ -2403,7 +2427,7 @@ app.delete('/api/instructor/formulas/:formulaId', (req, res): any => {
   const user = getCurrentUser(req, ['instructor']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });
 
-  const index = formulas.findIndex((item) => item.id === req.params.formulaId && item.instructorId === user.id);
+  const index = formulas.findIndex((item) => item.id === req.params.formulaId && instructorOwnsFormula(user, item));
   if (index === -1) return res.status(404).json({ error: 'Formule introuvable.' });
 
   formulas.splice(index, 1);
@@ -2452,7 +2476,7 @@ app.post('/api/instructor/schedule', (req, res): any => {
     return res.status(400).json({ error: 'Donnees emploi du temps invalides.' });
   }
 
-  const course = courses.find((item) => item.id === courseId && item.instructorId === user.id);
+  const course = courses.find((item) => item.id === courseId && instructorOwnsCourse(user, item));
   if (!course) {
     return res.status(404).json({ error: 'Formation introuvable pour cette formatrice.' });
   }
@@ -2650,7 +2674,10 @@ app.get('/api/instructor/exams', (req, res): any => {
 
   res.json(
     exams
-      .filter((exam) => courses.find((course) => course.id === exam.courseId)?.instructorId === user.id)
+      .filter((exam) => {
+        const course = courses.find((item) => item.id === exam.courseId);
+        return course ? instructorOwnsCourse(user, course) : false;
+      })
       .map((exam) => ({
         id: exam.id,
         title: exam.title,
