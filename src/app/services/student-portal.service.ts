@@ -101,7 +101,12 @@ export interface StudentExam {
   title: string;
   courseTitle: string;
   assignedBy: string;
-  status: 'available' | 'graded';
+  examType: 'quiz' | 'final';
+  durationMinutes: number;
+  maxAttempts: number;
+  attemptsUsed: number;
+  attemptsRemaining: number;
+  status: 'available' | 'graded' | 'locked';
   score: number | null;
   average: number;
   dueDate: string;

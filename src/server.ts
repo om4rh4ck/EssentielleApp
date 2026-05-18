@@ -9,6 +9,7 @@ import { join } from 'node:path';
 import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import mysql, { Pool } from 'mysql2/promise';
 import nodemailer from 'nodemailer';
+import { DETOX_FINAL_EXAM_QUESTIONS } from './data/detox-final-exam';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -259,6 +260,9 @@ interface ExamTemplate {
   courseId: string;
   assignedBy: string;
   dueDate: string;
+  examType?: 'quiz' | 'final';
+  durationMinutes?: number;
+  maxAttempts?: number;
   questions: ExamQuestion[];
 }
 
@@ -267,6 +271,7 @@ interface StudentAttempt {
   answers: number[];
   score: number;
   submittedAt: string;
+  attemptCount: number;
 }
 
 interface PaymentRecord {
@@ -738,6 +743,12 @@ courses.push(
         pdfName: 'FORMATION DETOX COMPLETE.pdf',
         pdfDataUrl: 'formation%20detox/FORMATION%20D%C3%89TOX%20COMPL%C3%88TE.pdf',
       },
+      {
+        id: 'module-13-2',
+        title: 'QCM final Detox - PDF source',
+        pdfName: 'QCM derox.pdf',
+        pdfDataUrl: 'formation%20detox/QCM%20derox.pdf',
+      },
     ],
   },
   {
@@ -1157,6 +1168,9 @@ function bootstrapRoleData(): void {
       courseId: '1',
       assignedBy: 'Dr. Expert',
       dueDate: '2026-05-20T23:59:00.000Z',
+      examType: 'quiz',
+      durationMinutes: 20,
+      maxAttempts: 1,
       questions: [
         {
           id: 'q1',
@@ -1180,6 +1194,9 @@ function bootstrapRoleData(): void {
       courseId: '4',
       assignedBy: 'Dr. Expert',
       dueDate: '2026-05-28T23:59:00.000Z',
+      examType: 'quiz',
+      durationMinutes: 20,
+      maxAttempts: 1,
       questions: [
         {
           id: 'q3',
@@ -1196,6 +1213,23 @@ function bootstrapRoleData(): void {
           points: 10,
         },
       ],
+    },
+    {
+      id: 'exam-detox-final',
+      title: 'Examen final - Formation Detox Therapeutique Complete',
+      courseId: '13',
+      assignedBy: 'Dr. Expert',
+      dueDate: '2026-12-31T23:59:00.000Z',
+      examType: 'final',
+      durationMinutes: 30,
+      maxAttempts: 2,
+      questions: DETOX_FINAL_EXAM_QUESTIONS.map((question, index) => ({
+        id: `detox-final-q${index + 1}`,
+        prompt: question.prompt,
+        options: question.options,
+        correctIndex: question.correctIndex,
+        points: 1,
+      })),
     }
   );
 
@@ -1205,6 +1239,7 @@ function bootstrapRoleData(): void {
       answers: [0, 1],
       score: 20,
       submittedAt: '2026-05-02T13:00:00.000Z',
+      attemptCount: 1,
     },
   ]);
 }
@@ -1971,6 +2006,14 @@ function getExamAverage(examId: string): number {
   return Number((scores.reduce((sum, score) => sum + score, 0) / scores.length).toFixed(1));
 }
 
+function getExamMaxAttempts(exam: ExamTemplate): number {
+  return Math.max(1, exam.maxAttempts ?? 1);
+}
+
+function getExamDurationMinutes(exam: ExamTemplate): number {
+  return Math.max(1, exam.durationMinutes ?? 20);
+}
+
 function toStudentExamView(user: PublicUser) {
   const workspace = ensureStudentWorkspace(user);
   const enrolledIds = workspace.enrollments.map((item) => item.courseId);
@@ -1978,16 +2021,24 @@ function toStudentExamView(user: PublicUser) {
     .filter((exam) => enrolledIds.includes(exam.courseId))
     .map((exam) => {
       const attempt = getAttempt(user.id, exam.id);
+      const maxAttempts = getExamMaxAttempts(exam);
+      const attemptsUsed = attempt?.attemptCount ?? 0;
+      const attemptsRemaining = Math.max(maxAttempts - attemptsUsed, 0);
       return {
         id: exam.id,
         title: exam.title,
         courseTitle: getCourseTitle(exam.courseId),
         assignedBy: exam.assignedBy,
-        status: attempt ? 'graded' : 'available',
+        examType: exam.examType ?? 'quiz',
+        durationMinutes: getExamDurationMinutes(exam),
+        maxAttempts,
+        attemptsUsed,
+        attemptsRemaining,
+        status: attemptsRemaining === 0 ? 'locked' : attempt ? 'graded' : 'available',
         score: attempt?.score ?? null,
         average: getExamAverage(exam.id),
         dueDate: exam.dueDate,
-        questions: attempt
+        questions: attemptsRemaining === 0
           ? undefined
           : exam.questions.map((question) => ({
               id: question.id,
@@ -2556,22 +2607,30 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
     return res.status(403).json({ error: 'Examen non accessible.' });
   }
 
-  const score = exam.questions.reduce((sum, question, index) => {
-    return sum + (answers[index] === question.correctIndex ? question.points : 0);
-  }, 0);
-
   const attempts = studentAttempts.get(user.id) ?? [];
   const existing = attempts.find((attempt) => attempt.examId === exam.id);
+  const maxAttempts = getExamMaxAttempts(exam);
+  if (existing && existing.attemptCount >= maxAttempts) {
+    return res.status(400).json({ error: 'Nombre maximum d essais atteint pour cet examen.' });
+  }
+
+  const rawScore = exam.questions.reduce((sum, question, index) => {
+    return sum + (answers[index] === question.correctIndex ? question.points : 0);
+  }, 0);
+  const totalPoints = exam.questions.reduce((sum, question) => sum + question.points, 0);
+  const score = totalPoints > 0 ? Number(((rawScore / totalPoints) * 20).toFixed(1)) : 0;
   if (existing) {
     existing.answers = answers;
     existing.score = score;
     existing.submittedAt = new Date().toISOString();
+    existing.attemptCount += 1;
   } else {
     attempts.push({
       examId: exam.id,
       answers,
       score,
       submittedAt: new Date().toISOString(),
+      attemptCount: 1,
     });
   }
   studentAttempts.set(user.id, attempts);
@@ -3145,6 +3204,9 @@ app.post('/api/instructor/exams', (req, res): any => {
     courseId,
     assignedBy: user.name,
     dueDate,
+    examType: 'quiz',
+    durationMinutes: 20,
+    maxAttempts: 1,
     questions: incomingQuestions.map((question: any, index: number) => ({
       id: `question-${Date.now()}-${index}`,
       prompt: String(question.prompt ?? '').trim(),
