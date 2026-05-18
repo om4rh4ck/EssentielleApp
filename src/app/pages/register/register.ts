@@ -16,8 +16,8 @@ import { AuthService } from '../../services/auth.service';
         <div class="absolute bottom-[-8%] left-[-5%] h-80 w-80 rounded-full bg-[var(--color-brand-green-800)]/10 blur-3xl"></div>
       </div>
 
-      <div class="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-center gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,430px)]">
-        <section class="rounded-[34px] border border-white/70 bg-white/92 p-6 shadow-[0_30px_80px_rgba(17,28,22,0.10)] backdrop-blur sm:p-8 lg:p-10">
+      <div class="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-[1720px] items-center gap-8 lg:grid-cols-[minmax(0,1.24fr)_minmax(420px,520px)]">
+        <section class="rounded-[34px] border border-white/70 bg-white/92 p-6 shadow-[0_30px_80px_rgba(17,28,22,0.10)] backdrop-blur sm:p-8 lg:p-10 xl:p-12">
           <div class="mb-8 flex flex-col gap-6 border-b border-[var(--color-brand-gold-300)]/25 pb-8 lg:flex-row lg:items-start lg:justify-between">
             <div class="max-w-2xl">
               <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/40 bg-[var(--color-brand-cream)] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-500)]">
@@ -36,8 +36,8 @@ import { AuthService } from '../../services/auth.service';
             </a>
           </div>
 
-          <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_270px]">
-            <div class="rounded-[30px] border border-[var(--color-brand-gold-300)]/22 bg-[linear-gradient(180deg,#fffefe_0%,#fbf7ef_100%)] p-6 shadow-[0_18px_40px_rgba(17,28,22,0.05)] sm:p-7">
+          <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px] 2xl:grid-cols-[minmax(0,1fr)_360px]">
+            <div class="rounded-[30px] border border-[var(--color-brand-gold-300)]/22 bg-[linear-gradient(180deg,#fffefe_0%,#fbf7ef_100%)] p-6 shadow-[0_18px_40px_rgba(17,28,22,0.05)] sm:p-7 xl:p-8">
               <div class="mb-6 flex items-center gap-3">
                 <a routerLink="/" class="inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--color-brand-gold-300)]/35 bg-white p-2 shadow-lg shadow-[var(--color-brand-gold-300)]/20">
                   <img src="lo2 originale.png" alt="Essenti'Elle Sante" class="h-full w-full rounded-xl object-contain" />
@@ -72,74 +72,109 @@ import { AuthService } from '../../services/auth.service';
                 </div>
 
                 <div class="grid gap-5 sm:grid-cols-2">
-                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3 sm:col-span-2">
-                    <label for="reg-name" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                  <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/28 bg-white px-5 py-4 shadow-[0_12px_24px_rgba(17,28,22,0.04)] sm:col-span-2">
+                    <label for="reg-name" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-green-900)]">
                       <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">badge</mat-icon>
                       Nom complet
                     </label>
-                    <input type="text" id="reg-name" formControlName="name"
-                      class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
-                      placeholder="Ex: Sophie Martin" />
+                    <div class="flex items-center gap-3 rounded-2xl border border-[var(--color-brand-gold-300)]/18 bg-[var(--color-brand-cream)]/58 px-4 py-3">
+                      <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--color-brand-gold-500)] shadow-sm">
+                        <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">person</mat-icon>
+                      </span>
+                      <input type="text" id="reg-name" formControlName="name"
+                        class="w-full border-0 bg-transparent px-1 py-1 text-base text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                        placeholder="Ex: Sophie Martin" />
+                    </div>
                   </div>
 
-                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3 sm:col-span-2">
-                    <label for="reg-email" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                  <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/28 bg-white px-5 py-4 shadow-[0_12px_24px_rgba(17,28,22,0.04)] sm:col-span-2">
+                    <label for="reg-email" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-green-900)]">
                       <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">alternate_email</mat-icon>
                       Email
                     </label>
-                    <input type="email" id="reg-email" formControlName="email"
-                      class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
-                      placeholder="votre@email.com" />
+                    <div class="flex items-center gap-3 rounded-2xl border border-[var(--color-brand-gold-300)]/18 bg-[var(--color-brand-cream)]/58 px-4 py-3">
+                      <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--color-brand-gold-500)] shadow-sm">
+                        <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">mail</mat-icon>
+                      </span>
+                      <input type="email" id="reg-email" formControlName="email"
+                        class="w-full border-0 bg-transparent px-1 py-1 text-base text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                        placeholder="votre@email.com" />
+                    </div>
                   </div>
 
-                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3">
-                    <label for="reg-phone" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                  <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/28 bg-white px-5 py-4 shadow-[0_12px_24px_rgba(17,28,22,0.04)]">
+                    <label for="reg-phone" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-green-900)]">
                       <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">call</mat-icon>
                       Telephone
                     </label>
-                    <input type="text" id="reg-phone" formControlName="phone"
-                      class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
-                      placeholder="+216 ..." />
+                    <div class="flex items-center gap-3 rounded-2xl border border-[var(--color-brand-gold-300)]/18 bg-[var(--color-brand-cream)]/58 px-4 py-3">
+                      <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--color-brand-gold-500)] shadow-sm">
+                        <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">call</mat-icon>
+                      </span>
+                      <input type="text" id="reg-phone" formControlName="phone"
+                        class="w-full border-0 bg-transparent px-1 py-1 text-base text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                        placeholder="+216 ..." />
+                    </div>
                   </div>
 
-                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3">
-                    <label for="reg-city" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                  <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/28 bg-white px-5 py-4 shadow-[0_12px_24px_rgba(17,28,22,0.04)]">
+                    <label for="reg-city" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-green-900)]">
                       <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">location_city</mat-icon>
                       Ville
                     </label>
-                    <input type="text" id="reg-city" formControlName="city"
-                      class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
-                      placeholder="Djerba" />
+                    <div class="flex items-center gap-3 rounded-2xl border border-[var(--color-brand-gold-300)]/18 bg-[var(--color-brand-cream)]/58 px-4 py-3">
+                      <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--color-brand-gold-500)] shadow-sm">
+                        <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">apartment</mat-icon>
+                      </span>
+                      <input type="text" id="reg-city" formControlName="city"
+                        class="w-full border-0 bg-transparent px-1 py-1 text-base text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                        placeholder="Djerba" />
+                    </div>
                   </div>
 
-                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3 sm:col-span-2">
-                    <label for="reg-country" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                  <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/28 bg-white px-5 py-4 shadow-[0_12px_24px_rgba(17,28,22,0.04)] sm:col-span-2">
+                    <label for="reg-country" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-green-900)]">
                       <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">public</mat-icon>
                       Pays
                     </label>
-                    <input type="text" id="reg-country" formControlName="country"
-                      class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
-                      placeholder="Tunisie" />
+                    <div class="flex items-center gap-3 rounded-2xl border border-[var(--color-brand-gold-300)]/18 bg-[var(--color-brand-cream)]/58 px-4 py-3">
+                      <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--color-brand-gold-500)] shadow-sm">
+                        <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">flag</mat-icon>
+                      </span>
+                      <input type="text" id="reg-country" formControlName="country"
+                        class="w-full border-0 bg-transparent px-1 py-1 text-base text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                        placeholder="Tunisie" />
+                    </div>
                   </div>
 
-                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3 sm:col-span-2">
-                    <label for="reg-objective" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                  <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/28 bg-white px-5 py-4 shadow-[0_12px_24px_rgba(17,28,22,0.04)] sm:col-span-2">
+                    <label for="reg-objective" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-green-900)]">
                       <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">track_changes</mat-icon>
                       Objectif
                     </label>
-                    <textarea id="reg-objective" rows="3" formControlName="objective"
-                      class="w-full resize-none border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
-                      placeholder="Votre projet dans le bien-etre feminin"></textarea>
+                    <div class="flex items-start gap-3 rounded-2xl border border-[var(--color-brand-gold-300)]/18 bg-[var(--color-brand-cream)]/58 px-4 py-3">
+                      <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--color-brand-gold-500)] shadow-sm">
+                        <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">rocket_launch</mat-icon>
+                      </span>
+                      <textarea id="reg-objective" rows="3" formControlName="objective"
+                        class="w-full resize-none border-0 bg-transparent px-1 py-1 text-base text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                        placeholder="Votre projet dans le bien-etre feminin"></textarea>
+                    </div>
                   </div>
 
-                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3 sm:col-span-2">
-                    <label for="reg-pwd" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                  <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/28 bg-white px-5 py-4 shadow-[0_12px_24px_rgba(17,28,22,0.04)] sm:col-span-2">
+                    <label for="reg-pwd" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-green-900)]">
                       <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">lock</mat-icon>
                       Mot de passe
                     </label>
-                    <input type="password" id="reg-pwd" formControlName="password"
-                      class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
-                      placeholder="********" />
+                    <div class="flex items-center gap-3 rounded-2xl border border-[var(--color-brand-gold-300)]/18 bg-[var(--color-brand-cream)]/58 px-4 py-3">
+                      <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--color-brand-gold-500)] shadow-sm">
+                        <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">password</mat-icon>
+                      </span>
+                      <input type="password" id="reg-pwd" formControlName="password"
+                        class="w-full border-0 bg-transparent px-1 py-1 text-base text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                        placeholder="********" />
+                    </div>
                   </div>
                 </div>
 
