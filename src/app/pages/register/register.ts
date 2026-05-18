@@ -10,14 +10,14 @@ import { AuthService } from '../../services/auth.service';
   imports: [RouterLink, MatIconModule, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="relative min-h-screen overflow-hidden bg-[linear-gradient(135deg,#f8f4ec_0%,#fffdf9_36%,#f0e4c9_100%)] px-4 py-8 font-sans sm:px-6 lg:px-10">
+    <div class="relative min-h-screen overflow-hidden bg-[linear-gradient(135deg,#f8f4ec_0%,#fffdf9_36%,#f0e4c9_100%)] px-2 py-4 font-sans sm:px-3 sm:py-5 lg:px-4 lg:py-6">
       <div class="pointer-events-none absolute inset-0">
         <div class="absolute right-[-6%] top-[8%] h-72 w-72 rounded-full bg-[var(--color-brand-gold-300)]/28 blur-3xl"></div>
         <div class="absolute bottom-[-8%] left-[-5%] h-80 w-80 rounded-full bg-[var(--color-brand-green-800)]/10 blur-3xl"></div>
       </div>
 
-      <div class="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-[1840px] items-center gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(430px,520px)]">
-        <section class="rounded-[34px] border border-white/70 bg-white/92 p-6 shadow-[0_30px_80px_rgba(17,28,22,0.10)] backdrop-blur sm:p-8 lg:p-10 xl:p-12">
+      <div class="relative z-10 mx-auto grid min-h-[calc(100vh-1.5rem)] w-full max-w-none items-center gap-8 lg:grid-cols-[minmax(0,1.45fr)_minmax(430px,540px)]">
+        <section class="rounded-[34px] border border-white/70 bg-white/92 p-6 shadow-[0_30px_80px_rgba(17,28,22,0.10)] backdrop-blur sm:p-8 lg:p-10 xl:p-12 2xl:px-14">
           <div class="mb-8 flex flex-col gap-6 border-b border-[var(--color-brand-gold-300)]/25 pb-8 lg:flex-row lg:items-start lg:justify-between">
             <div class="max-w-2xl">
               <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/40 bg-[var(--color-brand-cream)] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-500)]">
