@@ -20,20 +20,11 @@ import { MatIconModule } from '@angular/material/icon';
         <section class="w-full rounded-[34px] border border-white/70 bg-white/92 p-6 shadow-[0_30px_80px_rgba(17,28,22,0.10)] backdrop-blur sm:p-8 lg:p-10 xl:p-12 2xl:px-14">
           <div class="mb-8 flex flex-col gap-6 border-b border-[var(--color-brand-gold-300)]/25 pb-8 lg:flex-row lg:items-start lg:justify-between">
             <div class="max-w-2xl">
-              <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/40 bg-[var(--color-brand-cream)] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-500)]">
-                <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">verified_user</mat-icon>
-                Portail SaaS Essenti'Elle
-              </div>
               <h1 class="mt-5 font-serif text-4xl leading-tight text-[var(--color-brand-green-900)] sm:text-5xl">Bon retour dans votre espace professionnel</h1>
               <p class="mt-4 max-w-xl text-sm leading-7 text-[var(--color-brand-green-800)]/72 sm:text-base">
                 Connectez-vous pour retrouver vos formations, vos demandes d'inscription et vos reservations depuis une interface claire, rapide et rassurante.
               </p>
             </div>
-
-            <a routerLink="/register" [queryParams]="registerQueryParams()" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-[var(--color-brand-gold-300)]/45 bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white shadow-[0_18px_35px_rgba(15,23,19,0.16)] transition hover:-translate-y-0.5 hover:bg-[var(--color-brand-green-800)]">
-              <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">person_add</mat-icon>
-              S'inscrire
-            </a>
           </div>
 
           <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
