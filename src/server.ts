@@ -1311,6 +1311,54 @@ function isMailerConfigured(): boolean {
   return !!getSmtpConfig();
 }
 
+async function sendRegistrationSuccessEmail(user: PublicUser, req: Request): Promise<boolean> {
+  const config = getSmtpConfig();
+  if (!config) {
+    console.warn('[MAIL] SMTP not configured. Registration email skipped.');
+    return false;
+  }
+
+  const loginUrl = `${getAppUrl(req)}/login`;
+  const transporter = nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
+  });
+
+  await transporter.sendMail({
+    from: config.from,
+    to: user.email,
+    replyTo: config.replyTo,
+    subject: 'Inscription reussie - Essenti Elle Sante',
+    text: [
+      `Bonjour ${user.name},`,
+      '',
+      'Votre inscription sur Essenti Elle Sante a bien ete enregistree.',
+      `Votre e-mail de connexion : ${user.email}`,
+      `Votre identifiant : ${user.username}`,
+      `Acces a la connexion : ${loginUrl}`,
+      '',
+      "L'equipe Essenti'Elle Sante",
+    ].join('\n'),
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173526">
+        <p>Bonjour ${user.name},</p>
+        <p>Votre inscription sur <strong>Essenti Elle Sante</strong> a bien ete enregistree.</p>
+        <p><strong>E-mail de connexion :</strong> ${user.email}<br>
+        <strong>Identifiant :</strong> ${user.username}</p>
+        <p><a href="${loginUrl}" style="display:inline-block;padding:12px 18px;background:#1F2A24;color:#fff;text-decoration:none;border-radius:12px;">Se connecter</a></p>
+        <p>L'equipe Essenti'Elle Sante</p>
+      </div>
+    `,
+  });
+
+  return true;
+}
+
 async function sendPaidEnrollmentApprovalEmail(student: PublicUser, course: Course, request: PublicEnrollmentRequest): Promise<boolean> {
   const config = getSmtpConfig();
   if (!config) {
@@ -2131,6 +2179,11 @@ app.post('/api/register', async (req, res) => {
     const created = await createStoredUser(name, email, password, { phone, city, country, objective });
     const user = toPublicUser(created);
     await hydrateUserData(user);
+    try {
+      await sendRegistrationSuccessEmail(user, req);
+    } catch (mailError) {
+      console.error('[MAIL] Registration success email failed', mailError);
+    }
     const token = createToken(user);
     res.status(201).json({ token, user });
   } catch (error: unknown) {
@@ -3481,23 +3534,19 @@ app.post('/api/admin/enrollment-requests/:requestId/approve', async (req, res): 
   });
 
   let approvalEmailSent = false;
-  if (course.access === 'paid') {
-    try {
-      approvalEmailSent = await sendPaidEnrollmentApprovalEmail(student, course, request);
-    } catch (error) {
-      console.error('[MAIL] Failed to send approval email', error);
-    }
+  try {
+    approvalEmailSent = await sendPaidEnrollmentApprovalEmail(student, course, request);
+  } catch (error) {
+    console.error('[MAIL] Failed to send approval email', error);
   }
 
   res.json({
     ...request,
-    feedbackMessage: course.access === 'paid'
-      ? (approvalEmailSent
-        ? 'La demande a ete validee, l acces a ete ouvert et l email d acceptation a ete envoye automatiquement.'
-        : (isMailerConfigured()
-          ? 'La demande a ete validee et l acces a ete ouvert, mais l email automatique n a pas pu etre envoye.'
-          : 'La demande a ete validee et l acces a ete ouvert. Configurez le SMTP pour activer l email automatique depuis votre adresse professionnelle.'))
-      : 'La demande a ete validee et l acces a ete ouvert.',
+    feedbackMessage: approvalEmailSent
+      ? 'La demande a ete validee, l acces a ete ouvert et l email d acceptation a ete envoye automatiquement.'
+      : (isMailerConfigured()
+        ? 'La demande a ete validee et l acces a ete ouvert, mais l email automatique n a pas pu etre envoye.'
+        : 'La demande a ete validee et l acces a ete ouvert. Configurez le SMTP pour activer l email automatique depuis votre adresse professionnelle.'),
     approvalEmailSent,
   });
 });
