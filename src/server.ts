@@ -263,6 +263,8 @@ interface ExamTemplate {
   examType?: 'quiz' | 'final';
   durationMinutes?: number;
   maxAttempts?: number;
+  gradingScaleMax?: number;
+  passThreshold?: number;
   questions: ExamQuestion[];
 }
 
@@ -743,12 +745,6 @@ courses.push(
         pdfName: 'FORMATION DETOX COMPLETE.pdf',
         pdfDataUrl: 'formation%20detox/FORMATION%20D%C3%89TOX%20COMPL%C3%88TE.pdf',
       },
-      {
-        id: 'module-13-2',
-        title: 'QCM final Detox - PDF source',
-        pdfName: 'QCM derox.pdf',
-        pdfDataUrl: 'formation%20detox/QCM%20derox.pdf',
-      },
     ],
   },
   {
@@ -1171,6 +1167,8 @@ function bootstrapRoleData(): void {
       examType: 'quiz',
       durationMinutes: 20,
       maxAttempts: 1,
+      gradingScaleMax: 20,
+      passThreshold: 10,
       questions: [
         {
           id: 'q1',
@@ -1197,6 +1195,8 @@ function bootstrapRoleData(): void {
       examType: 'quiz',
       durationMinutes: 20,
       maxAttempts: 1,
+      gradingScaleMax: 20,
+      passThreshold: 10,
       questions: [
         {
           id: 'q3',
@@ -1223,6 +1223,8 @@ function bootstrapRoleData(): void {
       examType: 'final',
       durationMinutes: 30,
       maxAttempts: 2,
+      gradingScaleMax: 100,
+      passThreshold: 70,
       questions: DETOX_FINAL_EXAM_QUESTIONS.map((question, index) => ({
         id: `detox-final-q${index + 1}`,
         prompt: question.prompt,
@@ -2006,12 +2008,97 @@ function getExamAverage(examId: string): number {
   return Number((scores.reduce((sum, score) => sum + score, 0) / scores.length).toFixed(1));
 }
 
+function normalizeScoreToTwenty(examId: string, score: number): number {
+  const exam = exams.find((item) => item.id === examId);
+  if (!exam) return score;
+  return Number(((score / getExamScaleMax(exam)) * 20).toFixed(1));
+}
+
 function getExamMaxAttempts(exam: ExamTemplate): number {
   return Math.max(1, exam.maxAttempts ?? 1);
 }
 
 function getExamDurationMinutes(exam: ExamTemplate): number {
   return Math.max(1, exam.durationMinutes ?? 20);
+}
+
+function getExamScaleMax(exam: ExamTemplate): number {
+  return Math.max(1, exam.gradingScaleMax ?? 20);
+}
+
+function getExamPassThreshold(exam: ExamTemplate): number {
+  const scaleMax = getExamScaleMax(exam);
+  return Math.min(scaleMax, Math.max(0, exam.passThreshold ?? scaleMax / 2));
+}
+
+function getStoredUserById(userId: string): StoredUser | null {
+  return memoryUsers.find((item) => item.id === userId) ?? null;
+}
+
+function ensureExamCertificate(student: PublicUser, exam: ExamTemplate, score: number): void {
+  if (exam.examType !== 'final' || score < getExamPassThreshold(exam)) return;
+  const workspace = ensureStudentWorkspace(student);
+  const existing = workspace.certificates.find((item) => item.courseId === exam.courseId);
+  if (existing) {
+    existing.status = 'issued';
+    existing.issuedAt = new Date().toISOString();
+    existing.signedBy = exam.assignedBy;
+    return;
+  }
+
+  workspace.certificates.unshift({
+    id: `cert-exam-${exam.id}-${student.id}`,
+    courseId: exam.courseId,
+    title: `Certificat - ${getCourseTitle(exam.courseId)}`,
+    issuedAt: new Date().toISOString(),
+    status: 'issued',
+    signedBy: exam.assignedBy,
+  });
+}
+
+function buildStudentExamReview(exam: ExamTemplate, attempt: StudentAttempt) {
+  return exam.questions.map((question, index) => {
+    const selectedIndex = attempt.answers[index] ?? -1;
+    return {
+      id: question.id,
+      prompt: question.prompt,
+      selectedIndex,
+      selectedOption: selectedIndex >= 0 ? question.options[selectedIndex] ?? '' : '',
+      correctIndex: question.correctIndex,
+      correctOption: question.options[question.correctIndex] ?? '',
+      isCorrect: selectedIndex === question.correctIndex,
+      points: question.points,
+    };
+  });
+}
+
+function getSuccessfulStudentsForExam(exam: ExamTemplate) {
+  const successful: Array<{
+    studentId: string;
+    studentName: string;
+    studentEmail: string;
+    score: number;
+    submittedAt: string;
+    certificateIssued: boolean;
+  }> = [];
+
+  for (const [studentId, attempts] of studentAttempts.entries()) {
+    const attempt = attempts.find((item) => item.examId === exam.id);
+    if (!attempt || attempt.score < getExamPassThreshold(exam)) continue;
+    const student = getStoredUserById(studentId);
+    if (!student) continue;
+    const workspace = ensureStudentWorkspace(toPublicUser(student));
+    successful.push({
+      studentId,
+      studentName: student.name,
+      studentEmail: student.email,
+      score: attempt.score,
+      submittedAt: attempt.submittedAt,
+      certificateIssued: workspace.certificates.some((item) => item.courseId === exam.courseId && item.status === 'issued'),
+    });
+  }
+
+  return successful.sort((a, b) => b.score - a.score);
 }
 
 function toStudentExamView(user: PublicUser) {
@@ -2031,13 +2118,17 @@ function toStudentExamView(user: PublicUser) {
         assignedBy: exam.assignedBy,
         examType: exam.examType ?? 'quiz',
         durationMinutes: getExamDurationMinutes(exam),
+        gradingScaleMax: getExamScaleMax(exam),
+        passThreshold: getExamPassThreshold(exam),
         maxAttempts,
         attemptsUsed,
         attemptsRemaining,
         status: attemptsRemaining === 0 ? 'locked' : attempt ? 'graded' : 'available',
         score: attempt?.score ?? null,
+        passed: attempt ? attempt.score >= getExamPassThreshold(exam) : null,
         average: getExamAverage(exam.id),
         dueDate: exam.dueDate,
+        reviewQuestions: attempt ? buildStudentExamReview(exam, attempt) : undefined,
         questions: attemptsRemaining === 0
           ? undefined
           : exam.questions.map((question) => ({
@@ -2053,7 +2144,7 @@ function toStudentExamView(user: PublicUser) {
 function getStudentAverage(studentId: string): number {
   const attempts = studentAttempts.get(studentId) ?? [];
   if (!attempts.length) return 0;
-  return Number((attempts.reduce((sum, attempt) => sum + attempt.score, 0) / attempts.length).toFixed(1));
+  return Number((attempts.reduce((sum, attempt) => sum + normalizeScoreToTwenty(attempt.examId, attempt.score), 0) / attempts.length).toFixed(1));
 }
 
 function serializeCatalog(user: PublicUser) {
@@ -2618,7 +2709,7 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
     return sum + (answers[index] === question.correctIndex ? question.points : 0);
   }, 0);
   const totalPoints = exam.questions.reduce((sum, question) => sum + question.points, 0);
-  const score = totalPoints > 0 ? Number(((rawScore / totalPoints) * 20).toFixed(1)) : 0;
+  const score = totalPoints > 0 ? Number(((rawScore / totalPoints) * getExamScaleMax(exam)).toFixed(1)) : 0;
   if (existing) {
     existing.answers = answers;
     existing.score = score;
@@ -2634,6 +2725,7 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
     });
   }
   studentAttempts.set(user.id, attempts);
+  ensureExamCertificate(user, exam, score);
   res.json(toStudentExamView(user));
 });
 
@@ -3174,8 +3266,12 @@ app.get('/api/instructor/exams', (req, res): any => {
         courseTitle: getCourseTitle(exam.courseId),
         dueDate: exam.dueDate,
         assignedBy: exam.assignedBy,
+        examType: exam.examType ?? 'quiz',
+        gradingScaleMax: getExamScaleMax(exam),
+        passThreshold: getExamPassThreshold(exam),
         averageScore: getExamAverage(exam.id),
         submissions: Array.from(studentAttempts.values()).filter((attempts) => attempts.some((item) => item.examId === exam.id)).length,
+        successfulStudents: getSuccessfulStudentsForExam(exam),
         questions: exam.questions.map((question) => ({
           id: question.id,
           prompt: question.prompt,
@@ -3207,6 +3303,8 @@ app.post('/api/instructor/exams', (req, res): any => {
     examType: 'quiz',
     durationMinutes: 20,
     maxAttempts: 1,
+    gradingScaleMax: 20,
+    passThreshold: 10,
     questions: incomingQuestions.map((question: any, index: number) => ({
       id: `question-${Date.now()}-${index}`,
       prompt: String(question.prompt ?? '').trim(),
@@ -3224,8 +3322,12 @@ app.post('/api/instructor/exams', (req, res): any => {
     courseTitle: getCourseTitle(exam.courseId),
     dueDate: exam.dueDate,
     assignedBy: exam.assignedBy,
+    examType: exam.examType,
+    gradingScaleMax: getExamScaleMax(exam),
+    passThreshold: getExamPassThreshold(exam),
     averageScore: 0,
     submissions: 0,
+    successfulStudents: [],
     questions: exam.questions.map((question) => ({
       id: question.id,
       prompt: question.prompt,

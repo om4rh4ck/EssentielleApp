@@ -153,8 +153,19 @@ export interface ManagedExam {
   courseTitle: string;
   dueDate: string;
   assignedBy: string;
+  examType: 'quiz' | 'final';
+  gradingScaleMax: number;
+  passThreshold: number;
   averageScore: number;
   submissions: number;
+  successfulStudents: Array<{
+    studentId: string;
+    studentName: string;
+    studentEmail: string;
+    score: number;
+    submittedAt: string;
+    certificateIssued: boolean;
+  }>;
   questions: Array<{
     id: string;
     prompt: string;

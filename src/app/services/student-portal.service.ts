@@ -103,17 +103,30 @@ export interface StudentExam {
   assignedBy: string;
   examType: 'quiz' | 'final';
   durationMinutes: number;
+  gradingScaleMax: number;
+  passThreshold: number;
   maxAttempts: number;
   attemptsUsed: number;
   attemptsRemaining: number;
   status: 'available' | 'graded' | 'locked';
   score: number | null;
+  passed: boolean | null;
   average: number;
   dueDate: string;
   questions?: Array<{
     id: string;
     prompt: string;
     options: string[];
+    points: number;
+  }>;
+  reviewQuestions?: Array<{
+    id: string;
+    prompt: string;
+    selectedIndex: number;
+    selectedOption: string;
+    correctIndex: number;
+    correctOption: string;
+    isCorrect: boolean;
     points: number;
   }>;
 }
