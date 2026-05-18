@@ -19,7 +19,7 @@ import { AuthService } from '../../services/auth.service';
             <img src="lo2 originale.png" alt="Essenti'Elle Sante" class="h-full w-full rounded-full object-contain" />
           </a>
           <h1 class="text-3xl font-serif text-[var(--color-brand-green-900)]">Rejoindre l'Institut</h1>
-          <p class="text-sm font-light text-[var(--color-brand-green-800)]/70 mt-2">Creez votre espace Essenti'Elle Sante.</p>
+          <p class="text-sm font-light text-[var(--color-brand-green-800)]/70 mt-2">Creez votre compte avec votre adresse e-mail pour acceder a votre espace Essenti'Elle Sante.</p>
         </div>
 
         @if (errorMsg()) {
@@ -37,6 +37,10 @@ import { AuthService } from '../../services/auth.service';
         }
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+          <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/35 bg-[var(--color-brand-cream)]/70 px-4 py-3 text-sm text-[var(--color-brand-green-900)]/82">
+            Cette page sert a l'inscription des comptes etudiantes. Votre e-mail devient l'adresse de connexion pour suivre vos formations et recevoir les confirmations importantes.
+          </div>
+
           <div class="flex flex-col gap-1.5">
             <label for="reg-name" class="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand-green-900)]">Nom complet</label>
             <input type="text" id="reg-name" formControlName="name"

@@ -77,6 +77,7 @@ Le serveur crée automatiquement ces comptes au démarrage (avec hash sécurisé
 - Connexion admin => `/admin`
 - Connexion instructor => `/instructor`
 - Connexion student => `/student`
+- Validation admin d'une formation payante => ouverture de l'acces + email automatique si le SMTP est configure
 
 ## Déploiement Hostinger/GitHub
 1. Créer la base MySQL sur l'hébergeur.
@@ -100,4 +101,18 @@ npm run start:compat
 Ou lancer directement:
 ```bash
 node dist/app/server/server.mjs
+```
+
+
+## SMTP professionnel
+Ajoutez ces variables pour envoyer automatiquement les e-mails d'acceptation depuis votre adresse professionnelle:
+
+```env
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=contact@lessentielle-sante.site
+SMTP_PASS=mot_de_passe_smtp
+SMTP_FROM="Essenti'elle Sante <contact@lessentielle-sante.site>"
+SMTP_REPLY_TO=contact@lessentielle-sante.site
 ```

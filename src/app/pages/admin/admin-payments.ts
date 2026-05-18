@@ -136,9 +136,12 @@ export class AdminPaymentsComponent implements OnInit {
     this.approvingId.set(request.id);
     this.feedback.set(null);
     this.staff.approveAdminEnrollmentRequest(request.id).subscribe({
-      next: () => {
+      next: (response) => {
         this.approvingId.set(null);
-        this.feedback.set({ type: 'success', text: `La demande de ${request.name} a ete validee et l'acces a la formation est maintenant ouvert.` });
+        this.feedback.set({
+          type: 'success',
+          text: response.feedbackMessage || `La demande de ${request.name} a ete validee et l'acces a la formation est maintenant ouvert.`,
+        });
         this.load();
       },
       error: (err) => {

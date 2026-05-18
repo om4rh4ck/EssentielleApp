@@ -8,6 +8,7 @@ import express, { Request } from 'express';
 import { join } from 'node:path';
 import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import mysql, { Pool } from 'mysql2/promise';
+import nodemailer from 'nodemailer';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -131,6 +132,16 @@ interface PublicEnrollmentRequest {
   requestedAt: string;
   approvedAt?: string;
   approvedBy?: string;
+}
+
+interface MailerConfig {
+  host: string;
+  port: number;
+  secure: boolean;
+  user: string;
+  pass: string;
+  from: string;
+  replyTo?: string;
 }
 
 interface RevenueRow {
@@ -1242,6 +1253,88 @@ function isDbSslEnabled(): boolean {
   return (process.env['DB_SSL'] ?? '').toLowerCase() === 'true';
 }
 
+function getSmtpConfig(): MailerConfig | null {
+  const host = process.env['SMTP_HOST']?.trim() ?? '';
+  const port = Number(process.env['SMTP_PORT'] ?? '587');
+  const user = process.env['SMTP_USER']?.trim() ?? '';
+  const pass = process.env['SMTP_PASS']?.trim() ?? '';
+  const from = process.env['SMTP_FROM']?.trim() ?? user;
+  const replyTo = process.env['SMTP_REPLY_TO']?.trim() ?? '';
+  const secure = (process.env['SMTP_SECURE'] ?? '').toLowerCase() === 'true';
+
+  if (!host || !port || !user || !pass || !from) {
+    return null;
+  }
+
+  return {
+    host,
+    port,
+    secure,
+    user,
+    pass,
+    from,
+    replyTo: replyTo || undefined,
+  };
+}
+
+function isMailerConfigured(): boolean {
+  return !!getSmtpConfig();
+}
+
+async function sendPaidEnrollmentApprovalEmail(student: PublicUser, course: Course, request: PublicEnrollmentRequest): Promise<boolean> {
+  const config = getSmtpConfig();
+  if (!config) {
+    console.warn('[MAIL] SMTP not configured. Approval email skipped.');
+    return false;
+  }
+
+  const transporter = nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
+  });
+
+  const formulaLine = request.formulaTitle ? `Formule choisie : ${request.formulaTitle}` : '';
+  const certificateLine = request.certificateCount ? `Nombre de certificats : ${request.certificateCount}` : '';
+  const detailsBlock = [formulaLine, certificateLine].filter(Boolean).join('\n');
+  const htmlDetails = [formulaLine, certificateLine].filter(Boolean).map((line) => `<li>${line}</li>`).join('');
+
+  await transporter.sendMail({
+    from: config.from,
+    to: student.email,
+    replyTo: config.replyTo,
+    subject: `Acceptation de votre inscription - ${course.title}`,
+    text: [
+      `Bonjour ${student.name},`,
+      '',
+      `Votre demande d'inscription a ete acceptee pour la formation "${course.title}".`,
+      'Votre acces est maintenant ouvert dans votre espace etudiante sur la plateforme Essenti\'Elle Sante.',
+      detailsBlock,
+      '',
+      'Connectez-vous avec votre adresse e-mail pour retrouver votre formation.',
+      '',
+      'Bien cordialement,',
+      "L'equipe Essenti'Elle Sante",
+    ].filter(Boolean).join('\n'),
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173526">
+        <p>Bonjour ${student.name},</p>
+        <p>Votre demande d'inscription a ete acceptee pour la formation <strong>${course.title}</strong>.</p>
+        <p>Votre acces est maintenant ouvert dans votre espace etudiante sur la plateforme Essenti'Elle Sante.</p>
+        ${htmlDetails ? `<ul>${htmlDetails}</ul>` : ''}
+        <p>Connectez-vous avec votre adresse e-mail pour retrouver votre formation.</p>
+        <p>Bien cordialement,<br>L'equipe Essenti'Elle Sante</p>
+      </div>
+    `,
+  });
+
+  return true;
+}
+
 function createToken(user: PublicUser): string {
   const payload = Buffer.from(JSON.stringify(user), 'utf-8').toString('base64url');
   const signature = createTokenSignature(payload);
@@ -2002,10 +2095,11 @@ app.post('/api/public/enrollment-requests', (req, res): any => {
   };
 
   publicEnrollmentRequests.unshift(request);
+  const successMessage = course.access === 'free'
+    ? 'Votre demande d inscription a bien ete envoyee.'
+    : 'Votre demande a bien ete envoyee. Apres acceptation, vous recevrez automatiquement un email de confirmation depuis notre adresse professionnelle.';
   res.status(201).json({
-    message: course.access === 'free'
-      ? 'Votre demande d’inscription a bien été envoyée.'
-      : 'Votre demande a bien été envoyée. Notre équipe vous contactera pour finaliser la formule choisie.',
+    message: successMessage,
     request,
   });
 });
@@ -3144,7 +3238,26 @@ app.post('/api/admin/enrollment-requests/:requestId/approve', async (req, res): 
     sentAt: new Date().toISOString(),
   });
 
-  res.json(request);
+  let approvalEmailSent = false;
+  if (course.access === 'paid') {
+    try {
+      approvalEmailSent = await sendPaidEnrollmentApprovalEmail(student, course, request);
+    } catch (error) {
+      console.error('[MAIL] Failed to send approval email', error);
+    }
+  }
+
+  res.json({
+    ...request,
+    feedbackMessage: course.access === 'paid'
+      ? (approvalEmailSent
+        ? 'La demande a ete validee, l acces a ete ouvert et l email d acceptation a ete envoye automatiquement.'
+        : (isMailerConfigured()
+          ? 'La demande a ete validee et l acces a ete ouvert, mais l email automatique n a pas pu etre envoye.'
+          : 'La demande a ete validee et l acces a ete ouvert. Configurez le SMTP pour activer l email automatique depuis votre adresse professionnelle.'))
+      : 'La demande a ete validee et l acces a ete ouvert.',
+    approvalEmailSent,
+  });
 });
 
 app.get('/api/admin/stats', async (req, res): Promise<any> => {

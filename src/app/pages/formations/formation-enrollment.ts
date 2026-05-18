@@ -169,7 +169,7 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
 
               @if (selectedCourse.access === 'paid') {
                 <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
-                  La demande payante doit etre envoyee depuis un compte etudiante connecte avec le meme email que celui qui recevra l'acces.
+                  La demande payante doit etre envoyee depuis un compte etudiante connecte avec le meme email que celui qui recevra l'acces. Apres acceptation, un email est envoye automatiquement depuis notre adresse professionnelle.
                 </div>
               }
 

@@ -238,6 +238,13 @@ export interface EnrollmentRequestRecord {
   approvedBy?: string;
   matchedStudentId?: string | null;
   matchedStudentName?: string | null;
+  approvalEmailSent?: boolean;
+  feedbackMessage?: string;
+}
+
+export interface EnrollmentApprovalResponse extends EnrollmentRequestRecord {
+  feedbackMessage?: string;
+  approvalEmailSent?: boolean;
 }
 
 export interface RoleProfile {
@@ -404,8 +411,8 @@ export class StaffPortalService {
     return this.http.get<EnrollmentRequestRecord[]>('/api/admin/enrollment-requests', this.authHeaders());
   }
 
-  approveAdminEnrollmentRequest(requestId: string): Observable<EnrollmentRequestRecord> {
-    return this.http.post<EnrollmentRequestRecord>(`/api/admin/enrollment-requests/${requestId}/approve`, {}, this.authHeaders());
+  approveAdminEnrollmentRequest(requestId: string): Observable<EnrollmentApprovalResponse> {
+    return this.http.post<EnrollmentApprovalResponse>(`/api/admin/enrollment-requests/${requestId}/approve`, {}, this.authHeaders());
   }
 
   getAdminStats(): Observable<AdminStatsData> {
