@@ -28,6 +28,9 @@ import { AuthService } from '../../services/auth.service';
               <p class="mt-4 max-w-xl text-sm leading-7 text-[var(--color-brand-green-800)]/72 sm:text-base">
                 Creez votre compte avec votre adresse e-mail pour suivre vos formations, vos demandes et vos reservations en toute simplicite.
               </p>
+              <p class="mt-3 max-w-xl text-sm leading-7 text-[var(--color-brand-green-800)]/60">
+                Apres inscription, vous pourrez vous connecter soit avec votre e-mail complet, soit avec votre identifiant correspondant a la partie avant le symbole @.
+              </p>
             </div>
 
             <a routerLink="/login" [queryParams]="loginQueryParams()" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-[var(--color-brand-gold-300)]/45 bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white shadow-[0_18px_35px_rgba(15,23,19,0.16)] transition hover:-translate-y-0.5 hover:bg-[var(--color-brand-green-800)]">

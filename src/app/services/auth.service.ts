@@ -7,6 +7,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  username?: string;
   role: 'student' | 'instructor' | 'admin';
 }
 
@@ -76,8 +77,8 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  login(email: string, password: string) {
-    return this.http.post<{token: string, user: User}>('/api/login', { email, password }).pipe(
+  login(identifier: string, password: string) {
+    return this.http.post<{token: string, user: User}>('/api/login', { identifier, password }).pipe(
       tap(response => {
         if (typeof window !== 'undefined') {
           localStorage.setItem('token', response.token);
@@ -98,6 +99,14 @@ export class AuthService {
         }
       })
     );
+  }
+
+  forgotPassword(identifier: string) {
+    return this.http.post<{message: string}>('/api/forgot-password', { identifier });
+  }
+
+  resetPassword(token: string, password: string) {
+    return this.http.post<{message: string}>('/api/reset-password', { token, password });
   }
 
   updateCurrentUser(patch: Partial<User>) {

@@ -21,6 +21,7 @@ interface PublicUser {
   id: string;
   name: string;
   email: string;
+  username: string;
   role: UserRole;
 }
 
@@ -40,6 +41,17 @@ interface RegisterPayload {
 
 interface LoginPayload {
   email?: string;
+  identifier?: string;
+  password?: string;
+}
+
+interface ForgotPasswordPayload {
+  email?: string;
+  identifier?: string;
+}
+
+interface ResetPasswordPayload {
+  token?: string;
   password?: string;
 }
 
@@ -1215,17 +1227,35 @@ function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
 }
 
+function getUsernameFromEmail(email: string): string {
+  return normalizeEmail(email).split('@')[0] ?? '';
+}
+
 function toPublicUser(user: StoredUser): PublicUser {
   return {
     id: user.id,
     name: user.name,
     email: user.email,
+    username: getUsernameFromEmail(user.email),
     role: user.role,
   };
 }
 
 function getTokenSecret(): string {
   return process.env['TOKEN_SECRET'] ?? process.env['JWT_SECRET'] ?? 'dev-insecure-secret';
+}
+
+function getAppUrl(req?: Request): string {
+  const configured = process.env['APP_URL']?.trim();
+  if (configured) {
+    return configured.replace(/\/+$/, '');
+  }
+
+  if (!req) {
+    return 'http://localhost:3000';
+  }
+
+  return `${req.protocol}://${req.get('host')}`.replace(/\/+$/, '');
 }
 
 function getDbHost(): string | undefined {
@@ -1335,6 +1365,87 @@ async function sendPaidEnrollmentApprovalEmail(student: PublicUser, course: Cour
   return true;
 }
 
+function createPasswordResetToken(email: string): string {
+  const expiresAt = Date.now() + (60 * 60 * 1000);
+  const payload = Buffer.from(JSON.stringify({
+    email: normalizeEmail(email),
+    expiresAt,
+    type: 'password-reset',
+  }), 'utf-8').toString('base64url');
+  const signature = createTokenSignature(payload);
+  return `${payload}.${signature}`;
+}
+
+function verifyPasswordResetToken(token: string): string | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 2) return null;
+
+    const [payloadBase64Url, signature] = parts;
+    const expectedSignature = createTokenSignature(payloadBase64Url);
+    if (!timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) return null;
+
+    const parsed = JSON.parse(Buffer.from(payloadBase64Url, 'base64url').toString('utf-8')) as {
+      email?: string;
+      expiresAt?: number;
+      type?: string;
+    };
+
+    if (parsed.type !== 'password-reset' || !parsed.email || !parsed.expiresAt) return null;
+    if (Date.now() > parsed.expiresAt) return null;
+    return normalizeEmail(parsed.email);
+  } catch {
+    return null;
+  }
+}
+
+async function sendPasswordResetEmail(user: PublicUser, token: string, req: Request): Promise<boolean> {
+  const config = getSmtpConfig();
+  if (!config) {
+    console.warn('[MAIL] SMTP not configured. Password reset email skipped.');
+    return false;
+  }
+
+  const resetUrl = `${getAppUrl(req)}/reset-password?token=${encodeURIComponent(token)}`;
+  const transporter = nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
+  });
+
+  await transporter.sendMail({
+    from: config.from,
+    to: user.email,
+    replyTo: config.replyTo,
+    subject: 'Reinitialisation de votre mot de passe',
+    text: [
+      `Bonjour ${user.name},`,
+      '',
+      'Vous avez demande la reinitialisation de votre mot de passe.',
+      `Cliquez sur ce lien pour definir un nouveau mot de passe : ${resetUrl}`,
+      '',
+      'Ce lien est valable pendant 1 heure.',
+      '',
+      "L'equipe Essenti'Elle Sante",
+    ].join('\n'),
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173526">
+        <p>Bonjour ${user.name},</p>
+        <p>Vous avez demande la reinitialisation de votre mot de passe.</p>
+        <p><a href="${resetUrl}" style="display:inline-block;padding:12px 18px;background:#1F2A24;color:#fff;text-decoration:none;border-radius:12px;">Definir un nouveau mot de passe</a></p>
+        <p>Ce lien est valable pendant 1 heure.</p>
+        <p>L'equipe Essenti'Elle Sante</p>
+      </div>
+    `,
+  });
+
+  return true;
+}
+
 function createToken(user: PublicUser): string {
   const payload = Buffer.from(JSON.stringify(user), 'utf-8').toString('base64url');
   const signature = createTokenSignature(payload);
@@ -1370,6 +1481,7 @@ function makeStoredUser(id: string, name: string, email: string, role: UserRole,
     id,
     name,
     email: normalizeEmail(email),
+    username: getUsernameFromEmail(email),
     role,
     passwordHash: hashPassword(password),
   };
@@ -1498,6 +1610,36 @@ async function findStoredUserByEmail(email: string): Promise<StoredUser | null> 
     id: String(row['id']),
     name: String(row['name']),
     email: String(row['email']),
+    username: getUsernameFromEmail(String(row['email'])),
+    role: row['role'] as UserRole,
+    passwordHash: String(row['password_hash']),
+  };
+}
+
+async function findStoredUserByIdentifier(identifier: string): Promise<StoredUser | null> {
+  const normalized = identifier.trim().toLowerCase();
+  if (!normalized) return null;
+
+  const byEmail = await findStoredUserByEmail(normalized);
+  if (byEmail) return byEmail;
+
+  const pool = await getDbPool();
+  if (!pool) {
+    return memoryUsers.find((user) => getUsernameFromEmail(user.email) === normalized) ?? null;
+  }
+
+  const [rows] = await pool.query<mysql.RowDataPacket[]>(
+    'SELECT id, name, email, role, password_hash FROM users WHERE LOWER(SUBSTRING_INDEX(email, \'@\', 1)) = ? LIMIT 1',
+    [normalized]
+  );
+  if (!rows.length) return null;
+
+  const row = rows[0];
+  return {
+    id: String(row['id']),
+    name: String(row['name']),
+    email: String(row['email']),
+    username: getUsernameFromEmail(String(row['email'])),
     role: row['role'] as UserRole,
     passwordHash: String(row['password_hash']),
   };
@@ -1520,6 +1662,7 @@ async function createStoredUser(
       id: String(memoryUsers.length + 1),
       name,
       email: normalized,
+      username: getUsernameFromEmail(normalized),
       role: 'student',
       passwordHash,
     };
@@ -1546,6 +1689,7 @@ async function createStoredUser(
       id: String(result.insertId),
       name,
       email: normalized,
+      username: getUsernameFromEmail(normalized),
       role: 'student',
       passwordHash,
     };
@@ -1626,6 +1770,24 @@ async function persistUserProfile(
       payload.bio ?? null,
       Number(userId),
     ]
+  );
+}
+
+async function updateStoredUserPassword(email: string, password: string): Promise<void> {
+  const normalized = normalizeEmail(email);
+  const passwordHash = hashPassword(password);
+  const pool = await getDbPool();
+
+  if (!pool) {
+    const user = memoryUsers.find((item) => item.email === normalized);
+    if (!user) throw new Error('USER_NOT_FOUND');
+    user.passwordHash = passwordHash;
+    return;
+  }
+
+  await pool.query(
+    'UPDATE users SET password_hash = ? WHERE email = ?',
+    [passwordHash, normalized]
   );
 }
 
@@ -1843,6 +2005,7 @@ async function getAllUsers(): Promise<PublicUser[]> {
     id: String(row['id']),
     name: String(row['name']),
     email: String(row['email']),
+    username: getUsernameFromEmail(String(row['email'])),
     role: row['role'] as UserRole,
   }));
 }
@@ -1977,18 +2140,18 @@ app.post('/api/register', async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
   const body = req.body as LoginPayload;
-  const email = body.email?.trim() ?? '';
+  const identifier = body.identifier?.trim() ?? body.email?.trim() ?? '';
   const password = body.password ?? '';
 
-  if (!email || !password) {
-    res.status(400).json({ error: 'Email et mot de passe requis.' });
+  if (!identifier || !password) {
+    res.status(400).json({ error: 'Email ou nom d utilisateur et mot de passe requis.' });
     return;
   }
 
   try {
-    const user = await findStoredUserByEmail(email);
+    const user = await findStoredUserByIdentifier(identifier);
     if (!user || !verifyPassword(password, user.passwordHash)) {
-      res.status(401).json({ error: 'Email ou mot de passe incorrect.' });
+      res.status(401).json({ error: 'Email, nom d utilisateur ou mot de passe incorrect.' });
       return;
     }
     const publicUser = toPublicUser(user);
@@ -1998,6 +2161,60 @@ app.post('/api/login', async (req, res) => {
   } catch (error) {
     console.error('[API] Login failed', error);
     res.status(500).json({ error: 'Erreur serveur pendant la connexion.' });
+  }
+});
+
+app.post('/api/forgot-password', async (req, res) => {
+  const body = req.body as ForgotPasswordPayload;
+  const identifier = body.identifier?.trim() ?? body.email?.trim() ?? '';
+
+  if (!identifier) {
+    res.status(400).json({ error: 'Email ou nom d utilisateur requis.' });
+    return;
+  }
+
+  try {
+    const user = await findStoredUserByIdentifier(identifier);
+    if (user) {
+      const token = createPasswordResetToken(user.email);
+      try {
+        await sendPasswordResetEmail(toPublicUser(user), token, req);
+      } catch (error) {
+        console.error('[MAIL] Failed to send password reset email', error);
+      }
+    }
+
+    res.json({
+      message: 'Si un compte existe pour cette adresse ou ce nom d utilisateur, un lien de reinitialisation a ete envoye.',
+    });
+  } catch (error) {
+    console.error('[API] Forgot password failed', error);
+    res.status(500).json({ error: 'Erreur serveur pendant la demande de reinitialisation.' });
+  }
+});
+
+app.post('/api/reset-password', async (req, res) => {
+  const body = req.body as ResetPasswordPayload;
+  const token = body.token?.trim() ?? '';
+  const password = body.password ?? '';
+
+  if (!token || password.length < 8) {
+    res.status(400).json({ error: 'Token invalide ou mot de passe trop court (8 caracteres minimum).' });
+    return;
+  }
+
+  try {
+    const email = verifyPasswordResetToken(token);
+    if (!email) {
+      res.status(400).json({ error: 'Lien de reinitialisation invalide ou expire.' });
+      return;
+    }
+
+    await updateStoredUserPassword(email, password);
+    res.json({ message: 'Votre mot de passe a ete mis a jour. Vous pouvez maintenant vous connecter.' });
+  } catch (error) {
+    console.error('[API] Reset password failed', error);
+    res.status(500).json({ error: 'Erreur serveur pendant la mise a jour du mot de passe.' });
   }
 });
 

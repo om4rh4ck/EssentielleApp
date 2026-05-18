@@ -20,10 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
         <section class="w-full rounded-[34px] border border-white/70 bg-white/92 p-6 shadow-[0_30px_80px_rgba(17,28,22,0.10)] backdrop-blur sm:p-8 lg:p-10 xl:p-12 2xl:px-14">
           <div class="mb-8 flex flex-col gap-6 border-b border-[var(--color-brand-gold-300)]/25 pb-8 lg:flex-row lg:items-start lg:justify-between">
             <div class="max-w-2xl">
-              <h1 class="mt-5 font-serif text-4xl leading-tight text-[var(--color-brand-green-900)] sm:text-5xl">Bon retour dans votre espace professionnel</h1>
-              <p class="mt-4 max-w-xl text-sm leading-7 text-[var(--color-brand-green-800)]/72 sm:text-base">
-                Connectez-vous pour retrouver vos formations, vos demandes d'inscription et vos reservations depuis une interface claire, rapide et rassurante.
-              </p>
+              <h1 class="font-serif text-4xl leading-tight text-[var(--color-brand-green-900)] sm:text-5xl">Connexion</h1>
             </div>
           </div>
 
@@ -50,15 +47,15 @@ import { MatIconModule } from '@angular/material/icon';
                 <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/28 bg-white px-5 py-4 shadow-[0_12px_24px_rgba(17,28,22,0.04)]">
                   <label for="login-email" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-green-900)]">
                     <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">alternate_email</mat-icon>
-                    Email de connexion
+                    Email ou nom d'utilisateur
                   </label>
                   <div class="flex items-center gap-3 rounded-2xl border border-[var(--color-brand-gold-300)]/18 bg-[var(--color-brand-cream)]/58 px-4 py-3">
                     <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--color-brand-gold-500)] shadow-sm">
                       <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">mail</mat-icon>
                     </span>
-                    <input type="email" id="login-email" formControlName="email"
+                    <input type="text" id="login-email" formControlName="email"
                       class="w-full border-0 bg-transparent px-1 py-1 text-base text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
-                      placeholder="contact@exemple.com" />
+                      placeholder="contact@exemple.com ou votre identifiant" />
                   </div>
                 </div>
 
@@ -68,9 +65,14 @@ import { MatIconModule } from '@angular/material/icon';
                       <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">lock</mat-icon>
                       Mot de passe
                     </label>
-                    <a routerLink="/register" [queryParams]="registerQueryParams()" class="text-xs font-semibold text-[var(--color-brand-gold-500)] transition hover:text-[var(--color-brand-green-900)]">
-                      Creer un compte
-                    </a>
+                    <div class="flex items-center gap-4">
+                      <a routerLink="/forgot-password" class="text-xs font-semibold text-[var(--color-brand-gold-500)] transition hover:text-[var(--color-brand-green-900)]">
+                        Mot de passe oublie ?
+                      </a>
+                      <a routerLink="/register" [queryParams]="registerQueryParams()" class="text-xs font-semibold text-[var(--color-brand-gold-500)] transition hover:text-[var(--color-brand-green-900)]">
+                        Creer un compte
+                      </a>
+                    </div>
                   </div>
                   <div class="flex items-center gap-3 rounded-2xl border border-[var(--color-brand-gold-300)]/18 bg-[var(--color-brand-cream)]/58 px-4 py-3">
                     <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--color-brand-gold-500)] shadow-sm">
@@ -95,7 +97,7 @@ import { MatIconModule } from '@angular/material/icon';
                       <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">mark_email_read</mat-icon>
                       E-mail principal
                     </div>
-                    <p class="mt-2 text-sm leading-6 text-[var(--color-brand-green-800)]/68">Utilisez le meme e-mail que pour vos demandes et reservations de formation.</p>
+                    <p class="mt-2 text-sm leading-6 text-[var(--color-brand-green-800)]/68">Vous pouvez vous connecter avec votre e-mail complet ou avec la partie avant le symbole @.</p>
                   </div>
                 </div>
 
