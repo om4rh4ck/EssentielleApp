@@ -18,7 +18,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
         <div class="rounded-[28px] border border-[var(--color-brand-gold-300)]/35 bg-white p-8 shadow-[0_24px_50px_rgba(0,0,0,0.04)]">
           <h2 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Examens, devoirs et moyennes</h2>
           <p class="mt-3 max-w-3xl text-sm leading-7 text-[var(--color-brand-green-800)]/70">
-            Retrouvez ici votre examen final, votre note automatique, la moyenne de la promotion et la correction complete question par question.
+            Retrouvez ici votre examen final, votre note sur 100%, la moyenne de l'examen et la correction complete question par question.
           </p>
         </div>
 
@@ -31,7 +31,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                 <p class="mt-3 text-sm text-[var(--color-brand-green-800)]/75">
                   {{ exam.examType === 'final' ? 'Examen final certifiant' : 'Quiz numerique' }}
                   · {{ exam.durationMinutes }} min
-                  · Seuil de reussite {{ exam.passThreshold }}/{{ exam.gradingScaleMax }}
+                  · Seuil de reussite {{ exam.passThreshold }}%
                 </p>
               </div>
               <button type="button" (click)="closeExam()" class="rounded-full bg-[var(--color-brand-cream)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-green-900)]">Fermer</button>
@@ -40,12 +40,12 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
             @if (exam.score !== null) {
               <div class="mt-8 grid gap-4 md:grid-cols-4">
                 <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Votre note</div>
-                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ exam.score }}/{{ exam.gradingScaleMax }}</div>
+                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Votre note totale</div>
+                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ exam.score }}%</div>
                 </div>
                 <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
                   <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne examen</div>
-                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ exam.average }}/{{ exam.gradingScaleMax }}</div>
+                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ exam.average }}%</div>
                 </div>
                 <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
                   <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Resultat</div>
@@ -61,7 +61,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
 
               @if (exam.passed && exam.examType === 'final') {
                 <div class="mt-6 rounded-[24px] border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-800">
-                  Note superieure a 70%. Votre certificat peut maintenant etre vu dans la section certificats.
+                  Note superieure a 70%. Votre certificat est disponible dans la section certificats.
                 </div>
               }
 
@@ -99,7 +99,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                     <div class="mt-4 grid gap-3">
                       @for (option of question.options; track option; let optionIndex = $index) {
                         <label class="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-sm text-[var(--color-brand-green-900)]">
-                          <input type="radio" [value]="optionIndex" [formControl]="answerControls.at(i)" />
+                          <input type="radio" [name]="'question-' + i" [value]="optionIndex" [formControl]="answerControls.at(i)" />
                           <span>{{ option }}</span>
                         </label>
                       }
@@ -145,11 +145,11 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                   </div>
                   <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
                     <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne</div>
-                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ exam.average }}/{{ exam.gradingScaleMax }}</div>
+                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ exam.average }}%</div>
                   </div>
                   <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
                     <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Seuil</div>
-                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ exam.passThreshold }}/{{ exam.gradingScaleMax }}</div>
+                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ exam.passThreshold }}%</div>
                   </div>
                   <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
                     <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Essais</div>
@@ -157,7 +157,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                   </div>
                   <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
                     <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Votre note</div>
-                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ exam.score === null ? '-' : (exam.score + '/' + exam.gradingScaleMax) }}</div>
+                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ exam.score === null ? '-' : (exam.score + '%') }}</div>
                   </div>
                 </div>
               </div>
