@@ -1416,8 +1416,6 @@ async function sendPasswordResetEmail(user: PublicUser, token: string, req: Requ
     },
   });
 
-  await transporter.verify();
-
   const info = await transporter.sendMail({
     from: config.from,
     to: user.email,
@@ -2201,6 +2199,19 @@ app.post('/api/forgot-password', async (req, res) => {
     }
     if (error instanceof Error && error.message === 'MAIL_NOT_ACCEPTED') {
       res.status(502).json({ error: 'Le serveur e-mail a refuse l envoi du lien de reinitialisation.' });
+      return;
+    }
+    const smtpError = error as { code?: string; response?: string; command?: string; message?: string };
+    if (smtpError?.code === 'EAUTH') {
+      res.status(502).json({ error: 'Authentification SMTP refusee. Verifiez SMTP_USER et SMTP_PASS sur Hostinger.' });
+      return;
+    }
+    if (smtpError?.code === 'ESOCKET' || smtpError?.code === 'ECONNECTION') {
+      res.status(502).json({ error: 'Connexion au serveur e-mail impossible. Verifiez SMTP_HOST, SMTP_PORT et SMTP_SECURE.' });
+      return;
+    }
+    if (smtpError?.response) {
+      res.status(502).json({ error: `Erreur du serveur e-mail: ${smtpError.response}` });
       return;
     }
     res.status(500).json({ error: 'Erreur serveur pendant la demande de reinitialisation.' });
