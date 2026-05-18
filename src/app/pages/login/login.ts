@@ -16,7 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
         <div class="absolute bottom-[-8%] right-[-5%] h-80 w-80 rounded-full bg-[var(--color-brand-green-800)]/10 blur-3xl"></div>
       </div>
 
-      <div class="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-[1680px] items-center gap-8 lg:grid-cols-[minmax(0,1.22fr)_minmax(420px,520px)]">
+      <div class="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-[1840px] items-center gap-8 lg:grid-cols-[minmax(0,1.38fr)_minmax(430px,520px)]">
         <section class="rounded-[34px] border border-white/70 bg-white/92 p-6 shadow-[0_30px_80px_rgba(17,28,22,0.10)] backdrop-blur sm:p-8 lg:p-10 xl:p-12">
           <div class="mb-8 flex flex-col gap-6 border-b border-[var(--color-brand-gold-300)]/25 pb-8 lg:flex-row lg:items-start lg:justify-between">
             <div class="max-w-2xl">
@@ -36,8 +36,8 @@ import { MatIconModule } from '@angular/material/icon';
             </a>
           </div>
 
-          <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px] 2xl:grid-cols-[minmax(0,1fr)_360px]">
-            <div class="rounded-[30px] border border-[var(--color-brand-gold-300)]/22 bg-[linear-gradient(180deg,#fffefe_0%,#fbf7ef_100%)] p-6 shadow-[0_18px_40px_rgba(17,28,22,0.05)] sm:p-7 xl:p-8">
+          <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
+            <div class="rounded-[30px] border border-[var(--color-brand-gold-300)]/22 bg-[linear-gradient(180deg,#fffefe_0%,#fbf7ef_100%)] p-6 shadow-[0_18px_40px_rgba(17,28,22,0.05)] sm:p-7 xl:p-9">
               <div class="mb-6 flex items-center gap-3">
                 <a routerLink="/" class="inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--color-brand-gold-300)]/35 bg-white p-2 shadow-lg shadow-[var(--color-brand-gold-300)]/20">
                   <img src="lo2 originale.png" alt="Essenti'Elle Sante" class="h-full w-full rounded-xl object-contain" />
