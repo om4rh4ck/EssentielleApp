@@ -10,76 +10,204 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [RouterLink, ReactiveFormsModule, MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen flex items-center justify-center p-4 bg-[var(--color-brand-cream)] font-sans relative overflow-hidden">
-      <div class="absolute top-[-10%] right-[-5%] w-[30vw] h-[30vw] bg-[var(--color-brand-gold-300)]/20 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="w-full max-w-md bg-white rounded-[2rem] p-8 border border-[var(--color-brand-gold-300)]/30 relative z-10 shadow-xl shadow-[var(--color-brand-green-800)]/5">
-        <div class="text-center mb-8 flex flex-col items-center">
-          <a routerLink="/" class="mb-5 inline-flex h-20 w-20 items-center justify-center rounded-full border border-[var(--color-brand-gold-300)]/40 bg-white p-2 shadow-lg shadow-[var(--color-brand-gold-300)]/25">
-            <img src="lo2 originale.png" alt="Essenti'Elle Santé" class="h-full w-full rounded-full object-contain" />
-          </a>
-          <h1 class="text-3xl font-serif text-[var(--color-brand-green-900)]">Bon retour</h1>
-          <p class="text-sm font-light text-[var(--color-brand-green-800)]/70 mt-2">Connectez-vous à l'institut Essenti'Elle Santé.</p>
-        </div>
-
-        @if (errorMsg()) {
-          <div class="bg-red-50 text-red-600 border border-red-200 p-3 rounded-xl mb-6 text-sm flex items-center gap-2">
-            <mat-icon class="text-base" style="width: 16px; height: 16px;">error_outline</mat-icon>
-            {{errorMsg()}}
-          </div>
-        }
-
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
-          <div class="flex flex-col gap-1.5">
-            <label for="login-email" class="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand-green-900)]">Email</label>
-            <input type="email" id="login-email" formControlName="email"
-              class="px-4 py-3 bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-[var(--color-brand-gold-500)] focus:border-[var(--color-brand-gold-500)] transition-all text-sm rounded-xl"
-              placeholder="votre@email.com" />
-          </div>
-          
-          <div class="flex flex-col gap-1.5">
-            <div class="flex items-center justify-between">
-              <label for="login-password" class="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand-green-900)]">Mot de passe</label>
-              <a href="#" class="text-xs text-[var(--color-brand-gold-500)] font-medium hover:underline">Oublié ?</a>
-            </div>
-            <input type="password" id="login-password" formControlName="password"
-              class="px-4 py-3 bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-[var(--color-brand-gold-500)] focus:border-[var(--color-brand-gold-500)] transition-all text-sm rounded-xl"
-              placeholder="••••••••" />
-          </div>
-
-          <button type="submit" [disabled]="loginForm.invalid || loading()"
-            class="mt-4 w-full bg-[var(--color-brand-green-800)] text-[var(--color-brand-cream)] py-4 font-medium uppercase tracking-widest text-sm hover:bg-[var(--color-brand-green-900)] transition-colors rounded-xl disabled:opacity-50 disabled:cursor-not-allowed">
-            {{ loading() ? 'Connexion...' : 'Se connecter' }}
-          </button>
-          
-          <div class="mt-8 flex flex-col gap-3 pt-6 border-t border-[var(--color-brand-gold-300)]/30">
-            <p class="text-[10px] text-[var(--color-brand-green-800)]/50 uppercase tracking-widest text-center mb-1">Comptes de test</p>
-            <button type="button" (click)="fillDemo('admin')" class="text-xs py-2 bg-gray-50 hover:bg-gray-100 text-[var(--color-brand-green-800)] font-medium transition uppercase tracking-wider border border-gray-200">
-              Admin (admin&#64;lessentielle-sante.site)
-            </button>
-            <button type="button" (click)="fillDemo('instructor')" class="text-xs py-2 bg-gray-50 hover:bg-gray-100 text-[var(--color-brand-green-800)] font-medium transition uppercase tracking-wider border border-gray-200">
-              Formatrice (instructor&#64;lessentielle-sante.site)
-            </button>
-            <button type="button" (click)="fillDemo('student')" class="text-xs py-2 bg-gray-50 hover:bg-gray-100 text-[var(--color-brand-green-800)] font-medium transition uppercase tracking-wider border border-gray-200">
-              Étudiante (student&#64;lessentielle-sante.site)
-            </button>
-          </div>
-        </form>
-
-        <p class="text-center text-sm text-[var(--color-brand-green-800)]/70 font-light mt-8">
-          Pas encore de compte ? <a routerLink="/register" [queryParams]="registerQueryParams()" class="text-[var(--color-brand-gold-500)] font-medium hover:underline">S'inscrire</a>
-        </p>
+    <div class="relative min-h-screen overflow-hidden bg-[linear-gradient(135deg,#f8f4ec_0%,#fffdf9_36%,#f0e4c9_100%)] px-4 py-8 font-sans sm:px-6 lg:px-10">
+      <div class="pointer-events-none absolute inset-0">
+        <div class="absolute left-[-8%] top-[8%] h-72 w-72 rounded-full bg-[var(--color-brand-gold-300)]/28 blur-3xl"></div>
+        <div class="absolute bottom-[-8%] right-[-5%] h-80 w-80 rounded-full bg-[var(--color-brand-green-800)]/10 blur-3xl"></div>
       </div>
 
-      <div class="absolute bottom-4 left-4 right-4 mx-auto max-w-3xl rounded-[24px] border border-[var(--color-brand-gold-300)]/28 bg-white/92 p-4 shadow-[0_16px_34px_rgba(18,53,36,0.05)]">
-        <div class="flex items-start gap-3">
-          <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-brand-green-900)] text-white">
-            <mat-icon class="text-base" style="width: 20px; height: 20px;">gavel</mat-icon>
-          </span>
-          <p class="text-sm leading-7 text-[var(--color-brand-green-800)]/78">
-            Tous les contenus, images, videos, documents et supports de Essenti'Elle Sante sont reserves de droit. Toute copie, recuperation ou reutilisation sans autorisation ecrite est interdite.
-          </p>
-        </div>
+      <div class="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-center gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,430px)]">
+        <section class="rounded-[34px] border border-white/70 bg-white/92 p-6 shadow-[0_30px_80px_rgba(17,28,22,0.10)] backdrop-blur sm:p-8 lg:p-10">
+          <div class="mb-8 flex flex-col gap-6 border-b border-[var(--color-brand-gold-300)]/25 pb-8 lg:flex-row lg:items-start lg:justify-between">
+            <div class="max-w-2xl">
+              <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/40 bg-[var(--color-brand-cream)] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-500)]">
+                <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">verified_user</mat-icon>
+                Portail SaaS Essenti'Elle
+              </div>
+              <h1 class="mt-5 font-serif text-4xl leading-tight text-[var(--color-brand-green-900)] sm:text-5xl">Bon retour dans votre espace professionnel</h1>
+              <p class="mt-4 max-w-xl text-sm leading-7 text-[var(--color-brand-green-800)]/72 sm:text-base">
+                Connectez-vous pour retrouver vos formations, vos demandes d'inscription et vos reservations depuis une interface claire, rapide et rassurante.
+              </p>
+            </div>
+
+            <a routerLink="/register" [queryParams]="registerQueryParams()" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-[var(--color-brand-gold-300)]/45 bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white shadow-[0_18px_35px_rgba(15,23,19,0.16)] transition hover:-translate-y-0.5 hover:bg-[var(--color-brand-green-800)]">
+              <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">person_add</mat-icon>
+              S'inscrire
+            </a>
+          </div>
+
+          <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_270px]">
+            <div class="rounded-[30px] border border-[var(--color-brand-gold-300)]/22 bg-[linear-gradient(180deg,#fffefe_0%,#fbf7ef_100%)] p-6 shadow-[0_18px_40px_rgba(17,28,22,0.05)] sm:p-7">
+              <div class="mb-6 flex items-center gap-3">
+                <a routerLink="/" class="inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--color-brand-gold-300)]/35 bg-white p-2 shadow-lg shadow-[var(--color-brand-gold-300)]/20">
+                  <img src="lo2 originale.png" alt="Essenti'Elle Sante" class="h-full w-full rounded-xl object-contain" />
+                </a>
+                <div>
+                  <div class="text-xs font-bold uppercase tracking-[0.24em] text-[var(--color-brand-gold-500)]">Connexion</div>
+                  <div class="mt-1 text-sm text-[var(--color-brand-green-800)]/70">Acces securise a votre compte</div>
+                </div>
+              </div>
+
+              @if (errorMsg()) {
+                <div class="mb-6 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">error_outline</mat-icon>
+                  {{ errorMsg() }}
+                </div>
+              }
+
+              <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
+                <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3">
+                  <label for="login-email" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                    <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">alternate_email</mat-icon>
+                    Email de connexion
+                  </label>
+                  <input type="email" id="login-email" formControlName="email"
+                    class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                    placeholder="contact@exemple.com" />
+                </div>
+
+                <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3">
+                  <div class="mb-3 flex items-center justify-between gap-3">
+                    <label for="login-password" class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                      <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">lock</mat-icon>
+                      Mot de passe
+                    </label>
+                    <a routerLink="/register" [queryParams]="registerQueryParams()" class="text-xs font-semibold text-[var(--color-brand-gold-500)] transition hover:text-[var(--color-brand-green-900)]">
+                      Creer un compte
+                    </a>
+                  </div>
+                  <input type="password" id="login-password" formControlName="password"
+                    class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                    placeholder="••••••••" />
+                </div>
+
+                <div class="grid gap-3 sm:grid-cols-2">
+                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/24 bg-[var(--color-brand-cream)]/75 px-4 py-3">
+                    <div class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                      <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">shield</mat-icon>
+                      Acces securise
+                    </div>
+                    <p class="mt-2 text-sm leading-6 text-[var(--color-brand-green-800)]/68">Connexion reservee aux espaces admin, formatrice et etudiante.</p>
+                  </div>
+                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/24 bg-[var(--color-brand-cream)]/75 px-4 py-3">
+                    <div class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                      <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">mark_email_read</mat-icon>
+                      E-mail principal
+                    </div>
+                    <p class="mt-2 text-sm leading-6 text-[var(--color-brand-green-800)]/68">Utilisez le meme e-mail que pour vos demandes et reservations de formation.</p>
+                  </div>
+                </div>
+
+                <button type="submit" [disabled]="loginForm.invalid || loading()"
+                  class="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(135deg,var(--color-brand-green-900)_0%,#24372c_100%)] px-5 py-4 text-sm font-bold uppercase tracking-[0.22em] text-white shadow-[0_24px_40px_rgba(15,23,19,0.18)] transition hover:-translate-y-0.5 hover:shadow-[0_28px_46px_rgba(15,23,19,0.22)] disabled:cursor-not-allowed disabled:opacity-55">
+                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">login</mat-icon>
+                  {{ loading() ? 'Connexion...' : 'Se connecter' }}
+                </button>
+              </form>
+
+              <div class="mt-8 border-t border-[var(--color-brand-gold-300)]/25 pt-6">
+                <div class="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--color-brand-green-800)]/52">
+                  <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">bolt</mat-icon>
+                  Comptes de test
+                </div>
+                <div class="grid gap-3">
+                  <button type="button" (click)="fillDemo('admin')" class="flex items-center justify-between rounded-2xl border border-[var(--color-brand-gold-300)]/20 bg-white px-4 py-3 text-left transition hover:-translate-y-0.5 hover:border-[var(--color-brand-gold-300)]/45 hover:shadow-[0_16px_28px_rgba(17,28,22,0.06)]">
+                    <span class="flex items-center gap-3">
+                      <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--color-brand-green-900)] text-white">
+                        <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">admin_panel_settings</mat-icon>
+                      </span>
+                      <span>
+                        <span class="block text-sm font-bold text-[var(--color-brand-green-900)]">Admin</span>
+                        <span class="block text-xs text-[var(--color-brand-green-800)]/60">admin&#64;lessentielle-sante.site</span>
+                      </span>
+                    </span>
+                    <mat-icon class="text-[var(--color-brand-gold-500)]">arrow_forward</mat-icon>
+                  </button>
+
+                  <button type="button" (click)="fillDemo('instructor')" class="flex items-center justify-between rounded-2xl border border-[var(--color-brand-gold-300)]/20 bg-white px-4 py-3 text-left transition hover:-translate-y-0.5 hover:border-[var(--color-brand-gold-300)]/45 hover:shadow-[0_16px_28px_rgba(17,28,22,0.06)]">
+                    <span class="flex items-center gap-3">
+                      <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--color-brand-gold-500)] text-white">
+                        <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">co_present</mat-icon>
+                      </span>
+                      <span>
+                        <span class="block text-sm font-bold text-[var(--color-brand-green-900)]">Formatrice</span>
+                        <span class="block text-xs text-[var(--color-brand-green-800)]/60">instructor&#64;lessentielle-sante.site</span>
+                      </span>
+                    </span>
+                    <mat-icon class="text-[var(--color-brand-gold-500)]">arrow_forward</mat-icon>
+                  </button>
+
+                  <button type="button" (click)="fillDemo('student')" class="flex items-center justify-between rounded-2xl border border-[var(--color-brand-gold-300)]/20 bg-white px-4 py-3 text-left transition hover:-translate-y-0.5 hover:border-[var(--color-brand-gold-300)]/45 hover:shadow-[0_16px_28px_rgba(17,28,22,0.06)]">
+                    <span class="flex items-center gap-3">
+                      <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--color-brand-cream)] text-[var(--color-brand-green-900)]">
+                        <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">school</mat-icon>
+                      </span>
+                      <span>
+                        <span class="block text-sm font-bold text-[var(--color-brand-green-900)]">Etudiante</span>
+                        <span class="block text-xs text-[var(--color-brand-green-800)]/60">student&#64;lessentielle-sante.site</span>
+                      </span>
+                    </span>
+                    <mat-icon class="text-[var(--color-brand-gold-500)]">arrow_forward</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <aside class="rounded-[30px] border border-[var(--color-brand-gold-300)]/22 bg-[linear-gradient(180deg,#183126_0%,#101b16_100%)] p-6 text-white shadow-[0_28px_60px_rgba(15,23,19,0.28)] sm:p-7">
+              <div class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--color-brand-gold-300)]">
+                <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">event_available</mat-icon>
+                Reservation
+              </div>
+
+              <h2 class="mt-5 font-serif text-3xl leading-tight">Reserver votre place en formation</h2>
+              <p class="mt-4 text-sm leading-7 text-white/74">
+                Accedez rapidement a la reservation de votre prochaine formation et suivez la validation de votre inscription depuis la plateforme.
+              </p>
+
+              <div class="mt-6 space-y-3">
+                <div class="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
+                  <div class="flex items-center gap-3 text-sm font-semibold">
+                    <mat-icon class="text-[var(--color-brand-gold-300)]">mail</mat-icon>
+                    Confirmation par e-mail
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
+                  <div class="flex items-center gap-3 text-sm font-semibold">
+                    <mat-icon class="text-[var(--color-brand-gold-300)]">workspace_premium</mat-icon>
+                    Validation admin rapide
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
+                  <div class="flex items-center gap-3 text-sm font-semibold">
+                    <mat-icon class="text-[var(--color-brand-gold-300)]">auto_stories</mat-icon>
+                    Acces direct a vos contenus
+                  </div>
+                </div>
+              </div>
+
+              <a routerLink="/formations/2/inscription" class="mt-8 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[var(--color-brand-gold-500)] px-5 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white transition hover:bg-[#d4b57c]">
+                <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">calendar_month</mat-icon>
+                Reserver maintenant
+              </a>
+
+              <a routerLink="/register" [queryParams]="registerQueryParams()" class="mt-3 inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-white/18 bg-white/6 px-5 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white transition hover:bg-white/12">
+                <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">person_add_alt_1</mat-icon>
+                Creer mon compte
+              </a>
+
+              <div class="mt-8 rounded-[26px] border border-white/10 bg-white/6 p-5">
+                <div class="flex items-start gap-3">
+                  <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--color-brand-green-900)]">
+                    <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">gavel</mat-icon>
+                  </span>
+                  <p class="text-sm leading-7 text-white/74">
+                    Tous les contenus, supports, videos et documents de Essenti'Elle Sante restent reserves et proteges.
+                  </p>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
       </div>
     </div>
   `

@@ -10,108 +10,202 @@ import { AuthService } from '../../services/auth.service';
   imports: [RouterLink, MatIconModule, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen flex items-center justify-center p-4 bg-[var(--color-brand-cream)] font-sans relative overflow-hidden">
-      <div class="absolute top-[-10%] right-[-5%] w-[30vw] h-[30vw] bg-[var(--color-brand-gold-300)]/20 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="w-full max-w-md bg-white rounded-[2rem] p-8 border border-[var(--color-brand-gold-300)]/30 relative z-10 shadow-xl shadow-[var(--color-brand-green-800)]/5">
-        <div class="text-center mb-8 flex flex-col items-center">
-          <a routerLink="/" class="mb-5 inline-flex h-20 w-20 items-center justify-center rounded-full border border-[var(--color-brand-gold-300)]/40 bg-white p-2 shadow-lg shadow-[var(--color-brand-gold-300)]/25">
-            <img src="lo2 originale.png" alt="Essenti'Elle Sante" class="h-full w-full rounded-full object-contain" />
-          </a>
-          <h1 class="text-3xl font-serif text-[var(--color-brand-green-900)]">Rejoindre l'Institut</h1>
-          <p class="text-sm font-light text-[var(--color-brand-green-800)]/70 mt-2">Creez votre compte avec votre adresse e-mail pour acceder a votre espace Essenti'Elle Sante.</p>
-        </div>
-
-        @if (errorMsg()) {
-          <div class="bg-red-50 text-red-600 border border-red-200 p-3 rounded-xl mb-6 text-sm flex items-center gap-2">
-            <mat-icon class="text-base" style="width: 16px; height: 16px;">error_outline</mat-icon>
-            {{ errorMsg() }}
-          </div>
-        }
-
-        @if (successMsg()) {
-          <div class="bg-emerald-50 text-emerald-700 border border-emerald-200 p-3 rounded-xl mb-6 text-sm flex items-center gap-2">
-            <mat-icon class="text-base" style="width: 16px; height: 16px;">check_circle</mat-icon>
-            {{ successMsg() }}
-          </div>
-        }
-
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
-          <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/35 bg-[var(--color-brand-cream)]/70 px-4 py-3 text-sm text-[var(--color-brand-green-900)]/82">
-            Cette page sert a l'inscription des comptes etudiantes. Votre e-mail devient l'adresse de connexion pour suivre vos formations et recevoir les confirmations importantes.
-          </div>
-
-          <div class="flex flex-col gap-1.5">
-            <label for="reg-name" class="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand-green-900)]">Nom complet</label>
-            <input type="text" id="reg-name" formControlName="name"
-              class="px-4 py-3 bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-[var(--color-brand-gold-500)] focus:border-[var(--color-brand-gold-500)] transition-all text-sm rounded-xl"
-              placeholder="Ex: Sophie Martin" />
-          </div>
-
-          <div class="flex flex-col gap-1.5">
-            <label for="reg-email" class="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand-green-900)]">Email</label>
-            <input type="email" id="reg-email" formControlName="email"
-              class="px-4 py-3 bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-[var(--color-brand-gold-500)] focus:border-[var(--color-brand-gold-500)] transition-all text-sm rounded-xl"
-              placeholder="votre@email.com" />
-          </div>
-
-          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <div class="flex flex-col gap-1.5">
-              <label for="reg-phone" class="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand-green-900)]">Telephone</label>
-              <input type="text" id="reg-phone" formControlName="phone"
-                class="px-4 py-3 bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-[var(--color-brand-gold-500)] focus:border-[var(--color-brand-gold-500)] transition-all text-sm rounded-xl"
-                placeholder="+216 ..." />
-            </div>
-
-            <div class="flex flex-col gap-1.5">
-              <label for="reg-city" class="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand-green-900)]">Ville</label>
-              <input type="text" id="reg-city" formControlName="city"
-                class="px-4 py-3 bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-[var(--color-brand-gold-500)] focus:border-[var(--color-brand-gold-500)] transition-all text-sm rounded-xl"
-                placeholder="Djerba" />
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-1.5">
-            <label for="reg-country" class="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand-green-900)]">Pays</label>
-            <input type="text" id="reg-country" formControlName="country"
-              class="px-4 py-3 bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-[var(--color-brand-gold-500)] focus:border-[var(--color-brand-gold-500)] transition-all text-sm rounded-xl"
-              placeholder="Tunisie" />
-          </div>
-
-          <div class="flex flex-col gap-1.5">
-            <label for="reg-objective" class="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand-green-900)]">Objectif</label>
-            <textarea id="reg-objective" rows="3" formControlName="objective"
-              class="px-4 py-3 bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-[var(--color-brand-gold-500)] focus:border-[var(--color-brand-gold-500)] transition-all text-sm rounded-xl resize-none"
-              placeholder="Votre projet dans le bien-etre feminin"></textarea>
-          </div>
-
-          <div class="flex flex-col gap-1.5">
-            <label for="reg-pwd" class="text-xs uppercase tracking-wider font-semibold text-[var(--color-brand-green-900)]">Mot de passe</label>
-            <input type="password" id="reg-pwd" formControlName="password"
-              class="px-4 py-3 bg-gray-50 border border-gray-200 outline-none focus:ring-1 focus:ring-[var(--color-brand-gold-500)] focus:border-[var(--color-brand-gold-500)] transition-all text-sm rounded-xl"
-              placeholder="********" />
-          </div>
-
-          <button type="submit" [disabled]="registerForm.invalid || loading()"
-            class="mt-4 w-full bg-[var(--color-brand-green-800)] text-[var(--color-brand-cream)] py-4 font-medium uppercase tracking-widest text-sm hover:bg-[var(--color-brand-green-900)] transition-colors rounded-xl disabled:opacity-50 disabled:cursor-not-allowed">
-            {{ loading() ? 'Creation en cours...' : "S'inscrire" }}
-          </button>
-        </form>
-
-        <p class="text-center text-sm font-light text-[var(--color-brand-green-800)]/70 mt-8">
-          Deja un compte ? <a routerLink="/login" [queryParams]="loginQueryParams()" class="text-[var(--color-brand-gold-500)] font-medium hover:underline">Se connecter</a>
-        </p>
+    <div class="relative min-h-screen overflow-hidden bg-[linear-gradient(135deg,#f8f4ec_0%,#fffdf9_36%,#f0e4c9_100%)] px-4 py-8 font-sans sm:px-6 lg:px-10">
+      <div class="pointer-events-none absolute inset-0">
+        <div class="absolute right-[-6%] top-[8%] h-72 w-72 rounded-full bg-[var(--color-brand-gold-300)]/28 blur-3xl"></div>
+        <div class="absolute bottom-[-8%] left-[-5%] h-80 w-80 rounded-full bg-[var(--color-brand-green-800)]/10 blur-3xl"></div>
       </div>
 
-      <div class="absolute bottom-4 left-4 right-4 mx-auto max-w-3xl rounded-[24px] border border-[var(--color-brand-gold-300)]/28 bg-white/92 p-4 shadow-[0_16px_34px_rgba(18,53,36,0.05)]">
-        <div class="flex items-start gap-3">
-          <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-brand-green-900)] text-white">
-            <mat-icon class="text-base" style="width: 20px; height: 20px;">gavel</mat-icon>
-          </span>
-          <p class="text-sm leading-7 text-[var(--color-brand-green-800)]/78">
-            Tous les contenus, images, videos, documents et supports de Essenti'Elle Sante sont reserves de droit. Toute copie, recuperation ou reutilisation sans autorisation ecrite est interdite.
-          </p>
-        </div>
+      <div class="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-center gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,430px)]">
+        <section class="rounded-[34px] border border-white/70 bg-white/92 p-6 shadow-[0_30px_80px_rgba(17,28,22,0.10)] backdrop-blur sm:p-8 lg:p-10">
+          <div class="mb-8 flex flex-col gap-6 border-b border-[var(--color-brand-gold-300)]/25 pb-8 lg:flex-row lg:items-start lg:justify-between">
+            <div class="max-w-2xl">
+              <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/40 bg-[var(--color-brand-cream)] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-500)]">
+                <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">person_add_alt_1</mat-icon>
+                Creation de compte
+              </div>
+              <h1 class="mt-5 font-serif text-4xl leading-tight text-[var(--color-brand-green-900)] sm:text-5xl">Rejoindre votre espace SaaS Essenti'Elle</h1>
+              <p class="mt-4 max-w-xl text-sm leading-7 text-[var(--color-brand-green-800)]/72 sm:text-base">
+                Creez votre compte avec votre adresse e-mail pour suivre vos formations, vos demandes et vos reservations en toute simplicite.
+              </p>
+            </div>
+
+            <a routerLink="/login" [queryParams]="loginQueryParams()" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-[var(--color-brand-gold-300)]/45 bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white shadow-[0_18px_35px_rgba(15,23,19,0.16)] transition hover:-translate-y-0.5 hover:bg-[var(--color-brand-green-800)]">
+              <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">login</mat-icon>
+              Se connecter
+            </a>
+          </div>
+
+          <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_270px]">
+            <div class="rounded-[30px] border border-[var(--color-brand-gold-300)]/22 bg-[linear-gradient(180deg,#fffefe_0%,#fbf7ef_100%)] p-6 shadow-[0_18px_40px_rgba(17,28,22,0.05)] sm:p-7">
+              <div class="mb-6 flex items-center gap-3">
+                <a routerLink="/" class="inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--color-brand-gold-300)]/35 bg-white p-2 shadow-lg shadow-[var(--color-brand-gold-300)]/20">
+                  <img src="lo2 originale.png" alt="Essenti'Elle Sante" class="h-full w-full rounded-xl object-contain" />
+                </a>
+                <div>
+                  <div class="text-xs font-bold uppercase tracking-[0.24em] text-[var(--color-brand-gold-500)]">Inscription</div>
+                  <div class="mt-1 text-sm text-[var(--color-brand-green-800)]/70">Ouverture de votre compte etudiante</div>
+                </div>
+              </div>
+
+              @if (errorMsg()) {
+                <div class="mb-6 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">error_outline</mat-icon>
+                  {{ errorMsg() }}
+                </div>
+              }
+
+              @if (successMsg()) {
+                <div class="mb-6 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">check_circle</mat-icon>
+                  {{ successMsg() }}
+                </div>
+              }
+
+              <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
+                <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/24 bg-[var(--color-brand-cream)]/75 px-4 py-3">
+                  <div class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                    <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">info</mat-icon>
+                    Compte de plateforme
+                  </div>
+                  <p class="mt-2 text-sm leading-6 text-[var(--color-brand-green-800)]/68">Cette page sert a l'inscription des comptes etudiantes. Votre e-mail devient l'identifiant principal de connexion.</p>
+                </div>
+
+                <div class="grid gap-5 sm:grid-cols-2">
+                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3 sm:col-span-2">
+                    <label for="reg-name" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                      <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">badge</mat-icon>
+                      Nom complet
+                    </label>
+                    <input type="text" id="reg-name" formControlName="name"
+                      class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                      placeholder="Ex: Sophie Martin" />
+                  </div>
+
+                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3 sm:col-span-2">
+                    <label for="reg-email" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                      <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">alternate_email</mat-icon>
+                      Email
+                    </label>
+                    <input type="email" id="reg-email" formControlName="email"
+                      class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                      placeholder="votre@email.com" />
+                  </div>
+
+                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3">
+                    <label for="reg-phone" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                      <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">call</mat-icon>
+                      Telephone
+                    </label>
+                    <input type="text" id="reg-phone" formControlName="phone"
+                      class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                      placeholder="+216 ..." />
+                  </div>
+
+                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3">
+                    <label for="reg-city" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                      <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">location_city</mat-icon>
+                      Ville
+                    </label>
+                    <input type="text" id="reg-city" formControlName="city"
+                      class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                      placeholder="Djerba" />
+                  </div>
+
+                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3 sm:col-span-2">
+                    <label for="reg-country" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                      <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">public</mat-icon>
+                      Pays
+                    </label>
+                    <input type="text" id="reg-country" formControlName="country"
+                      class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                      placeholder="Tunisie" />
+                  </div>
+
+                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3 sm:col-span-2">
+                    <label for="reg-objective" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                      <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">track_changes</mat-icon>
+                      Objectif
+                    </label>
+                    <textarea id="reg-objective" rows="3" formControlName="objective"
+                      class="w-full resize-none border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                      placeholder="Votre projet dans le bien-etre feminin"></textarea>
+                  </div>
+
+                  <div class="rounded-2xl border border-[var(--color-brand-gold-300)]/26 bg-white px-4 py-3 sm:col-span-2">
+                    <label for="reg-pwd" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-900)]">
+                      <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">lock</mat-icon>
+                      Mot de passe
+                    </label>
+                    <input type="password" id="reg-pwd" formControlName="password"
+                      class="w-full border-0 bg-transparent px-1 py-1 text-sm text-[var(--color-brand-green-900)] outline-none placeholder:text-[var(--color-brand-green-800)]/38"
+                      placeholder="********" />
+                  </div>
+                </div>
+
+                <button type="submit" [disabled]="registerForm.invalid || loading()"
+                  class="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(135deg,var(--color-brand-green-900)_0%,#24372c_100%)] px-5 py-4 text-sm font-bold uppercase tracking-[0.22em] text-white shadow-[0_24px_40px_rgba(15,23,19,0.18)] transition hover:-translate-y-0.5 hover:shadow-[0_28px_46px_rgba(15,23,19,0.22)] disabled:cursor-not-allowed disabled:opacity-55">
+                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">how_to_reg</mat-icon>
+                  {{ loading() ? 'Creation en cours...' : "S'inscrire" }}
+                </button>
+              </form>
+            </div>
+
+            <aside class="rounded-[30px] border border-[var(--color-brand-gold-300)]/22 bg-[linear-gradient(180deg,#183126_0%,#101b16_100%)] p-6 text-white shadow-[0_28px_60px_rgba(15,23,19,0.28)] sm:p-7">
+              <div class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--color-brand-gold-300)]">
+                <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">event_available</mat-icon>
+                Reservation
+              </div>
+
+              <h2 class="mt-5 font-serif text-3xl leading-tight">Reserver votre place en formation</h2>
+              <p class="mt-4 text-sm leading-7 text-white/74">
+                Creez votre compte puis passez directement a votre demande d'inscription pour accelerer la validation de votre acces.
+              </p>
+
+              <div class="mt-6 space-y-3">
+                <div class="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
+                  <div class="flex items-center gap-3 text-sm font-semibold">
+                    <mat-icon class="text-[var(--color-brand-gold-300)]">mail</mat-icon>
+                    Confirmation par e-mail
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
+                  <div class="flex items-center gap-3 text-sm font-semibold">
+                    <mat-icon class="text-[var(--color-brand-gold-300)]">workspace_premium</mat-icon>
+                    Validation admin rapide
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
+                  <div class="flex items-center gap-3 text-sm font-semibold">
+                    <mat-icon class="text-[var(--color-brand-gold-300)]">auto_stories</mat-icon>
+                    Acces a votre espace etudiante
+                  </div>
+                </div>
+              </div>
+
+              <a routerLink="/formations/2/inscription" class="mt-8 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[var(--color-brand-gold-500)] px-5 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white transition hover:bg-[#d4b57c]">
+                <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">calendar_month</mat-icon>
+                Reserver maintenant
+              </a>
+
+              <a routerLink="/login" [queryParams]="loginQueryParams()" class="mt-3 inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-white/18 bg-white/6 px-5 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white transition hover:bg-white/12">
+                <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">login</mat-icon>
+                J'ai deja un compte
+              </a>
+
+              <div class="mt-8 rounded-[26px] border border-white/10 bg-white/6 p-5">
+                <div class="flex items-start gap-3">
+                  <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--color-brand-green-900)]">
+                    <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">gavel</mat-icon>
+                  </span>
+                  <p class="text-sm leading-7 text-white/74">
+                    Tous les contenus, supports, videos et documents de Essenti'Elle Sante restent reserves et proteges.
+                  </p>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
       </div>
     </div>
   `
