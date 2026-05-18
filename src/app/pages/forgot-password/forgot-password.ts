@@ -27,6 +27,10 @@ import { AuthService } from '../../services/auth.service';
           <div class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{{ successMsg() }}</div>
         }
 
+        <div class="mt-6 rounded-2xl border border-[var(--color-brand-gold-300)]/24 bg-[var(--color-brand-cream)]/65 px-4 py-3 text-sm leading-7 text-[var(--color-brand-green-800)]/72">
+          Le lien est envoye uniquement si un compte existe vraiment et si le serveur e-mail confirme l'expedition.
+        </div>
+
         <form [formGroup]="form" (ngSubmit)="submit()" class="mt-6 space-y-5">
           <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/28 bg-white px-5 py-4 shadow-[0_12px_24px_rgba(17,28,22,0.04)]">
             <label for="forgot-identifier" class="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-green-900)]">

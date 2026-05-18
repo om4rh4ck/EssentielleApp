@@ -1399,11 +1399,10 @@ function verifyPasswordResetToken(token: string): string | null {
   }
 }
 
-async function sendPasswordResetEmail(user: PublicUser, token: string, req: Request): Promise<boolean> {
+async function sendPasswordResetEmail(user: PublicUser, token: string, req: Request): Promise<void> {
   const config = getSmtpConfig();
   if (!config) {
-    console.warn('[MAIL] SMTP not configured. Password reset email skipped.');
-    return false;
+    throw new Error('SMTP_NOT_CONFIGURED');
   }
 
   const resetUrl = `${getAppUrl(req)}/reset-password?token=${encodeURIComponent(token)}`;
@@ -1417,7 +1416,9 @@ async function sendPasswordResetEmail(user: PublicUser, token: string, req: Requ
     },
   });
 
-  await transporter.sendMail({
+  await transporter.verify();
+
+  const info = await transporter.sendMail({
     from: config.from,
     to: user.email,
     replyTo: config.replyTo,
@@ -1443,7 +1444,13 @@ async function sendPasswordResetEmail(user: PublicUser, token: string, req: Requ
     `,
   });
 
-  return true;
+  const accepted = Array.isArray(info.accepted) ? info.accepted.map((item: unknown) => String(item).toLowerCase()) : [];
+  const rejected = Array.isArray(info.rejected) ? info.rejected.map((item: unknown) => String(item).toLowerCase()) : [];
+  const normalizedRecipient = user.email.toLowerCase();
+
+  if (rejected.includes(normalizedRecipient) || !accepted.includes(normalizedRecipient)) {
+    throw new Error('MAIL_NOT_ACCEPTED');
+  }
 }
 
 function createToken(user: PublicUser): string {
@@ -2175,20 +2182,27 @@ app.post('/api/forgot-password', async (req, res) => {
 
   try {
     const user = await findStoredUserByIdentifier(identifier);
-    if (user) {
-      const token = createPasswordResetToken(user.email);
-      try {
-        await sendPasswordResetEmail(toPublicUser(user), token, req);
-      } catch (error) {
-        console.error('[MAIL] Failed to send password reset email', error);
-      }
+    if (!user) {
+      res.status(404).json({ error: 'Aucun compte ne correspond a cet email ou a ce nom d utilisateur.' });
+      return;
     }
 
+    const token = createPasswordResetToken(user.email);
+    await sendPasswordResetEmail(toPublicUser(user), token, req);
+
     res.json({
-      message: 'Si un compte existe pour cette adresse ou ce nom d utilisateur, un lien de reinitialisation a ete envoye.',
+      message: 'Le lien de reinitialisation a bien ete envoye sur votre adresse e-mail.',
     });
   } catch (error) {
     console.error('[API] Forgot password failed', error);
+    if (error instanceof Error && error.message === 'SMTP_NOT_CONFIGURED') {
+      res.status(500).json({ error: 'Le service e-mail n est pas configure. Verifiez les variables SMTP sur le serveur.' });
+      return;
+    }
+    if (error instanceof Error && error.message === 'MAIL_NOT_ACCEPTED') {
+      res.status(502).json({ error: 'Le serveur e-mail a refuse l envoi du lien de reinitialisation.' });
+      return;
+    }
     res.status(500).json({ error: 'Erreur serveur pendant la demande de reinitialisation.' });
   }
 });
