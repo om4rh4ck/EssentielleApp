@@ -16,8 +16,8 @@ import { AuthService } from '../../services/auth.service';
         <div class="absolute bottom-[-8%] left-[-5%] h-80 w-80 rounded-full bg-[var(--color-brand-green-800)]/10 blur-3xl"></div>
       </div>
 
-      <div class="relative z-10 mx-auto grid min-h-[calc(100vh-1.5rem)] w-full max-w-none items-center gap-8 lg:grid-cols-[minmax(0,1.45fr)_minmax(430px,540px)]">
-        <section class="rounded-[34px] border border-white/70 bg-white/92 p-6 shadow-[0_30px_80px_rgba(17,28,22,0.10)] backdrop-blur sm:p-8 lg:p-10 xl:p-12 2xl:px-14">
+      <div class="relative z-10 mx-auto min-h-[calc(100vh-1.5rem)] w-full">
+        <section class="w-full rounded-[34px] border border-white/70 bg-white/92 p-6 shadow-[0_30px_80px_rgba(17,28,22,0.10)] backdrop-blur sm:p-8 lg:p-10 xl:p-12 2xl:px-14">
           <div class="mb-8 flex flex-col gap-6 border-b border-[var(--color-brand-gold-300)]/25 pb-8 lg:flex-row lg:items-start lg:justify-between">
             <div class="max-w-2xl">
               <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/40 bg-[var(--color-brand-cream)] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-500)]">
