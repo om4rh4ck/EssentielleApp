@@ -59,14 +59,14 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
             @if (exam.score !== null) {
               <div class="mt-8 grid gap-4 md:grid-cols-4">
                 <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Votre note totale</div>
-                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ formatScore(exam.score, exam.gradingScaleMax) }}</div>
-                  <div class="mt-2 text-sm text-[var(--color-brand-green-800)]/65">Calcul reel sur 100%</div>
+                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Score brut</div>
+                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ formatRawScore(exam.rawScore, exam.rawMaxScore) }}</div>
+                  <div class="mt-2 text-sm text-[var(--color-brand-green-800)]/65">0,5 point par bonne reponse</div>
                 </div>
                 <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne examen</div>
-                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ formatScore(exam.average, exam.gradingScaleMax) }}</div>
-                  <div class="mt-2 text-sm text-[var(--color-brand-green-800)]/65">Moyenne reelle des soumissions</div>
+                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Note finale</div>
+                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ formatScore(exam.score, exam.gradingScaleMax) }}</div>
+                  <div class="mt-2 text-sm text-[var(--color-brand-green-800)]/65">Resultat reel ramene sur 10</div>
                 </div>
                 <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
                   <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Resultat</div>
@@ -75,8 +75,9 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                   </div>
                 </div>
                 <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Essais utilises</div>
-                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ exam.attemptsUsed }}/{{ exam.maxAttempts }}</div>
+                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne examen</div>
+                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ formatScore(exam.average, exam.gradingScaleMax) }}</div>
+                  <div class="mt-2 text-sm text-[var(--color-brand-green-800)]/65">Moyenne reelle sur 10</div>
                 </div>
               </div>
 
@@ -111,7 +112,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
               </div>
             } @else {
               <div class="mt-8 rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-[#fffaf2] px-5 py-4 text-sm leading-7 text-[var(--color-brand-green-800)]/78">
-                Repondez a chaque question en selectionnant une proposition A, B, C ou D. A la validation, le systeme calcule automatiquement votre resultat reel sur 100%.
+                Repondez a chaque question en selectionnant une proposition A, B, C ou D. Chaque bonne reponse vaut 0,5 point. Le score brut est ensuite ramene sur 10 pour afficher la note finale.
               </div>
 
               <form class="mt-8 space-y-6" (ngSubmit)="submitExam()">
@@ -320,6 +321,11 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
   }
 
   formatScore(score: number | null, scaleMax: number): string {
+    if (score === null) return '-';
+    return `${score}/${scaleMax}`;
+  }
+
+  formatRawScore(score: number | null, scaleMax: number): string {
     if (score === null) return '-';
     return `${score}/${scaleMax}`;
   }

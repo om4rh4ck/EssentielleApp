@@ -6,29 +6,32 @@ import {
 } from '@angular/ssr/node';
 import express, { Request } from 'express';
 import { join } from 'node:path';
-import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import mysql, { Pool } from 'mysql2/promise';
 import nodemailer from 'nodemailer';
 import { DETOX_FINAL_EXAM_QUESTIONS } from './data/detox-final-exam';
+import {
+  assertTokenSecretConfigured,
+  createPasswordResetToken,
+  createToken,
+  getCurrentUser,
+  getUsernameFromEmail,
+  hashPassword,
+  makeStoredUser,
+  normalizeEmail,
+  verifyPassword,
+  verifyPasswordResetToken,
+  type PublicUser,
+  type StoredUser,
+  type UserRole,
+} from './server/auth';
+import { apiLimiter, applyBaseSecurity, authLimiter, loginLimiter } from './server/security';
+import { registerUploadRoutes } from './server/uploads';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
-type UserRole = 'student' | 'instructor' | 'admin';
 type CourseAccess = 'free' | 'paid';
 type CourseStatus = 'published' | 'draft';
 type MessageRole = 'student' | 'instructor' | 'admin';
-
-interface PublicUser {
-  id: string;
-  name: string;
-  email: string;
-  username: string;
-  role: UserRole;
-}
-
-interface StoredUser extends PublicUser {
-  passwordHash: string;
-}
 
 interface RegisterPayload {
   name?: string;
@@ -272,6 +275,7 @@ interface StudentAttempt {
   examId: string;
   answers: number[];
   score: number;
+  rawScore?: number;
   submittedAt: string;
   attemptCount: number;
 }
@@ -314,8 +318,28 @@ interface AdminStatsSnapshot {
 }
 
 const app = express();
-app.use(express.json({ limit: '250mb' }));
-app.use(express.urlencoded({ limit: '250mb', extended: true }));
+
+// Sécurité HTTP de base (helmet)
+applyBaseSecurity(app);
+
+// Trust proxy headers (Hostinger / reverse proxy) — nécessaire pour que
+// express-rate-limit voie la vraie IP du client.
+app.set('trust proxy', 1);
+
+// Rate-limit global pour /api/* (très permissif, protège du DoS basique)
+app.use('/api', apiLimiter);
+
+// Limite de payload réduite à 25 Mo pour la majorité des routes JSON.
+// La route /api/uploads gère elle-même multer en streaming, donc cette
+// limite ne s'applique pas aux gros fichiers.
+// NOTE: les anciens endpoints qui acceptaient des dataUrl base64 jusqu'à
+// 250 Mo restent fonctionnels tant que le frontend n'a pas migré, mais on
+// ne devrait plus envoyer de média en JSON — utiliser POST /api/uploads.
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ limit: '25mb', extended: true }));
+
+// Routes d'upload de médias (multer + serving /uploads)
+registerUploadRoutes(app);
 
 const angularApp = new AngularNodeAppEngine({
   allowedHosts: ['*'],
@@ -1223,14 +1247,14 @@ function bootstrapRoleData(): void {
       examType: 'final',
       durationMinutes: 30,
       maxAttempts: 2,
-      gradingScaleMax: 100,
-      passThreshold: 70,
+      gradingScaleMax: 10,
+      passThreshold: 7,
       questions: DETOX_FINAL_EXAM_QUESTIONS.map((question, index) => ({
         id: `detox-final-q${index + 1}`,
         prompt: question.prompt,
         options: question.options,
         correctIndex: question.correctIndex,
-        points: 1,
+        points: 0.5,
       })),
     }
   );
@@ -1246,27 +1270,8 @@ function bootstrapRoleData(): void {
   ]);
 }
 
-function hashPassword(password: string): string {
-  const salt = randomBytes(16).toString('hex');
-  const hash = scryptSync(password, salt, 64).toString('hex');
-  return `${salt}:${hash}`;
-}
-
-function verifyPassword(password: string, storedHash: string): boolean {
-  const [salt, hash] = storedHash.split(':');
-  if (!salt || !hash) return false;
-  const hashBuffer = Buffer.from(hash, 'hex');
-  const derived = scryptSync(password, salt, 64);
-  return timingSafeEqual(hashBuffer, derived);
-}
-
-function normalizeEmail(email: string): string {
-  return email.trim().toLowerCase();
-}
-
-function getUsernameFromEmail(email: string): string {
-  return normalizeEmail(email).split('@')[0] ?? '';
-}
+// hashPassword, verifyPassword, normalizeEmail, getUsernameFromEmail
+// sont désormais importés depuis ./server/auth
 
 function toPublicUser(user: StoredUser): PublicUser {
   return {
@@ -1278,9 +1283,8 @@ function toPublicUser(user: StoredUser): PublicUser {
   };
 }
 
-function getTokenSecret(): string {
-  return process.env['TOKEN_SECRET'] ?? process.env['JWT_SECRET'] ?? 'dev-insecure-secret';
-}
+// getTokenSecret est désormais importé depuis ./server/auth
+// (avec enforcement strict en production).
 
 function getAppUrl(req?: Request): string {
   const configured = process.env['APP_URL']?.trim();
@@ -1452,39 +1456,7 @@ async function sendPaidEnrollmentApprovalEmail(student: PublicUser, course: Cour
   return true;
 }
 
-function createPasswordResetToken(email: string): string {
-  const expiresAt = Date.now() + (60 * 60 * 1000);
-  const payload = Buffer.from(JSON.stringify({
-    email: normalizeEmail(email),
-    expiresAt,
-    type: 'password-reset',
-  }), 'utf-8').toString('base64url');
-  const signature = createTokenSignature(payload);
-  return `${payload}.${signature}`;
-}
-
-function verifyPasswordResetToken(token: string): string | null {
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 2) return null;
-
-    const [payloadBase64Url, signature] = parts;
-    const expectedSignature = createTokenSignature(payloadBase64Url);
-    if (!timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) return null;
-
-    const parsed = JSON.parse(Buffer.from(payloadBase64Url, 'base64url').toString('utf-8')) as {
-      email?: string;
-      expiresAt?: number;
-      type?: string;
-    };
-
-    if (parsed.type !== 'password-reset' || !parsed.email || !parsed.expiresAt) return null;
-    if (Date.now() > parsed.expiresAt) return null;
-    return normalizeEmail(parsed.email);
-  } catch {
-    return null;
-  }
-}
+// createPasswordResetToken et verifyPasswordResetToken sont importés depuis ./server/auth.
 
 async function sendPasswordResetEmail(user: PublicUser, token: string, req: Request): Promise<void> {
   const config = getSmtpConfig();
@@ -1538,46 +1510,8 @@ async function sendPasswordResetEmail(user: PublicUser, token: string, req: Requ
   }
 }
 
-function createToken(user: PublicUser): string {
-  const payload = Buffer.from(JSON.stringify(user), 'utf-8').toString('base64url');
-  const signature = createTokenSignature(payload);
-  return `${payload}.${signature}`;
-}
-
-function createTokenSignature(payloadBase64Url: string): string {
-  const secret = getTokenSecret();
-  const hmac = createHmac('sha256', secret).update(payloadBase64Url).digest('base64url');
-  return hmac;
-}
-
-function decodeToken(token: string): PublicUser | null {
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 2) return null;
-
-    const [payloadBase64Url, signature] = parts;
-    const expectedSignature = createTokenSignature(payloadBase64Url);
-
-    if (!timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) return null;
-
-    const parsed = JSON.parse(Buffer.from(payloadBase64Url, 'base64url').toString('utf-8')) as PublicUser;
-    if (!parsed?.id || !parsed?.email || !parsed?.role) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-function makeStoredUser(id: string, name: string, email: string, role: UserRole, password: string): StoredUser {
-  return {
-    id,
-    name,
-    email: normalizeEmail(email),
-    username: getUsernameFromEmail(email),
-    role,
-    passwordHash: hashPassword(password),
-  };
-}
+// createToken, decodeToken, makeStoredUser sont importés depuis ./server/auth
+// (avec expiration des tokens à 7 jours et vérification stricte de la signature).
 
 function parseTextList(items: unknown): string[] {
   if (!Array.isArray(items)) return [];
@@ -1890,14 +1824,7 @@ async function countUsers(): Promise<number> {
   return Number(rows[0]?.['total'] ?? 0);
 }
 
-function getCurrentUser(req: Request, allowedRoles?: UserRole[]): PublicUser | null {
-  const authHeader = req.header('Authorization') ?? '';
-  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
-  const user = token ? decodeToken(token) : null;
-  if (!user) return null;
-  if (allowedRoles && !allowedRoles.includes(user.role)) return null;
-  return user;
-}
+// getCurrentUser est importé depuis ./server/auth
 
 function ensureStudentWorkspace(user: PublicUser): StudentWorkspace {
   const existing = studentWorkspaces.get(user.id);
@@ -2016,6 +1943,18 @@ function normalizeScoreToTwenty(examId: string, score: number): number {
   return Number(((score / getExamScaleMax(exam)) * 20).toFixed(1));
 }
 
+function getExamRawMax(exam: ExamTemplate): number {
+  return Number(exam.questions.reduce((sum, question) => sum + question.points, 0).toFixed(2));
+}
+
+function getExamRawScore(exam: ExamTemplate, answers: number[]): number {
+  return Number(
+    exam.questions
+      .reduce((sum, question, index) => sum + (answers[index] === question.correctIndex ? question.points : 0), 0)
+      .toFixed(2)
+  );
+}
+
 function getExamMaxAttempts(exam: ExamTemplate): number {
   return Math.max(1, exam.maxAttempts ?? 1);
 }
@@ -2119,17 +2058,19 @@ function toStudentExamView(user: PublicUser) {
         courseTitle: getCourseTitle(exam.courseId),
         assignedBy: exam.assignedBy,
         examType: exam.examType ?? 'quiz',
-        durationMinutes: getExamDurationMinutes(exam),
-        gradingScaleMax: getExamScaleMax(exam),
-        passThreshold: getExamPassThreshold(exam),
-        maxAttempts,
-        attemptsUsed,
-        attemptsRemaining,
-        status: attemptsRemaining === 0 ? 'locked' : attempt ? 'graded' : 'available',
-        score: attempt?.score ?? null,
-        passed: attempt ? attempt.score >= getExamPassThreshold(exam) : null,
-        average: getExamAverage(exam.id),
-        dueDate: exam.dueDate,
+      durationMinutes: getExamDurationMinutes(exam),
+      gradingScaleMax: getExamScaleMax(exam),
+      passThreshold: getExamPassThreshold(exam),
+      rawMaxScore: getExamRawMax(exam),
+      maxAttempts,
+      attemptsUsed,
+      attemptsRemaining,
+      status: attemptsRemaining === 0 ? 'locked' : attempt ? 'graded' : 'available',
+      score: attempt?.score ?? null,
+      rawScore: attempt?.rawScore ?? (attempt ? getExamRawScore(exam, attempt.answers) : null),
+      passed: attempt ? attempt.score >= getExamPassThreshold(exam) : null,
+      average: getExamAverage(exam.id),
+      dueDate: exam.dueDate,
         reviewQuestions: attempt ? buildStudentExamReview(exam, attempt) : undefined,
         questions: attemptsRemaining === 0
           ? undefined
@@ -2304,7 +2245,7 @@ function getMessagesForUser(userId: string): MessageRecord[] {
   return messages.filter((message) => message.senderId === userId || message.recipientId === userId);
 }
 
-app.post('/api/register', async (req, res) => {
+app.post('/api/register', authLimiter, async (req, res) => {
   const body = req.body as RegisterPayload;
   const name = body.name?.trim() ?? '';
   const email = body.email?.trim() ?? '';
@@ -2340,7 +2281,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-app.post('/api/login', async (req, res) => {
+app.post('/api/login', loginLimiter, async (req, res) => {
   const body = req.body as LoginPayload;
   const identifier = body.identifier?.trim() ?? body.email?.trim() ?? '';
   const password = body.password ?? '';
@@ -2366,7 +2307,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-app.post('/api/forgot-password', async (req, res) => {
+app.post('/api/forgot-password', authLimiter, async (req, res) => {
   const body = req.body as ForgotPasswordPayload;
   const identifier = body.identifier?.trim() ?? body.email?.trim() ?? '';
 
@@ -2415,7 +2356,7 @@ app.post('/api/forgot-password', async (req, res) => {
   }
 });
 
-app.post('/api/reset-password', async (req, res) => {
+app.post('/api/reset-password', authLimiter, async (req, res) => {
   const body = req.body as ResetPasswordPayload;
   const token = body.token?.trim() ?? '';
   const password = body.password ?? '';
@@ -2707,14 +2648,13 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
     return res.status(400).json({ error: 'Nombre maximum d essais atteint pour cet examen.' });
   }
 
-  const rawScore = exam.questions.reduce((sum, question, index) => {
-    return sum + (answers[index] === question.correctIndex ? question.points : 0);
-  }, 0);
-  const totalPoints = exam.questions.reduce((sum, question) => sum + question.points, 0);
+  const rawScore = getExamRawScore(exam, answers);
+  const totalPoints = getExamRawMax(exam);
   const score = totalPoints > 0 ? Number(((rawScore / totalPoints) * getExamScaleMax(exam)).toFixed(1)) : 0;
   if (existing) {
     existing.answers = answers;
     existing.score = score;
+    existing.rawScore = rawScore;
     existing.submittedAt = new Date().toISOString();
     existing.attemptCount += 1;
   } else {
@@ -2722,6 +2662,7 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
       examId: exam.id,
       answers,
       score,
+      rawScore,
       submittedAt: new Date().toISOString(),
       attemptCount: 1,
     });
@@ -3767,6 +3708,9 @@ app.use((req, res, next) => {
 export async function startServer(): Promise<void> {
   if (serverStarted) return;
   serverStarted = true;
+
+  // Fail-fast si TOKEN_SECRET est absent ou trop faible en production.
+  assertTokenSecretConfigured();
 
   const port = Number(process.env['PORT'] || 4000);
   void getDbPool();

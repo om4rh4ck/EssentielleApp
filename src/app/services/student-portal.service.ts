@@ -105,11 +105,13 @@ export interface StudentExam {
   durationMinutes: number;
   gradingScaleMax: number;
   passThreshold: number;
+  rawMaxScore: number;
   maxAttempts: number;
   attemptsUsed: number;
   attemptsRemaining: number;
   status: 'available' | 'graded' | 'locked';
   score: number | null;
+  rawScore: number | null;
   passed: boolean | null;
   average: number;
   dueDate: string;
