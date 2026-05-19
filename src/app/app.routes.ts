@@ -1,4 +1,5 @@
 import {Routes} from '@angular/router';
+import {authGuard, roleGuard} from './core/auth.guard';
 
 export const routes: Routes = [
   {
@@ -47,100 +48,130 @@ export const routes: Routes = [
     path: 'reset-password',
     loadComponent: () => import('./pages/reset-password/reset-password').then(m => m.ResetPasswordComponent)
   },
+
+  // -------- Espace ÉTUDIANTE (roleGuard ['student']) --------
   {
     path: 'student',
+    canActivate: [authGuard, roleGuard(['student'])],
     loadComponent: () => import('./pages/student/student-dashboard').then(m => m.StudentDashboardComponent)
   },
   {
     path: 'student/catalog',
+    canActivate: [authGuard, roleGuard(['student'])],
     loadComponent: () => import('./pages/student/student-catalog').then(m => m.StudentCatalogComponent)
   },
   {
     path: 'student/schedule',
+    canActivate: [authGuard, roleGuard(['student'])],
     loadComponent: () => import('./pages/student/student-schedule').then(m => m.StudentScheduleComponent)
   },
   {
     path: 'student/certificates',
+    canActivate: [authGuard, roleGuard(['student'])],
     loadComponent: () => import('./pages/student/student-certificates').then(m => m.StudentCertificatesComponent)
   },
   {
     path: 'student/messages',
+    canActivate: [authGuard, roleGuard(['student'])],
     loadComponent: () => import('./pages/student/student-messages').then(m => m.StudentMessagesComponent)
   },
   {
     path: 'student/exams',
+    canActivate: [authGuard, roleGuard(['student'])],
     loadComponent: () => import('./pages/student/student-exams').then(m => m.StudentExamsComponent)
   },
   {
     path: 'student/profile',
+    canActivate: [authGuard, roleGuard(['student'])],
     loadComponent: () => import('./pages/student/student-profile').then(m => m.StudentProfileComponent)
   },
   {
     path: 'student/course/:id',
+    canActivate: [authGuard, roleGuard(['student'])],
     loadComponent: () => import('./pages/course-detail/course-detail').then(m => m.CourseDetailComponent)
   },
+
+  // -------- Espace FORMATRICE (roleGuard ['instructor']) --------
   {
     path: 'instructor',
+    canActivate: [authGuard, roleGuard(['instructor'])],
     loadComponent: () => import('./pages/instructor/instructor-dashboard').then(m => m.InstructorDashboardComponent)
   },
   {
     path: 'instructor/courses',
+    canActivate: [authGuard, roleGuard(['instructor'])],
     loadComponent: () => import('./pages/instructor/instructor-courses').then(m => m.InstructorCoursesComponent)
   },
   {
     path: 'instructor/formulas',
+    canActivate: [authGuard, roleGuard(['instructor'])],
     loadComponent: () => import('./pages/instructor/instructor-formulas').then(m => m.InstructorFormulasComponent)
   },
   {
     path: 'instructor/resources',
+    canActivate: [authGuard, roleGuard(['instructor'])],
     loadComponent: () => import('./pages/instructor/instructor-resources').then(m => m.InstructorResourcesComponent)
   },
   {
     path: 'instructor/schedule',
+    canActivate: [authGuard, roleGuard(['instructor'])],
     loadComponent: () => import('./pages/instructor/instructor-schedule').then(m => m.InstructorScheduleComponent)
   },
   {
     path: 'instructor/students',
+    canActivate: [authGuard, roleGuard(['instructor'])],
     loadComponent: () => import('./pages/instructor/instructor-students').then(m => m.InstructorStudentsComponent)
   },
   {
     path: 'instructor/messages',
+    canActivate: [authGuard, roleGuard(['instructor'])],
     loadComponent: () => import('./pages/instructor/instructor-messages').then(m => m.InstructorMessagesComponent)
   },
   {
     path: 'instructor/exams',
+    canActivate: [authGuard, roleGuard(['instructor'])],
     loadComponent: () => import('./pages/instructor/instructor-exams').then(m => m.InstructorExamsComponent)
   },
   {
     path: 'instructor/settings',
+    canActivate: [authGuard, roleGuard(['instructor'])],
     loadComponent: () => import('./pages/instructor/instructor-profile').then(m => m.InstructorProfileComponent)
   },
+
+  // -------- Espace ADMIN (roleGuard ['admin']) --------
   {
     path: 'admin',
+    canActivate: [authGuard, roleGuard(['admin'])],
     loadComponent: () => import('./pages/admin/admin-dashboard').then(m => m.AdminDashboardComponent)
   },
   {
     path: 'admin/users',
+    canActivate: [authGuard, roleGuard(['admin'])],
     loadComponent: () => import('./pages/admin/admin-users').then(m => m.AdminUsersComponent)
   },
   {
     path: 'admin/messages',
+    canActivate: [authGuard, roleGuard(['admin'])],
     loadComponent: () => import('./pages/admin/admin-messages').then(m => m.AdminMessagesComponent)
   },
   {
     path: 'admin/courses',
+    canActivate: [authGuard, roleGuard(['admin'])],
     loadComponent: () => import('./pages/admin/admin-courses').then(m => m.AdminCoursesComponent)
   },
   {
     path: 'admin/payments',
+    canActivate: [authGuard, roleGuard(['admin'])],
     loadComponent: () => import('./pages/admin/admin-payments').then(m => m.AdminPaymentsComponent)
   },
   {
     path: 'admin/stats',
+    canActivate: [authGuard, roleGuard(['admin'])],
     loadComponent: () => import('./pages/admin/admin-stats').then(m => m.AdminStatsComponent)
   },
   {
     path: 'admin/settings',
+    canActivate: [authGuard, roleGuard(['admin'])],
     loadComponent: () => import('./pages/admin/admin-settings').then(m => m.AdminSettingsComponent)
   }
 ];
