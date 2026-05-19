@@ -23,7 +23,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
         </div>
 
         @if (activeExam(); as exam) {
-          <section class="rounded-[28px] border border-[var(--color-brand-gold-300)]/35 bg-white p-6 shadow-[0_24px_50px_rgba(0,0,0,0.04)]">
+          <section id="active-exam-panel" class="rounded-[28px] border border-[var(--color-brand-gold-300)]/35 bg-white p-6 shadow-[0_24px_50px_rgba(0,0,0,0.04)]">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <div class="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-brand-gold-700)]">{{ exam.courseTitle }}</div>
@@ -242,6 +242,12 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
     this.portal.getExams().subscribe((data) => this.exams.set(data));
   }
 
+  scrollToActiveExam(): void {
+    setTimeout(() => {
+      document.getElementById('active-exam-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }
+
   openExam(exam: StudentExam, reviewOnly: boolean): void {
     this.submitError.set('');
     this.stopTimer();
@@ -256,6 +262,7 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
     }
 
     this.activeExam.set(reviewOnly ? { ...exam, questions: undefined } : exam);
+    this.scrollToActiveExam();
   }
 
   openExamForRetry(exam: StudentExam): void {
@@ -270,6 +277,7 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
     }
 
     this.startTimer(exam.durationMinutes);
+    this.scrollToActiveExam();
   }
 
   closeExam(): void {
@@ -341,6 +349,7 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
         this.activeExam.set(refreshedExam);
         this.answerControls.clear();
         this.submitInProgress.set(false);
+        this.scrollToActiveExam();
       },
       error: (error: HttpErrorResponse) => {
         this.submitInProgress.set(false);
