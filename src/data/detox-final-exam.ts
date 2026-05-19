@@ -1,4 +1,4 @@
-export const DETOX_FINAL_EXAM_QUESTIONS = [
+const DETOX_FINAL_EXAM_QUESTIONS_RAW = [
   {
     prompt: "Quel est l'objectif principal d'une detox ?",
     options: [
@@ -305,3 +305,21 @@ export const DETOX_FINAL_EXAM_QUESTIONS = [
     correctIndex: 2,
   },
 ];
+
+const DETOX_FINAL_ANSWER_KEY = [
+  1, 1, 1, 2, 0,
+  1, 2, 1, 1, 0,
+  1, 1, 0, 1, 1,
+  1, 1, 0, 0, 2,
+  1, 0, 0, 0, 1,
+  1, 0, 0, 2, 0,
+  1, 2, 0, 0, 1,
+  1, 2, 2, 0, 0,
+  1, 2, 1, 2, 1,
+  1, 1, 2, 1, 2,
+] as const;
+
+export const DETOX_FINAL_EXAM_QUESTIONS = DETOX_FINAL_EXAM_QUESTIONS_RAW.map((question, index) => ({
+  ...question,
+  correctIndex: DETOX_FINAL_ANSWER_KEY[index] ?? question.correctIndex,
+}));
