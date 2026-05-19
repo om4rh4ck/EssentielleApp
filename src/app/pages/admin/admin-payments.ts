@@ -18,7 +18,7 @@ import { ADMIN_MENU_ITEMS } from './admin-menu';
             <div>
               <h2 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Demandes d'inscription</h2>
               <p class="mt-2 text-sm text-[var(--color-brand-green-800)]/70">
-                Validez la demande pour ouvrir l'acces de l'etudiante a sa formation payante.
+                Validez chaque demande pour ouvrir l'acces de la formation uniquement a l'etudiante concernee, de maniere definitive dans son espace.
               </p>
             </div>
             <div class="text-sm text-[var(--color-brand-green-800)]/60">{{ enrollmentRequests().length }} demandes</div>
@@ -64,7 +64,7 @@ import { ADMIN_MENU_ITEMS } from './admin-menu';
                       [class.text-emerald-700]="request.status === 'approved'"
                       [class.bg-amber-50]="request.status === 'pending'"
                       [class.text-amber-700]="request.status === 'pending'">
-                      {{ request.status === 'approved' ? 'Validee' : 'En attente' }}
+                      {{ request.status === 'approved' ? 'Validation effectuee' : 'En attente de validation' }}
                     </div>
 
                     @if (request.status === 'pending') {
@@ -74,7 +74,7 @@ import { ADMIN_MENU_ITEMS } from './admin-menu';
                         [disabled]="approvingId() === request.id"
                         class="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)] disabled:opacity-60">
                         <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">verified</mat-icon>
-                        {{ approvingId() === request.id ? 'Validation...' : 'Valider et ouvrir l acces' }}
+                        {{ approvingId() === request.id ? 'Validation en cours...' : 'Valider et ouvrir l acces definitif' }}
                       </button>
                     }
                   </div>
@@ -140,7 +140,7 @@ export class AdminPaymentsComponent implements OnInit {
         this.approvingId.set(null);
         this.feedback.set({
           type: 'success',
-          text: response.feedbackMessage || `La demande de ${request.name} a ete validee et l'acces a la formation est maintenant ouvert.`,
+          text: response.feedbackMessage || `La demande de ${request.name} a ete validee. L'acces a la formation est maintenant ouvert de facon definitive dans son espace etudiante.`,
         });
         this.load();
       },

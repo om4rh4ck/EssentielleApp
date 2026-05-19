@@ -93,7 +93,7 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                   <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-[#fffaf2] p-5">
                     <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Contenu complet apres validation</h2>
                     <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/72">
-                      Le support PDF integral, les images detaillees, les modules et tous les chapitres deviennent accessibles dans l'espace etudiante apres acceptation de la demande par l'administration.
+                      Le support PDF integral, les images detaillees, les modules et l'ensemble des chapitres deviennent accessibles dans l'espace etudiante des la validation administrative de votre inscription.
                     </p>
                   </div>
                 }

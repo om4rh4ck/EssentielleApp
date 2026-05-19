@@ -17,7 +17,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
         <div class="rounded-[28px] border border-[var(--color-brand-gold-300)]/35 bg-white p-8 shadow-[0_24px_50px_rgba(0,0,0,0.04)]">
           <h2 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Les formations disponibles</h2>
           <p class="mt-3 max-w-3xl text-sm leading-7 text-[var(--color-brand-green-800)]/70">
-            Les formations gratuites peuvent etre rejointes immediatement. Les formations payantes peuvent maintenant etre demandees directement depuis votre catalogue et seront activees apres validation par l'administration.
+            Les formations gratuites sont accessibles immediatement. Les formations payantes sont ouvertes uniquement apres validation administrative de votre inscription, puis restent disponibles dans votre espace etudiante.
           </p>
         </div>
 
@@ -67,28 +67,28 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                 <div class="flex flex-wrap gap-3">
                   @if (course.enrolled) {
                     <a [routerLink]="['/student/course', course.id]" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)]">
-                      Continuer la formation
+                      Acceder a la formation
                       <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">play_circle</mat-icon>
                     </a>
                   } @else if (course.access === 'free') {
                     <button (click)="enroll(course.id)" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-900)]">
-                      S'inscrire gratuitement
+                      S'inscrire maintenant
                       <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">how_to_reg</mat-icon>
                     </button>
                   } @else if (course.enrollmentRequestStatus === 'pending') {
                     <button type="button" disabled class="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-5 py-3 text-sm font-bold text-amber-700 opacity-90">
-                      Demande envoyee
+                      Inscription en cours de validation
                       <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">schedule</mat-icon>
                     </button>
                   } @else {
                     <button type="button" (click)="requestEnrollment(course.id)" class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-[var(--color-brand-green-900)] transition hover:bg-[var(--color-brand-green-900)] hover:text-white">
-                      Demander l'inscription
+                      Faire une demande d'inscription
                       <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">assignment</mat-icon>
                     </button>
                   }
 
                   <span class="inline-flex items-center rounded-full bg-[var(--color-brand-cream)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/60">
-                    {{ course.enrolled ? 'Deja inscrite' : (course.enrollmentRequestStatus === 'pending' ? 'En attente' : 'Disponible') }}
+                    {{ course.enrolled ? 'Acces ouvert' : (course.enrollmentRequestStatus === 'pending' ? 'Validation en cours' : 'Disponible') }}
                   </span>
                 </div>
               </div>

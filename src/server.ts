@@ -1426,11 +1426,12 @@ async function sendPaidEnrollmentApprovalEmail(student: PublicUser, course: Cour
     text: [
       `Bonjour ${student.name},`,
       '',
-      `Votre demande d'inscription a ete acceptee pour la formation "${course.title}".`,
-      'Votre acces est maintenant ouvert dans votre espace etudiante sur la plateforme Essenti\'Elle Sante.',
+      `Votre demande d'inscription a ete validee pour la formation "${course.title}".`,
+      'Votre acces personnel a cette formation est maintenant ouvert dans votre espace etudiante sur la plateforme Essenti\'Elle Sante.',
+      'Une fois active, la formation reste disponible pour votre suivi pedagogique, y compris apres vos evaluations.',
       detailsBlock,
       '',
-      'Connectez-vous avec votre adresse e-mail pour retrouver votre formation.',
+      'Connectez-vous avec votre adresse e-mail pour acceder a votre formation.',
       '',
       'Bien cordialement,',
       "L'equipe Essenti'Elle Sante",
@@ -1438,10 +1439,11 @@ async function sendPaidEnrollmentApprovalEmail(student: PublicUser, course: Cour
     html: `
       <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173526">
         <p>Bonjour ${student.name},</p>
-        <p>Votre demande d'inscription a ete acceptee pour la formation <strong>${course.title}</strong>.</p>
-        <p>Votre acces est maintenant ouvert dans votre espace etudiante sur la plateforme Essenti'Elle Sante.</p>
+        <p>Votre demande d'inscription a ete validee pour la formation <strong>${course.title}</strong>.</p>
+        <p>Votre acces personnel a cette formation est maintenant ouvert dans votre espace etudiante sur la plateforme Essenti'Elle Sante.</p>
+        <p>Une fois activee, la formation reste disponible pour votre suivi pedagogique, y compris apres vos evaluations.</p>
         ${htmlDetails ? `<ul>${htmlDetails}</ul>` : ''}
-        <p>Connectez-vous avec votre adresse e-mail pour retrouver votre formation.</p>
+        <p>Connectez-vous avec votre adresse e-mail pour acceder a votre formation.</p>
         <p>Bien cordialement,<br>L'equipe Essenti'Elle Sante</p>
       </div>
     `,
@@ -2533,8 +2535,8 @@ app.post('/api/public/enrollment-requests', (req, res): any => {
 
   publicEnrollmentRequests.unshift(request);
   const successMessage = course.access === 'free'
-    ? 'Votre demande d inscription a bien ete envoyee.'
-    : 'Votre demande a bien ete envoyee. Apres acceptation, vous recevrez automatiquement un email de confirmation depuis notre adresse professionnelle.';
+    ? 'Votre inscription a bien ete enregistree. La formation est maintenant disponible dans votre espace etudiante.'
+    : 'Votre demande d inscription a bien ete enregistree. Apres validation administrative, vous recevrez une confirmation et votre acces personnel sera ouvert dans votre espace etudiante.';
   res.status(201).json({
     message: successMessage,
     request,
@@ -3692,8 +3694,8 @@ app.post('/api/admin/enrollment-requests/:requestId/approve', async (req, res): 
     recipientId: student.id,
     recipientRole: 'student',
     recipientName: student.name,
-    subject: `Acces valide - ${course.title}`,
-    content: `Votre demande pour la formation ${course.title} a ete acceptee. La formation est maintenant accessible dans votre espace etudiante.`,
+    subject: `Acces a la formation valide - ${course.title}`,
+    content: `Votre inscription a la formation ${course.title} a ete validee. Votre acces personnel est maintenant ouvert de facon definitive dans votre espace etudiante.`,
     sentAt: new Date().toISOString(),
   });
 
@@ -3707,10 +3709,10 @@ app.post('/api/admin/enrollment-requests/:requestId/approve', async (req, res): 
   res.json({
     ...request,
     feedbackMessage: approvalEmailSent
-      ? 'La demande a ete validee, l acces a ete ouvert et l email d acceptation a ete envoye automatiquement.'
+      ? 'La demande a ete validee, l acces definitif a ete ouvert pour cette etudiante et l email de confirmation a ete envoye automatiquement.'
       : (isMailerConfigured()
-        ? 'La demande a ete validee et l acces a ete ouvert, mais l email automatique n a pas pu etre envoye.'
-        : 'La demande a ete validee et l acces a ete ouvert. Configurez le SMTP pour activer l email automatique depuis votre adresse professionnelle.'),
+        ? 'La demande a ete validee et l acces definitif a ete ouvert pour cette etudiante, mais l email automatique n a pas pu etre envoye.'
+        : 'La demande a ete validee et l acces definitif a ete ouvert pour cette etudiante. Configurez le SMTP pour activer l email automatique depuis votre adresse professionnelle.'),
     approvalEmailSent,
   });
 });

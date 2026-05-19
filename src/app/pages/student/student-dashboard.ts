@@ -29,8 +29,8 @@ import { StudentOverview, StudentPortalService } from '../../services/student-po
                 <p class="max-w-xl text-sm leading-7 text-white/80">
                   Continuez votre parcours, consultez vos examens, vos certificats et vos échanges avec la formatrice ou la directrice depuis un seul espace.
                 </p>
-                <a [routerLink]="['/student/course', data.featuredCourseId]" class="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-[var(--color-brand-green-900)] transition hover:bg-[var(--color-brand-cream)]">
-                  Reprendre {{ data.featuredCourseTitle }}
+                <a [routerLink]="data.enrolledCount > 0 ? ['/student/course', data.featuredCourseId] : ['/student/catalog']" class="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-[var(--color-brand-green-900)] transition hover:bg-[var(--color-brand-cream)]">
+                  {{ data.enrolledCount > 0 ? ('Reprendre ' + data.featuredCourseTitle) : 'Voir le catalogue' }}
                   <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">arrow_forward</mat-icon>
                 </a>
               </div>
