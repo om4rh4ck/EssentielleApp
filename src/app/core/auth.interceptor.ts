@@ -1,26 +1,9 @@
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
-/**
- * Intercepteur HTTP fonctionnel.
- *
- * - Ajoute automatiquement l'en-tête `Authorization: Bearer <token>` à
- *   toutes les requêtes sortantes si un token est présent. Plus besoin
- *   d'appeler manuellement `authHeaders()` dans chaque service.
- *
- * - Sur réponse 401 (token absent, invalide, ou EXPIRÉ — voir la nouvelle
- *   logique d'expiration côté serveur), purge le token local et redirige
- *   l'utilisateur vers /login en conservant l'URL d'origine pour la
- *   redirection post-login.
- *
- * - On exclut explicitement les endpoints publics d'authentification
- *   (`/api/login`, `/api/register`, `/api/forgot-password`,
- *   `/api/reset-password`) du traitement 401 — un échec de login ne doit
- *   pas déclencher de logout/redirect.
- */
 const PUBLIC_AUTH_ENDPOINTS = [
   '/api/login',
   '/api/register',
@@ -46,14 +29,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (
         error instanceof HttpErrorResponse &&
         error.status === 401 &&
-        !isPublicAuthEndpoint(req.url)
+        !isPublicAuthEndpoint(req.url) &&
+        !auth.getToken()
       ) {
-        // Token expiré ou invalide : on purge et on renvoie vers /login.
         auth.logout();
         void router.navigate(['/login'], {
           queryParams: { redirectTo: router.url },
         });
       }
+
       return throwError(() => error);
     }),
   );

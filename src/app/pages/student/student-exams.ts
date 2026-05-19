@@ -18,9 +18,45 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
         <div class="rounded-[28px] border border-[var(--color-brand-gold-300)]/35 bg-white p-8 shadow-[0_24px_50px_rgba(0,0,0,0.04)]">
           <h2 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Examens, devoirs et moyennes</h2>
           <p class="mt-3 max-w-3xl text-sm leading-7 text-[var(--color-brand-green-800)]/70">
-            Retrouvez ici votre examen final structure, votre resultat reel sur 100%, la moyenne generale du QCM et la correction detaillee question par question.
+            Retrouvez ici votre examen final structure, votre note reelle sur 10, la moyenne generale du QCM et la correction detaillee question par question.
           </p>
         </div>
+
+        @if (latestResultExam(); as resultExam) {
+          <section class="rounded-[28px] border border-[var(--color-brand-gold-300)]/35 bg-white p-6 shadow-[0_24px_50px_rgba(0,0,0,0.04)]">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div class="max-w-3xl">
+                <div class="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-brand-gold-700)]">Resultat du QCM</div>
+                <h3 class="mt-2 font-serif text-3xl text-[var(--color-brand-green-900)]">{{ resultExam.title }}</h3>
+                <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/75">
+                  Formule de calcul : ((score brut / {{ resultExam.rawMaxScore }}) × {{ resultExam.gradingScaleMax }}) = note finale.
+                </p>
+                <p class="mt-2 text-sm leading-7 text-[var(--color-brand-green-800)]/75">
+                  Detail : {{ formatRawScore(resultExam.rawScore, resultExam.rawMaxScore) }} donne {{ formatScore(resultExam.score, resultExam.gradingScaleMax) }}.
+                </p>
+              </div>
+
+              <div class="grid min-w-[340px] grid-cols-2 gap-3">
+                <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
+                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Bonnes reponses</div>
+                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ correctAnswersCount(resultExam) }}/{{ totalQuestions(resultExam) }}</div>
+                </div>
+                <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
+                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Score brut</div>
+                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatRawScore(resultExam.rawScore, resultExam.rawMaxScore) }}</div>
+                </div>
+                <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
+                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Note finale</div>
+                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatScore(resultExam.score, resultExam.gradingScaleMax) }}</div>
+                </div>
+                <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
+                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne QCM</div>
+                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatScore(resultExam.average, resultExam.gradingScaleMax) }}</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        }
 
         @if (activeExam(); as exam) {
           <section id="active-exam-panel" class="rounded-[28px] border border-[var(--color-brand-gold-300)]/35 bg-white p-6 shadow-[0_24px_50px_rgba(0,0,0,0.04)]">
@@ -243,6 +279,10 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
     this.portal.getExams().subscribe((data) => this.exams.set(data));
   }
 
+  latestResultExam(): StudentExam | null {
+    return this.exams().find((exam) => exam.score !== null) ?? null;
+  }
+
   scrollToActiveExam(): void {
     setTimeout(() => {
       document.getElementById('active-exam-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -332,6 +372,14 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
 
   formatThreshold(exam: StudentExam): string {
     return `${exam.passThreshold}/${exam.gradingScaleMax}`;
+  }
+
+  correctAnswersCount(exam: StudentExam): number {
+    return exam.rawScore !== null ? Math.round(exam.rawScore / 0.5) : 0;
+  }
+
+  totalQuestions(exam: StudentExam): number {
+    return Math.round(exam.rawMaxScore / 0.5);
   }
 
   submitExam(autoSubmit = false): void {
