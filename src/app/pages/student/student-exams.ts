@@ -26,7 +26,8 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
 
         <!-- Exam cards -->
         @for (exam of exams(); track exam.id) {
-          <div class="overflow-hidden rounded-[24px] bg-white shadow-[0_16px_40px_rgba(0,0,0,0.04)]"
+          <div [attr.id]="'exam-' + exam.id"
+               class="overflow-hidden rounded-[24px] bg-white shadow-[0_16px_40px_rgba(0,0,0,0.04)]"
                [class.ring-2]="openId() === exam.id"
                [class.ring-[var(--color-brand-gold-400)]]="openId() === exam.id">
 
@@ -308,6 +309,60 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
           </div>
         }
 
+        @if (resultPopup(); as popup) {
+          <div class="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(15,23,15,0.55)] p-4">
+            <div class="w-full max-w-xl rounded-[28px] bg-white p-6 shadow-[0_24px_80px_rgba(0,0,0,0.18)]">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <div class="text-[11px] font-bold uppercase tracking-[0.28em]"
+                       [class.text-emerald-700]="popup.passed"
+                       [class.text-red-600]="!popup.passed">
+                    {{ popup.passed ? 'Examen validé' : 'Résultat enregistré' }}
+                  </div>
+                  <h3 class="mt-2 font-serif text-2xl text-[var(--color-brand-green-900)]">{{ popup.title }}</h3>
+                </div>
+                <button type="button" (click)="closeResultPopup()"
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-brand-cream)] text-[var(--color-brand-green-900)] transition hover:bg-[var(--color-brand-gold-100)]">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+
+              <div class="mt-5 rounded-[22px] px-5 py-6 text-center"
+                   [class.bg-emerald-50]="popup.passed"
+                   [class.bg-red-50]="!popup.passed">
+                <div class="text-sm font-semibold text-[var(--color-brand-green-900)]">Votre note</div>
+                <div class="mt-2 text-6xl font-black leading-none"
+                     [class.text-emerald-700]="popup.passed"
+                     [class.text-red-600]="!popup.passed">
+                  {{ popup.scoreLabel }}
+                </div>
+                <div class="mt-3 text-sm text-[var(--color-brand-green-800)]/75">
+                  {{ popup.correctAnswers }}/{{ popup.totalQuestions }} bonne(s) réponse(s)
+                  · Score brut {{ popup.rawScoreLabel }}
+                </div>
+              </div>
+
+              <div class="mt-4 rounded-[18px] bg-[var(--color-brand-cream)] px-4 py-4 text-sm text-[var(--color-brand-green-900)]">
+                <p class="font-semibold">Calcul de la note</p>
+                <p class="mt-1 text-[var(--color-brand-green-800)]/70">
+                  (score brut ÷ score maximum) × barème = note finale
+                </p>
+                <p class="mt-2">
+                  ({{ popup.rawScore }} ÷ {{ popup.rawMaxScore }}) × {{ popup.gradingScaleMax }} = <span class="font-bold">{{ popup.scoreLabel }}</span>
+                </p>
+              </div>
+
+              <div class="mt-5 flex flex-wrap justify-end gap-3">
+                <button type="button" (click)="closeResultPopup()"
+                        class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)]">
+                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">check_circle</mat-icon>
+                  Voir le résultat
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
       </div>
     </app-dashboard-layout>
   `,
@@ -328,6 +383,17 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
   controls           = this.fb.array<FormControl<number | null>>([]);
   answeredMask       = signal<boolean[]>([]);
   answeredCount      = computed(() => this.answeredMask().filter(Boolean).length);
+  resultPopup        = signal<{
+    title: string;
+    passed: boolean;
+    scoreLabel: string;
+    rawScoreLabel: string;
+    rawScore: number;
+    rawMaxScore: number;
+    gradingScaleMax: number;
+    correctAnswers: number;
+    totalQuestions: number;
+  } | null>(null);
 
   ngOnInit(): void { this.portal.getExams().subscribe(d => this.exams.set(d)); }
   ngOnDestroy(): void { this.stopTimer(); }
@@ -368,6 +434,10 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
     this.submitError.set('');
     this.controls.clear();
     this.answeredMask.set([]);
+  }
+
+  closeResultPopup(): void {
+    this.resultPopup.set(null);
   }
 
   onAnswer(i: number): void {
@@ -426,6 +496,7 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
         console.log('[EXAM] POST result — score=', refreshed?.score, 'pct=', refreshed?.percentage, 'passed=', refreshed?.passed);
         if (refreshed?.score !== null && refreshed?.score !== undefined) {
           this.activeExam.set(refreshed);
+          this.openResultPopup(refreshed);
         } else {
           // POST response didn't include a graded result → fetch fresh from GET
           console.warn('[EXAM] score null in POST response, falling back to GET /exams');
@@ -435,6 +506,9 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
               const freshExam = fresh.find(e => e.id === exam.id) ?? null;
               console.log('[EXAM] GET fallback — score=', freshExam?.score);
               this.activeExam.set(freshExam);
+              if (freshExam?.score !== null && freshExam?.score !== undefined) {
+                this.openResultPopup(freshExam);
+              }
               if (!freshExam || freshExam.score === null) {
                 this.submitError.set('Résultat non disponible — actualisez la page.');
               }
@@ -477,5 +551,23 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
   }
   totalQ(e: StudentExam): number {
     return e.reviewQuestions?.length ?? e.questions?.length ?? 0;
+  }
+  formatScore(e: StudentExam): string {
+    if (e.score === null) return '-';
+    return `${e.score}/${e.gradingScaleMax}`;
+  }
+  openResultPopup(e: StudentExam): void {
+    if (e.score === null || e.rawScore === null) return;
+    this.resultPopup.set({
+      title: e.title,
+      passed: !!e.passed,
+      scoreLabel: this.formatScore(e),
+      rawScoreLabel: this.rawScore(e.rawScore, e.rawMaxScore),
+      rawScore: e.rawScore,
+      rawMaxScore: e.rawMaxScore,
+      gradingScaleMax: e.gradingScaleMax,
+      correctAnswers: this.correctCount(e),
+      totalQuestions: this.totalQ(e),
+    });
   }
 }

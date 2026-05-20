@@ -1385,7 +1385,7 @@ function bootstrapRoleData(): void {
   studentAttempts.set('3', [
     {
       examId:      'exam-1',
-      answers:     [0, 1],
+      answers:     { q1: 0, q2: 1 },
       score:       20,        // scaledScore = (20/20) × 20 = 20
       rawScore:    20,        // earnedScore = 8 + 12
       totalPoints: 20,        // 8 + 12
@@ -3167,8 +3167,10 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
   // Accept answers as {questionId: optionIndex} object OR legacy positional array
   const answers: Record<string, number> = {};
   const body = req.body?.answers;
+  let receivedAnswersCount = 0;
   if (body && !Array.isArray(body) && typeof body === 'object') {
     // New format: {questionId: optionIndex}
+    receivedAnswersCount = Object.keys(body as Record<string, unknown>).length;
     for (const q of exam.questions) {
       const val = Number((body as Record<string, unknown>)[q.id]);
       answers[q.id] = Number.isNaN(val) ? -1 : val;
@@ -3176,13 +3178,14 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
   } else {
     // Legacy array format — map by position
     const raw = Array.isArray(body) ? (body as unknown[]).map((v) => Number(v)) : [];
+    receivedAnswersCount = raw.length;
     exam.questions.forEach((q, i) => {
       answers[q.id] = i < raw.length && !Number.isNaN(raw[i]) ? raw[i] : -1;
     });
   }
 
   // ── DEBUG STEP 5: log normalized answers ─────────────────────────────────
-  console.log('[EXAM-DEBUG] raw array length:', raw.length, '| exam questions count:', exam.questions.length);
+  console.log('[EXAM-DEBUG] received answers count:', receivedAnswersCount, '| exam questions count:', exam.questions.length);
   console.log('[EXAM-DEBUG] normalized answers:', JSON.stringify(answers));
   // ─────────────────────────────────────────────────────────────────────────
 
