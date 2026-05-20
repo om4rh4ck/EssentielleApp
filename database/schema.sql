@@ -127,6 +127,8 @@ CREATE INDEX idx_cert_course_id ON student_certificates(course_id);
 
 -- =========================
 -- Exams
+-- NOTE: No FK on course_id — courses are managed in-memory.
+--       No FK on exam_id in attempts — allows storing attempts for seed exams.
 -- =========================
 
 CREATE TABLE IF NOT EXISTS exams (
@@ -135,10 +137,12 @@ CREATE TABLE IF NOT EXISTS exams (
   course_id VARCHAR(64) NOT NULL,
   assigned_by VARCHAR(255) NOT NULL,
   due_date DATETIME NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_exam_course
-    FOREIGN KEY (course_id) REFERENCES courses(id)
-    ON DELETE CASCADE
+  exam_type VARCHAR(10) NOT NULL DEFAULT 'quiz',
+  duration_minutes INT NOT NULL DEFAULT 20,
+  max_attempts INT NOT NULL DEFAULT 1,
+  grading_scale_max INT NOT NULL DEFAULT 20,
+  pass_threshold DECIMAL(5,2) NOT NULL DEFAULT 10,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE INDEX idx_exams_course_id ON exams(course_id);
@@ -149,9 +153,10 @@ CREATE TABLE IF NOT EXISTS exam_questions (
   prompt TEXT NOT NULL,
   option_a TEXT NOT NULL,
   option_b TEXT NOT NULL,
-  option_c TEXT NOT NULL,
+  option_c TEXT NOT NULL DEFAULT '',
+  option_d TEXT NULL,
   correct_index INT NOT NULL DEFAULT 0,
-  points INT NOT NULL DEFAULT 0,
+  points DECIMAL(4,1) NOT NULL DEFAULT 1,
   sort_index INT NOT NULL DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_exam_questions_exam
@@ -166,13 +171,15 @@ CREATE TABLE IF NOT EXISTS student_exam_attempts (
   student_id VARCHAR(64) NOT NULL,
   exam_id VARCHAR(64) NOT NULL,
   answers_json MEDIUMTEXT NOT NULL,
-  score INT NOT NULL DEFAULT 0,
+  score DECIMAL(6,2) NOT NULL DEFAULT 0,
+  raw_score DECIMAL(6,2) NOT NULL DEFAULT 0,
+  total_points DECIMAL(6,2) NOT NULL DEFAULT 0,
+  percentage DECIMAL(5,2) NOT NULL DEFAULT 0,
+  attempt_count INT NOT NULL DEFAULT 1,
   submitted_at DATETIME NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY uq_student_exam (student_id, exam_id),
-  CONSTRAINT fk_attempts_exam
-    FOREIGN KEY (exam_id) REFERENCES exams(id)
-    ON DELETE CASCADE
+  UNIQUE KEY uq_student_exam (student_id, exam_id)
+  -- No FK on exam_id: allows attempts for seed exams not stored in the exams table
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE INDEX idx_attempts_student_id ON student_exam_attempts(student_id);
@@ -314,5 +321,5 @@ CREATE INDEX idx_payments_student_id ON payments(student_id);
 
 -- =========================
 -- NOTE
--- Seeds are expected to be inserted by backend migration logic (server.ts) once routes switch from in-memory to DB.
+-- Seeds are inserted by backend migration logic (server.ts bootstrapRoleData).
 -- =========================

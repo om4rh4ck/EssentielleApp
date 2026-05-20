@@ -1705,6 +1705,179 @@ async function getDbPool(): Promise<Pool | null> {
   }
 }
 
+// ── MySQL helpers for column/table migration ──────────────────────────────────
+
+async function dbAddCol(pool: Pool, table: string, col: string, def: string): Promise<void> {
+  try {
+    await pool.query(`ALTER TABLE \`${table}\` ADD COLUMN \`${col}\` ${def}`);
+  } catch (err: any) {
+    if (err?.code !== 'ER_DUP_FIELDNAME') console.warn(`[DB] addCol ${table}.${col}:`, err.message);
+  }
+}
+
+async function dbDropFk(pool: Pool, table: string, fkName: string): Promise<void> {
+  try {
+    await pool.query(`ALTER TABLE \`${table}\` DROP FOREIGN KEY \`${fkName}\``);
+  } catch { /* FK might not exist — that's fine */ }
+}
+
+// ── MySQL-backed exam persistence ─────────────────────────────────────────────
+
+async function loadExamsFromDb(pool: Pool): Promise<void> {
+  try {
+    const [examRows] = await pool.query<mysql.RowDataPacket[]>(
+      `SELECT id, title, course_id, assigned_by, due_date, exam_type,
+              duration_minutes, max_attempts, grading_scale_max, pass_threshold
+       FROM exams`
+    );
+    const [qRows] = await pool.query<mysql.RowDataPacket[]>(
+      `SELECT id, exam_id, prompt, option_a, option_b, option_c, option_d,
+              correct_index, points, sort_index
+       FROM exam_questions ORDER BY exam_id, sort_index`
+    );
+    let loaded = 0;
+    for (const row of examRows) {
+      const eid = String(row['id']);
+      if (SEED_EXAM_IDS.has(eid) || exams.some((e) => e.id === eid)) continue;
+      const questions = qRows
+        .filter((q) => String(q['exam_id']) === eid)
+        .map((q) => ({
+          id: String(q['id']),
+          prompt: String(q['prompt']),
+          options: [q['option_a'], q['option_b'], q['option_c'], q['option_d']]
+            .filter(Boolean).map(String),
+          correctIndex: Number(q['correct_index']),
+          points: Number(q['points']),
+        }));
+      exams.push({
+        id: eid,
+        title: String(row['title']),
+        courseId: String(row['course_id']),
+        assignedBy: String(row['assigned_by']),
+        dueDate: String(row['due_date']),
+        examType: String(row['exam_type'] ?? 'quiz') as 'quiz' | 'final',
+        durationMinutes: Number(row['duration_minutes'] ?? 20),
+        maxAttempts: Number(row['max_attempts'] ?? 1),
+        gradingScaleMax: Number(row['grading_scale_max'] ?? 20),
+        passThreshold: Number(row['pass_threshold'] ?? 10),
+        questions,
+      });
+      loaded++;
+    }
+    console.log(`[DB] Loaded ${loaded} custom exam(s) from MySQL`);
+  } catch (err) {
+    console.warn('[DB] Could not load exams from MySQL:', err);
+  }
+}
+
+async function upsertExamToDb(pool: Pool, exam: ExamTemplate): Promise<void> {
+  if (SEED_EXAM_IDS.has(exam.id)) return;
+  try {
+    await pool.query(
+      `INSERT INTO exams
+         (id, title, course_id, assigned_by, due_date, exam_type, duration_minutes,
+          max_attempts, grading_scale_max, pass_threshold)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE
+         title = VALUES(title), course_id = VALUES(course_id),
+         assigned_by = VALUES(assigned_by), due_date = VALUES(due_date),
+         exam_type = VALUES(exam_type), duration_minutes = VALUES(duration_minutes),
+         max_attempts = VALUES(max_attempts), grading_scale_max = VALUES(grading_scale_max),
+         pass_threshold = VALUES(pass_threshold)`,
+      [exam.id, exam.title, exam.courseId, exam.assignedBy, exam.dueDate,
+       exam.examType ?? 'quiz', exam.durationMinutes ?? 20, exam.maxAttempts ?? 1,
+       exam.gradingScaleMax ?? 20, exam.passThreshold ?? 10]
+    );
+    await pool.query('DELETE FROM exam_questions WHERE exam_id = ?', [exam.id]);
+    for (let i = 0; i < exam.questions.length; i++) {
+      const q = exam.questions[i];
+      await pool.query(
+        `INSERT INTO exam_questions
+           (id, exam_id, prompt, option_a, option_b, option_c, option_d,
+            correct_index, points, sort_index)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [q.id, exam.id, q.prompt,
+         q.options[0] ?? '', q.options[1] ?? '', q.options[2] ?? '', q.options[3] ?? null,
+         q.correctIndex, q.points, i]
+      );
+    }
+  } catch (err) {
+    console.warn('[DB] Could not upsert exam:', err);
+  }
+}
+
+async function deleteExamFromDb(pool: Pool, examId: string): Promise<void> {
+  if (SEED_EXAM_IDS.has(examId)) return;
+  try {
+    await pool.query('DELETE FROM exams WHERE id = ?', [examId]);
+  } catch (err) {
+    console.warn('[DB] Could not delete exam:', err);
+  }
+}
+
+// ── MySQL-backed attempt persistence ─────────────────────────────────────────
+
+async function loadAttemptsFromDb(pool: Pool): Promise<void> {
+  try {
+    const [rows] = await pool.query<mysql.RowDataPacket[]>(
+      `SELECT student_id, exam_id, answers_json, score, raw_score, total_points,
+              percentage, attempt_count, submitted_at
+       FROM student_exam_attempts`
+    );
+    let loaded = 0;
+    for (const row of rows) {
+      const sid = String(row['student_id']);
+      const arr = studentAttempts.get(sid) ?? [];
+      if (!arr.some((a) => a.examId === String(row['exam_id']))) {
+        let answers: number[] = [];
+        try { answers = JSON.parse(String(row['answers_json'] ?? '[]')); } catch { answers = []; }
+        arr.push({
+          examId:       String(row['exam_id']),
+          answers,
+          score:        Number(row['score'] ?? 0),
+          rawScore:     Number(row['raw_score'] ?? 0),
+          totalPoints:  Number(row['total_points'] ?? 0),
+          percentage:   Number(row['percentage'] ?? 0),
+          attemptCount: Number(row['attempt_count'] ?? 1),
+          submittedAt:  String(row['submitted_at'] ?? new Date().toISOString()),
+        });
+        studentAttempts.set(sid, arr);
+        loaded++;
+      }
+    }
+    console.log(`[DB] Loaded ${loaded} student attempt(s) from MySQL`);
+  } catch (err) {
+    console.warn('[DB] Could not load attempts from MySQL:', err);
+  }
+}
+
+async function upsertAttemptToDb(pool: Pool, studentId: string, attempt: StudentAttempt): Promise<void> {
+  try {
+    await pool.query(
+      `INSERT INTO student_exam_attempts
+         (student_id, exam_id, answers_json, score, raw_score, total_points,
+          percentage, attempt_count, submitted_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE
+         answers_json  = VALUES(answers_json),
+         score         = VALUES(score),
+         raw_score     = VALUES(raw_score),
+         total_points  = VALUES(total_points),
+         percentage    = VALUES(percentage),
+         attempt_count = VALUES(attempt_count),
+         submitted_at  = VALUES(submitted_at)`,
+      [studentId, attempt.examId, JSON.stringify(attempt.answers),
+       attempt.score, attempt.rawScore ?? 0, attempt.totalPoints ?? 0,
+       attempt.percentage ?? 0, attempt.attemptCount,
+       attempt.submittedAt]
+    );
+  } catch (err) {
+    console.warn('[DB] Could not upsert attempt:', err);
+  }
+}
+
+// ── Schema creation + migration ───────────────────────────────────────────────
+
 async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -1728,9 +1901,79 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
   await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS objective TEXT NULL');
   await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS bio TEXT NULL');
 
+  // ── Exam tables ────────────────────────────────────────────────────────────
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS exams (
+      id VARCHAR(64) NOT NULL PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      course_id VARCHAR(64) NOT NULL,
+      assigned_by VARCHAR(255) NOT NULL,
+      due_date DATETIME NOT NULL,
+      exam_type VARCHAR(10) NOT NULL DEFAULT 'quiz',
+      duration_minutes INT NOT NULL DEFAULT 20,
+      max_attempts INT NOT NULL DEFAULT 1,
+      grading_scale_max INT NOT NULL DEFAULT 20,
+      pass_threshold DECIMAL(5,2) NOT NULL DEFAULT 10,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+  await dbAddCol(pool, 'exams', 'exam_type',        "VARCHAR(10) NOT NULL DEFAULT 'quiz'");
+  await dbAddCol(pool, 'exams', 'duration_minutes',  'INT NOT NULL DEFAULT 20');
+  await dbAddCol(pool, 'exams', 'max_attempts',      'INT NOT NULL DEFAULT 1');
+  await dbAddCol(pool, 'exams', 'grading_scale_max', 'INT NOT NULL DEFAULT 20');
+  await dbAddCol(pool, 'exams', 'pass_threshold',    'DECIMAL(5,2) NOT NULL DEFAULT 10');
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS exam_questions (
+      id VARCHAR(64) NOT NULL PRIMARY KEY,
+      exam_id VARCHAR(64) NOT NULL,
+      prompt TEXT NOT NULL,
+      option_a TEXT NOT NULL,
+      option_b TEXT NOT NULL,
+      option_c TEXT NOT NULL DEFAULT '',
+      option_d TEXT NULL,
+      correct_index INT NOT NULL DEFAULT 0,
+      points DECIMAL(4,1) NOT NULL DEFAULT 1,
+      sort_index INT NOT NULL DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT fk_eq_exam FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+  await dbAddCol(pool, 'exam_questions', 'option_d', 'TEXT NULL');
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS student_exam_attempts (
+      id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      student_id VARCHAR(64) NOT NULL,
+      exam_id VARCHAR(64) NOT NULL,
+      answers_json MEDIUMTEXT NOT NULL,
+      score DECIMAL(6,2) NOT NULL DEFAULT 0,
+      raw_score DECIMAL(6,2) NOT NULL DEFAULT 0,
+      total_points DECIMAL(6,2) NOT NULL DEFAULT 0,
+      percentage DECIMAL(5,2) NOT NULL DEFAULT 0,
+      attempt_count INT NOT NULL DEFAULT 1,
+      submitted_at DATETIME NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE KEY uq_student_exam (student_id, exam_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+  // Drop old FK on exam_id (if it exists) so seed exams can have attempts
+  await dbDropFk(pool, 'student_exam_attempts', 'fk_attempts_exam');
+  await dbAddCol(pool, 'student_exam_attempts', 'raw_score',    'DECIMAL(6,2) NOT NULL DEFAULT 0');
+  await dbAddCol(pool, 'student_exam_attempts', 'total_points', 'DECIMAL(6,2) NOT NULL DEFAULT 0');
+  await dbAddCol(pool, 'student_exam_attempts', 'percentage',   'DECIMAL(5,2) NOT NULL DEFAULT 0');
+  await dbAddCol(pool, 'student_exam_attempts', 'attempt_count','INT NOT NULL DEFAULT 1');
+  try {
+    await pool.query('ALTER TABLE student_exam_attempts MODIFY COLUMN score DECIMAL(6,2) NOT NULL DEFAULT 0');
+  } catch { /* ignore — already correct type */ }
+
   await insertSeedUser(pool, 'Admin User', 'admin@lessentielle-sante.site', 'admin', 'password123');
   await insertSeedUser(pool, 'Dr. Expert', 'instructor@lessentielle-sante.site', 'instructor', 'password123');
   await insertSeedUser(pool, 'Jane Doe', 'student@lessentielle-sante.site', 'student', 'password123');
+
+  // Load exam + attempt data from DB into in-memory maps
+  await loadExamsFromDb(pool);
+  await loadAttemptsFromDb(pool);
 }
 
 async function insertSeedUser(pool: Pool, name: string, email: string, role: UserRole, password: string): Promise<void> {
@@ -2984,6 +3227,11 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
   studentAttempts.set(user.id, attempts);
   ensureExamCertificate(user, exam, grade.scaledScore);
   savePersistedData();
+  // Persist attempt to MySQL (fire-and-forget — response is not delayed)
+  const savedAttemptForDb = studentAttempts.get(user.id)?.find((a) => a.examId === exam.id);
+  if (savedAttemptForDb) {
+    void getDbPool().then((pool) => { if (pool) void upsertAttemptToDb(pool, user.id, savedAttemptForDb); });
+  }
 
   // ── DEBUG STEP 8: log saved attempt ──────────────────────────────────────
   const saved = studentAttempts.get(user.id)?.find((a) => a.examId === exam.id);
@@ -3601,6 +3849,7 @@ app.post('/api/instructor/exams', (req, res): any => {
   };
   exams.unshift(exam);
   savePersistedData();
+  void getDbPool().then((pool) => { if (pool) void upsertExamToDb(pool, exam); });
 
   res.status(201).json({
     id: exam.id,
@@ -3652,6 +3901,7 @@ app.put('/api/instructor/exams/:examId', (req, res): any => {
     exam.passThreshold = Math.max(0, Math.min(getExamScaleMax(exam), Number(req.body.passThreshold)));
 
   savePersistedData();
+  void getDbPool().then((pool) => { if (pool) void upsertExamToDb(pool, exam); });
   res.json({
     id: exam.id, title: exam.title, courseId: exam.courseId,
     courseTitle: getCourseTitle(exam.courseId), dueDate: exam.dueDate,
@@ -3681,6 +3931,7 @@ app.delete('/api/instructor/exams/:examId', (req, res): any => {
   exams.splice(idx, 1);
   deletedExamIds.add(deletedId);
   savePersistedData();
+  void getDbPool().then((pool) => { if (pool) void deleteExamFromDb(pool, deletedId); });
   res.status(204).end();
 });
 
