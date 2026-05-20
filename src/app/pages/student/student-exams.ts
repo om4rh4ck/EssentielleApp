@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -193,23 +193,52 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                 }
               </div>
             } @else {
-              <div class="mt-8 rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-[#fffaf2] px-5 py-4 text-sm leading-7 text-[var(--color-brand-green-800)]/78">
-                Repondez a chaque question en selectionnant une proposition A, B, C ou D. Chaque bonne reponse vaut 0,5 point.
-                {{ exam.gradingScaleMax === 100 ? 'Le score brut est ensuite converti en pourcentage sur 100 %.' : 'Le score brut est ensuite ramene sur ' + exam.gradingScaleMax + ' pour afficher la note finale.' }}
+              <!-- Instructions -->
+              <div class="mt-6 rounded-[20px] border border-[var(--color-brand-gold-300)]/24 bg-[#fffaf2] px-5 py-4 text-sm leading-7 text-[var(--color-brand-green-800)]/78">
+                Selectionnez une reponse par question (A, B, C ou D). Chaque bonne reponse vaut 0,5 pt.
+                {{ exam.gradingScaleMax === 100 ? 'La note finale est convertie en pourcentage sur 100 %.' : 'Le total est ramene sur ' + exam.gradingScaleMax + '.' }}
               </div>
 
-              <form class="mt-8 space-y-6" (ngSubmit)="submitExam()">
-                @for (question of exam.questions ?? []; track question.id; let i = $index) {
-                  <article class="rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-[var(--color-brand-cream)] p-5">
-                    <div class="flex items-start justify-between gap-4">
-                      <h4 class="text-lg font-bold text-[var(--color-brand-green-900)]">{{ i + 1 }}. {{ question.prompt }}</h4>
-                      <span class="rounded-full bg-white px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-brand-gold-700)]">{{ question.points }} pt{{ question.points > 1 ? 's' : '' }}</span>
+              <!-- Navigateur de questions -->
+              <div class="mt-6 rounded-[20px] border border-[var(--color-brand-gold-300)]/24 bg-white p-4">
+                <div class="mb-3 flex items-center gap-3">
+                  <span class="text-sm font-semibold text-[var(--color-brand-green-900)]">{{ answeredCount() }}/{{ (exam.questions ?? []).length }} repondues</span>
+                  <div class="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-brand-cream)]">
+                    <div class="h-full rounded-full bg-emerald-500 transition-[width] duration-300"
+                         [style.width.%]="(exam.questions ?? []).length > 0 ? (answeredCount() / (exam.questions ?? []).length) * 100 : 0">
                     </div>
-                    <div class="mt-4 grid gap-3">
+                  </div>
+                  <span class="text-xs text-[var(--color-brand-green-800)]/55">{{ (exam.questions ?? []).length - answeredCount() }} restantes</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                  @for (q of exam.questions ?? []; track q.id; let i = $index) {
+                    <button type="button" (click)="scrollToQuestion(i)"
+                            [class]="questionDotClass(i)"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition">
+                      {{ i + 1 }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <form class="mt-6 space-y-5" (ngSubmit)="submitExam()">
+                @for (question of exam.questions ?? []; track question.id; let i = $index) {
+                  <article [id]="'question-' + i" class="scroll-mt-4 rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-[var(--color-brand-cream)] p-5">
+                    <div class="flex items-start justify-between gap-4">
+                      <h4 class="text-base font-bold text-[var(--color-brand-green-900)]">{{ i + 1 }}. {{ question.prompt }}</h4>
+                      <span class="shrink-0 rounded-full bg-white px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-brand-gold-700)]">{{ question.points }} pt</span>
+                    </div>
+                    <div class="mt-4 grid gap-2">
                       @for (option of question.options; track option; let optionIndex = $index) {
-                        <label class="flex items-center gap-3 rounded-2xl border border-transparent bg-white px-4 py-3 text-sm text-[var(--color-brand-green-900)] transition hover:border-[var(--color-brand-gold-300)]">
-                          <input type="radio" [name]="'question-' + i" [value]="optionIndex" [formControl]="answerControls.at(i)" />
-                          <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-brand-green-900)] text-xs font-bold text-white">{{ optionLetter(optionIndex) }}</span>
+                        <label class="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent bg-white px-4 py-3 text-sm text-[var(--color-brand-green-900)] transition hover:border-[var(--color-brand-gold-300)]">
+                          <input type="radio" [name]="'question-' + i" [value]="optionIndex" [formControl]="answerControls.at(i)" (change)="onAnswerChange(i)" class="sr-only" />
+                          <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                                [class.bg-emerald-500]="answerControls.at(i).value === optionIndex"
+                                [class.text-white]="answerControls.at(i).value === optionIndex"
+                                [class.bg-[var(--color-brand-green-900)]]="answerControls.at(i).value !== optionIndex"
+                                [class.text-white]="answerControls.at(i).value !== optionIndex">
+                            {{ optionLetter(optionIndex) }}
+                          </span>
                           <span>{{ option }}</span>
                         </label>
                       }
@@ -221,10 +250,15 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                   <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ submitError() }}</div>
                 }
 
-                <button type="submit" [disabled]="submitInProgress()" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-6 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)] disabled:opacity-60">
-                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">task_alt</mat-icon>
-                  {{ submitInProgress() ? 'Validation en cours...' : "Valider l'examen" }}
-                </button>
+                <div class="flex items-center gap-4 pt-2">
+                  <button type="submit" [disabled]="submitInProgress()" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-6 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)] disabled:opacity-60">
+                    <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">task_alt</mat-icon>
+                    {{ submitInProgress() ? 'Validation en cours...' : "Valider l'examen" }}
+                  </button>
+                  @if (answeredCount() < (exam.questions ?? []).length) {
+                    <span class="text-sm text-amber-600">{{ (exam.questions ?? []).length - answeredCount() }} question(s) sans reponse</span>
+                  }
+                </div>
               </form>
             }
           </section>
@@ -313,6 +347,8 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
   submitInProgress = signal(false);
   timeRemainingSeconds = signal(0);
   answerControls = this.fb.array<FormControl<number | null>>([]);
+  answeredMask = signal<boolean[]>([]);
+  answeredCount = computed(() => this.answeredMask().filter(Boolean).length);
 
   ngOnInit(): void {
     this.load();
@@ -340,12 +376,15 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
     this.submitError.set('');
     this.stopTimer();
     this.answerControls.clear();
+    this.answeredMask.set([]);
     this.submitInProgress.set(false);
 
     if (!reviewOnly) {
-      for (let i = 0; i < (exam.questions?.length ?? 0); i += 1) {
+      const count = exam.questions?.length ?? 0;
+      for (let i = 0; i < count; i += 1) {
         this.answerControls.push(new FormControl<number | null>(null));
       }
+      this.answeredMask.set(new Array(count).fill(false));
       this.startTimer(exam.durationMinutes);
     }
 
@@ -359,13 +398,31 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
     this.submitError.set('');
     this.submitInProgress.set(false);
     this.answerControls.clear();
-
-    for (let i = 0; i < (exam.questions?.length ?? 0); i += 1) {
+    const count = exam.questions?.length ?? 0;
+    for (let i = 0; i < count; i += 1) {
       this.answerControls.push(new FormControl<number | null>(null));
     }
-
+    this.answeredMask.set(new Array(count).fill(false));
     this.startTimer(exam.durationMinutes);
     this.scrollToActiveExam();
+  }
+
+  onAnswerChange(questionIndex: number): void {
+    this.answeredMask.update((mask) => {
+      const next = [...mask];
+      next[questionIndex] = true;
+      return next;
+    });
+  }
+
+  scrollToQuestion(index: number): void {
+    document.getElementById(`question-${index}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  questionDotClass(index: number): string {
+    return this.answeredMask()[index]
+      ? 'bg-emerald-500 text-white'
+      : 'bg-[var(--color-brand-cream)] text-[var(--color-brand-green-800)]/60';
   }
 
   closeExam(): void {
@@ -375,6 +432,7 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
     this.submitInProgress.set(false);
     this.timeRemainingSeconds.set(0);
     this.answerControls.clear();
+    this.answeredMask.set([]);
   }
 
   startTimer(durationMinutes: number): void {

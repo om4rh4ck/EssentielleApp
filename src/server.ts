@@ -6,6 +6,7 @@ import {
 } from '@angular/ssr/node';
 import express, { Request } from 'express';
 import { join } from 'node:path';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import mysql, { Pool } from 'mysql2/promise';
 import nodemailer from 'nodemailer';
 import { DETOX_FINAL_EXAM_QUESTIONS } from './data/detox-final-exam';
@@ -1064,12 +1065,72 @@ const scheduleEntries: ScheduleEntry[] = [
 const exams: ExamTemplate[] = [];
 const studentAttempts = new Map<string, StudentAttempt[]>();
 const publicEnrollmentRequests: PublicEnrollmentRequest[] = [];
+
+// ─── Persistent JSON store ─────────────────────────────────────────────────
+// Survives server restarts / deployments without a database.
+const STORE_FILE = join(process.cwd(), 'essentielle-data.json');
+const SEED_EXAM_IDS = new Set(['exam-1', 'exam-2', 'exam-detox-final']);
+
+function loadPersistedData(): void {
+  try {
+    if (!existsSync(STORE_FILE)) return;
+    const saved = JSON.parse(readFileSync(STORE_FILE, 'utf8')) as {
+      users?: StoredUser[];
+      workspaces?: Record<string, StudentWorkspace>;
+      attempts?: Record<string, StudentAttempt[]>;
+      requests?: PublicEnrollmentRequest[];
+      dynamicExams?: ExamTemplate[];
+    };
+    for (const u of saved.users ?? []) {
+      const idx = memoryUsers.findIndex((m) => m.id === u.id);
+      if (idx >= 0) memoryUsers[idx] = u;
+      else memoryUsers.push(u);
+    }
+    for (const [id, ws] of Object.entries(saved.workspaces ?? {})) {
+      studentWorkspaces.set(id, ws);
+    }
+    for (const [id, attempts] of Object.entries(saved.attempts ?? {})) {
+      studentAttempts.set(id, attempts);
+    }
+    for (const req of saved.requests ?? []) {
+      if (!publicEnrollmentRequests.some((r) => r.id === req.id)) {
+        publicEnrollmentRequests.push(req);
+      }
+    }
+    for (const exam of saved.dynamicExams ?? []) {
+      if (!exams.some((e) => e.id === exam.id)) exams.push(exam);
+    }
+    console.log('[STORE] Data loaded from', STORE_FILE);
+  } catch (err) {
+    console.warn('[STORE] Could not load persisted data:', err);
+  }
+}
+
+let _persistTimer: ReturnType<typeof setTimeout> | null = null;
+function savePersistedData(): void {
+  if (_persistTimer) clearTimeout(_persistTimer);
+  _persistTimer = setTimeout(() => {
+    try {
+      writeFileSync(STORE_FILE, JSON.stringify({
+        savedAt: new Date().toISOString(),
+        users: memoryUsers,
+        workspaces: Object.fromEntries(studentWorkspaces),
+        attempts: Object.fromEntries(studentAttempts),
+        requests: publicEnrollmentRequests,
+        dynamicExams: exams.filter((e) => !SEED_EXAM_IDS.has(e.id)),
+      }, null, 2), 'utf8');
+    } catch (err) {
+      console.warn('[STORE] Could not save data:', err);
+    }
+  }, 600);
+}
 const paymentRecords: PaymentRecord[] = [
   { id: 'pay-1', studentId: '3', studentName: 'Jane Doe', courseId: '2', amountEur: 349, status: 'paid', paidAt: '2026-04-10T10:30:00.000Z' },
   { id: 'pay-2', studentId: '3', studentName: 'Jane Doe', courseId: '3', amountEur: 329, status: 'pending', paidAt: '2026-04-26T12:00:00.000Z' },
 ];
 
 bootstrapRoleData();
+loadPersistedData();
 
 function bootstrapRoleData(): void {
   roleProfiles.set('1', {
@@ -1704,6 +1765,7 @@ async function createStoredUser(
         objective: profile.objective,
       },
     });
+    savePersistedData();
     return newUser;
   }
 
@@ -2041,6 +2103,39 @@ function getSuccessfulStudentsForExam(exam: ExamTemplate) {
   }
 
   return successful.sort((a, b) => b.score - a.score);
+}
+
+function getAllStudentsForExam(exam: ExamTemplate) {
+  const result: Array<{
+    studentId: string;
+    studentName: string;
+    studentEmail: string;
+    score: number;
+    rawScore: number;
+    passed: boolean;
+    submittedAt: string;
+    attemptCount: number;
+    certificateIssued: boolean;
+  }> = [];
+  for (const [studentId, attempts] of studentAttempts.entries()) {
+    const attempt = attempts.find((item) => item.examId === exam.id);
+    if (!attempt) continue;
+    const student = getStoredUserById(studentId);
+    if (!student) continue;
+    const workspace = ensureStudentWorkspace(toPublicUser(student));
+    result.push({
+      studentId,
+      studentName: student.name,
+      studentEmail: student.email,
+      score: attempt.score,
+      rawScore: attempt.rawScore ?? getExamRawScore(exam, attempt.answers),
+      passed: attempt.score >= getExamPassThreshold(exam),
+      submittedAt: attempt.submittedAt,
+      attemptCount: attempt.attemptCount,
+      certificateIssued: workspace.certificates.some((c) => c.courseId === exam.courseId && c.status === 'issued'),
+    });
+  }
+  return result.sort((a, b) => b.score - a.score);
 }
 
 function toStudentExamView(user: PublicUser) {
@@ -2503,6 +2598,7 @@ app.post('/api/student/catalog/:courseId/enroll', (req, res): any => {
   if (!workspace.enrollments.some((item) => item.courseId === course.id)) {
     workspace.enrollments.push({ courseId: course.id, progress: 0 });
     course.students += 1;
+    savePersistedData();
   }
   res.json(serializeCatalog(user).find((item) => item.id === course.id));
 });
@@ -2670,6 +2766,7 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
   }
   studentAttempts.set(user.id, attempts);
   ensureExamCertificate(user, exam, score);
+  savePersistedData();
   res.json(toStudentExamView(user));
 });
 
@@ -3214,8 +3311,11 @@ app.get('/api/instructor/exams', (req, res): any => {
         gradingScaleMax: getExamScaleMax(exam),
         passThreshold: getExamPassThreshold(exam),
         averageScore: getExamAverage(exam.id),
+        durationMinutes: getExamDurationMinutes(exam),
+        maxAttempts: getExamMaxAttempts(exam),
         submissions: Array.from(studentAttempts.values()).filter((attempts) => attempts.some((item) => item.examId === exam.id)).length,
         successfulStudents: getSuccessfulStudentsForExam(exam),
+        allStudents: getAllStudentsForExam(exam),
         questions: exam.questions.map((question) => ({
           id: question.id,
           prompt: question.prompt,
@@ -3232,7 +3332,12 @@ app.post('/api/instructor/exams', (req, res): any => {
 
   const title = typeof req.body?.title === 'string' ? req.body.title.trim() : '';
   const courseId = String(req.body?.courseId ?? '');
-  const dueDate = typeof req.body?.dueDate === 'string' ? req.body.dueDate : new Date().toISOString();
+  const dueDate = typeof req.body?.dueDate === 'string' ? req.body.dueDate : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+  const examType: 'quiz' | 'final' = req.body?.examType === 'final' ? 'final' : 'quiz';
+  const durationMinutes = Math.max(5, Math.min(180, Number(req.body?.durationMinutes ?? 20)));
+  const maxAttempts = Math.max(1, Math.min(5, Number(req.body?.maxAttempts ?? 1)));
+  const gradingScaleMax = [10, 20, 100].includes(Number(req.body?.gradingScaleMax)) ? Number(req.body?.gradingScaleMax) : 20;
+  const passThreshold = Math.max(0, Math.min(gradingScaleMax, Number(req.body?.passThreshold ?? gradingScaleMax / 2)));
   const incomingQuestions = Array.isArray(req.body?.questions) ? req.body.questions : [];
   if (title.length < 3 || !courseId || !incomingQuestions.length) {
     return res.status(400).json({ error: 'Examen invalide.' });
@@ -3244,20 +3349,23 @@ app.post('/api/instructor/exams', (req, res): any => {
     courseId,
     assignedBy: user.name,
     dueDate,
-    examType: 'quiz',
-    durationMinutes: 20,
-    maxAttempts: 1,
-    gradingScaleMax: 20,
-    passThreshold: 10,
+    examType,
+    durationMinutes,
+    maxAttempts,
+    gradingScaleMax,
+    passThreshold,
     questions: incomingQuestions.map((question: any, index: number) => ({
       id: `question-${Date.now()}-${index}`,
       prompt: String(question.prompt ?? '').trim(),
-      options: Array.isArray(question.options) ? question.options.map((option: unknown) => String(option)) : [],
+      options: Array.isArray(question.options)
+        ? question.options.filter((o: unknown) => typeof o === 'string' && (o as string).trim()).map((o: unknown) => String(o).trim())
+        : [],
       correctIndex: Number(question.correctIndex ?? 0),
-      points: Number(question.points ?? 0),
+      points: Number(question.points ?? 1),
     })),
   };
   exams.unshift(exam);
+  savePersistedData();
 
   res.status(201).json({
     id: exam.id,
@@ -3269,9 +3377,12 @@ app.post('/api/instructor/exams', (req, res): any => {
     examType: exam.examType,
     gradingScaleMax: getExamScaleMax(exam),
     passThreshold: getExamPassThreshold(exam),
+    durationMinutes: getExamDurationMinutes(exam),
+    maxAttempts: getExamMaxAttempts(exam),
     averageScore: 0,
     submissions: 0,
     successfulStudents: [],
+    allStudents: [],
     questions: exam.questions.map((question) => ({
       id: question.id,
       prompt: question.prompt,

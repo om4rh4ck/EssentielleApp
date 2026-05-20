@@ -156,6 +156,8 @@ export interface ManagedExam {
   examType: 'quiz' | 'final';
   gradingScaleMax: number;
   passThreshold: number;
+  durationMinutes: number;
+  maxAttempts: number;
   averageScore: number;
   submissions: number;
   successfulStudents: Array<{
@@ -164,6 +166,17 @@ export interface ManagedExam {
     studentEmail: string;
     score: number;
     submittedAt: string;
+    certificateIssued: boolean;
+  }>;
+  allStudents: Array<{
+    studentId: string;
+    studentName: string;
+    studentEmail: string;
+    score: number;
+    rawScore: number;
+    passed: boolean;
+    submittedAt: string;
+    attemptCount: number;
     certificateIssued: boolean;
   }>;
   questions: Array<{
@@ -374,7 +387,17 @@ export class StaffPortalService {
     return this.http.get<ManagedExam[]>('/api/instructor/exams', this.authHeaders());
   }
 
-  createInstructorExam(payload: { title: string; courseId: string; dueDate: string; questions: ExamQuestionPayload[] }): Observable<ManagedExam> {
+  createInstructorExam(payload: {
+    title: string;
+    courseId: string;
+    dueDate: string;
+    examType?: 'quiz' | 'final';
+    durationMinutes?: number;
+    gradingScaleMax?: number;
+    passThreshold?: number;
+    maxAttempts?: number;
+    questions: ExamQuestionPayload[];
+  }): Observable<ManagedExam> {
     return this.http.post<ManagedExam>('/api/instructor/exams', payload, this.authHeaders());
   }
 
