@@ -275,10 +275,21 @@ interface ExamTemplate {
 interface StudentAttempt {
   examId: string;
   answers: number[];
-  score: number;
-  rawScore?: number;
+  score: number;        // scaled to gradingScaleMax (e.g. 84 for 84/100 or 17 for 17/20)
+  rawScore: number;     // earnedScore: sum of points for correct answers
+  totalPoints: number;  // max possible earnedScore
+  percentage: number;   // (rawScore / totalPoints) * 100
   submittedAt: string;
   attemptCount: number;
+}
+
+interface GradeResult {
+  earnedScore: number;
+  totalPoints: number;
+  percentage: number;
+  scaledScore: number;
+  passed: boolean;
+  perQuestion: Array<{ questionId: string; correct: boolean; earned: number; points: number }>;
 }
 
 interface PaymentRecord {
@@ -1345,11 +1356,15 @@ function bootstrapRoleData(): void {
     }
   );
 
+  // exam-1: quiz for course 1 — 2 questions, points 8 and 12 → totalPoints=20, both correct
   studentAttempts.set('3', [
     {
-      examId: 'exam-1',
-      answers: [0, 1],
-      score: 20,
+      examId:      'exam-1',
+      answers:     [0, 1],
+      score:       20,        // scaledScore = (20/20) × 20 = 20
+      rawScore:    20,        // earnedScore = 8 + 12
+      totalPoints: 20,        // 8 + 12
+      percentage:  100,       // (20/20) × 100
       submittedAt: '2026-05-02T13:00:00.000Z',
       attemptCount: 1,
     },
@@ -2043,18 +2058,6 @@ function normalizeScoreToTwenty(examId: string, score: number): number {
   return Number(((score / getExamScaleMax(exam)) * 20).toFixed(1));
 }
 
-function getExamRawMax(exam: ExamTemplate): number {
-  return Number(exam.questions.reduce((sum, question) => sum + question.points, 0).toFixed(2));
-}
-
-function getExamRawScore(exam: ExamTemplate, answers: number[]): number {
-  return Number(
-    exam.questions
-      .reduce((sum, question, index) => sum + (answers[index] === question.correctIndex ? question.points : 0), 0)
-      .toFixed(2)
-  );
-}
-
 function getExamMaxAttempts(exam: ExamTemplate): number {
   return Math.max(1, exam.maxAttempts ?? 1);
 }
@@ -2070,6 +2073,58 @@ function getExamScaleMax(exam: ExamTemplate): number {
 function getExamPassThreshold(exam: ExamTemplate): number {
   const scaleMax = getExamScaleMax(exam);
   return Math.min(scaleMax, Math.max(0, exam.passThreshold ?? scaleMax / 2));
+}
+
+/**
+ * REAL GRADING ENGINE
+ *
+ * For each question:
+ *   if student answer === correctIndex → earnedScore += question.points
+ *
+ * Formula:
+ *   earnedScore  = sum of points for correct answers
+ *   totalPoints  = sum of all question points
+ *   percentage   = (earnedScore / totalPoints) * 100
+ *   scaledScore  = (earnedScore / totalPoints) * gradingScaleMax
+ *   passed       = scaledScore >= passThreshold
+ */
+function gradeExamSubmission(exam: ExamTemplate, answers: number[]): GradeResult {
+  let earnedScore = 0;
+  let totalPoints = 0;
+  const perQuestion: GradeResult['perQuestion'] = [];
+
+  for (let i = 0; i < exam.questions.length; i++) {
+    const question = exam.questions[i];
+    const isCorrect = answers[i] === question.correctIndex;
+    if (isCorrect) earnedScore += question.points;
+    totalPoints += question.points;
+    perQuestion.push({
+      questionId: question.id,
+      correct: isCorrect,
+      earned: isCorrect ? question.points : 0,
+      points: question.points,
+    });
+  }
+
+  // Round to 2 decimal places to avoid float precision drift
+  earnedScore = Number(earnedScore.toFixed(2));
+  totalPoints = Number(totalPoints.toFixed(2));
+
+  const percentage = totalPoints > 0 ? Number(((earnedScore / totalPoints) * 100).toFixed(1)) : 0;
+  const scaledScore = totalPoints > 0
+    ? Number(((earnedScore / totalPoints) * getExamScaleMax(exam)).toFixed(1))
+    : 0;
+  const passed = scaledScore >= getExamPassThreshold(exam);
+
+  return { earnedScore, totalPoints, percentage, scaledScore, passed, perQuestion };
+}
+
+// Legacy aliases used by older code paths
+function getExamRawMax(exam: ExamTemplate): number {
+  return Number(exam.questions.reduce((sum, q) => sum + q.points, 0).toFixed(2));
+}
+function getExamRawScore(exam: ExamTemplate, answers: number[]): number {
+  return gradeExamSubmission(exam, answers).earnedScore;
 }
 
 function getStoredUserById(userId: string): StoredUser | null {
@@ -2143,12 +2198,15 @@ function getSuccessfulStudentsForExam(exam: ExamTemplate) {
 }
 
 function getAllStudentsForExam(exam: ExamTemplate) {
+  const rawMaxScore = getExamRawMax(exam);
   const result: Array<{
     studentId: string;
     studentName: string;
     studentEmail: string;
     score: number;
     rawScore: number;
+    totalPoints: number;
+    percentage: number;
     passed: boolean;
     submittedAt: string;
     attemptCount: number;
@@ -2160,19 +2218,40 @@ function getAllStudentsForExam(exam: ExamTemplate) {
     const student = getStoredUserById(studentId);
     if (!student) continue;
     const workspace = ensureStudentWorkspace(toPublicUser(student));
+    const earned = attempt.rawScore ?? gradeExamSubmission(exam, attempt.answers).earnedScore;
+    const pct    = attempt.percentage ?? (rawMaxScore > 0 ? Number(((earned / rawMaxScore) * 100).toFixed(1)) : 0);
     result.push({
       studentId,
-      studentName: student.name,
+      studentName:  student.name,
       studentEmail: student.email,
-      score: attempt.score,
-      rawScore: attempt.rawScore ?? getExamRawScore(exam, attempt.answers),
-      passed: attempt.score >= getExamPassThreshold(exam),
-      submittedAt: attempt.submittedAt,
+      score:        attempt.score,
+      rawScore:     earned,
+      totalPoints:  attempt.totalPoints ?? rawMaxScore,
+      percentage:   pct,
+      passed:       attempt.score >= getExamPassThreshold(exam),
+      submittedAt:  attempt.submittedAt,
       attemptCount: attempt.attemptCount,
       certificateIssued: workspace.certificates.some((c) => c.courseId === exam.courseId && c.status === 'issued'),
     });
   }
-  return result.sort((a, b) => b.score - a.score);
+  return result.sort((a, b) => b.percentage - a.percentage);
+}
+
+/**
+ * Instructor aggregate stats — equivalent to:
+ * SELECT COUNT(*) participants,
+ *        AVG(percentage) average_percentage,
+ *        SUM(CASE WHEN passed THEN 1 ELSE 0 END) passed_students
+ * FROM exam_attempts WHERE exam_id = $1
+ */
+function getExamAggregateStats(examId: string, exam: ExamTemplate) {
+  const rows = getAllStudentsForExam(exam);
+  const participants = rows.length;
+  const passedStudents = rows.filter((r) => r.passed).length;
+  const avgPercentage = participants > 0
+    ? Number((rows.reduce((sum, r) => sum + r.percentage, 0) / participants).toFixed(1))
+    : 0;
+  return { participants, passedStudents, avgPercentage };
 }
 
 function toStudentExamView(user: PublicUser) {
@@ -2185,33 +2264,48 @@ function toStudentExamView(user: PublicUser) {
       const maxAttempts = getExamMaxAttempts(exam);
       const attemptsUsed = attempt?.attemptCount ?? 0;
       const attemptsRemaining = Math.max(maxAttempts - attemptsUsed, 0);
+
+      // Re-compute grading fields if they were saved before the new engine
+      const rawMaxScore = getExamRawMax(exam);
+      const earnedScore = attempt
+        ? (attempt.rawScore ?? gradeExamSubmission(exam, attempt.answers).earnedScore)
+        : null;
+      const percentage = attempt
+        ? (attempt.percentage ?? (earnedScore !== null && rawMaxScore > 0
+            ? Number(((earnedScore / rawMaxScore) * 100).toFixed(1))
+            : 0))
+        : null;
+      const scaledScore = attempt?.score ?? null;
+      const passed = attempt ? (scaledScore ?? 0) >= getExamPassThreshold(exam) : null;
+
       return {
-        id: exam.id,
-        title: exam.title,
-        courseTitle: getCourseTitle(exam.courseId),
-        assignedBy: exam.assignedBy,
-        examType: exam.examType ?? 'quiz',
-      durationMinutes: getExamDurationMinutes(exam),
-      gradingScaleMax: getExamScaleMax(exam),
-      passThreshold: getExamPassThreshold(exam),
-      rawMaxScore: getExamRawMax(exam),
-      maxAttempts,
-      attemptsUsed,
-      attemptsRemaining,
-      status: attemptsRemaining === 0 ? 'locked' : attempt ? 'graded' : 'available',
-      score: attempt?.score ?? null,
-      rawScore: attempt?.rawScore ?? (attempt ? getExamRawScore(exam, attempt.answers) : null),
-      passed: attempt ? attempt.score >= getExamPassThreshold(exam) : null,
-      average: getExamAverage(exam.id),
-      dueDate: exam.dueDate,
+        id:              exam.id,
+        title:           exam.title,
+        courseTitle:     getCourseTitle(exam.courseId),
+        assignedBy:      exam.assignedBy,
+        examType:        exam.examType ?? 'quiz',
+        durationMinutes: getExamDurationMinutes(exam),
+        gradingScaleMax: getExamScaleMax(exam),
+        passThreshold:   getExamPassThreshold(exam),
+        rawMaxScore,
+        maxAttempts,
+        attemptsUsed,
+        attemptsRemaining,
+        status:     attemptsRemaining === 0 ? 'locked' : attempt ? 'graded' : 'available',
+        score:      scaledScore,
+        rawScore:   earnedScore,
+        percentage,               // explicit: (earnedScore / totalPoints) × 100
+        passed,
+        average:    getExamAverage(exam.id),
+        dueDate:    exam.dueDate,
         reviewQuestions: attempt ? buildStudentExamReview(exam, attempt) : undefined,
         questions: attemptsRemaining === 0
           ? undefined
-          : exam.questions.map((question) => ({
-              id: question.id,
-              prompt: question.prompt,
-              options: question.options,
-              points: question.points,
+          : exam.questions.map((q) => ({
+              id:      q.id,
+              prompt:  q.prompt,
+              options: q.options,
+              points:  q.points,
             })),
       };
     });
@@ -2790,28 +2884,38 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
     return res.status(400).json({ error: 'Nombre maximum d essais atteint pour cet examen.' });
   }
 
-  const rawScore = getExamRawScore(exam, answers);
-  const totalPoints = getExamRawMax(exam);
-  const score = totalPoints > 0 ? Number(((rawScore / totalPoints) * getExamScaleMax(exam)).toFixed(1)) : 0;
+  // ── REAL GRADING ENGINE ────────────────────────────────────────────────────
+  // For each question: compare answer with correctIndex, accumulate earned pts.
+  // percentage = (earnedScore / totalPoints) × 100
+  // scaledScore = (earnedScore / totalPoints) × gradingScaleMax
+  // passed = scaledScore >= passThreshold
+  const grade = gradeExamSubmission(exam, answers);
+
   if (existing) {
-    existing.answers = answers;
-    existing.score = score;
-    existing.rawScore = rawScore;
-    existing.submittedAt = new Date().toISOString();
+    existing.answers      = answers;
+    existing.score        = grade.scaledScore;
+    existing.rawScore     = grade.earnedScore;
+    existing.totalPoints  = grade.totalPoints;
+    existing.percentage   = grade.percentage;
+    existing.submittedAt  = new Date().toISOString();
     existing.attemptCount += 1;
   } else {
     attempts.push({
-      examId: exam.id,
+      examId:       exam.id,
       answers,
-      score,
-      rawScore,
-      submittedAt: new Date().toISOString(),
+      score:        grade.scaledScore,
+      rawScore:     grade.earnedScore,
+      totalPoints:  grade.totalPoints,
+      percentage:   grade.percentage,
+      submittedAt:  new Date().toISOString(),
       attemptCount: 1,
     });
   }
   studentAttempts.set(user.id, attempts);
-  ensureExamCertificate(user, exam, score);
+  ensureExamCertificate(user, exam, grade.scaledScore);
   savePersistedData();
+
+  // Return the full updated exam list so the client updates immediately
   res.json(toStudentExamView(user));
 });
 
@@ -3345,7 +3449,10 @@ app.get('/api/instructor/exams', (req, res): any => {
         const course = courses.find((item) => item.id === exam.courseId);
         return course ? instructorOwnsCourse(user, course) : false;
       })
-      .map((exam) => ({
+      .map((exam) => {
+        const allStudents = getAllStudentsForExam(exam);
+        const stats = getExamAggregateStats(exam.id, exam);
+        return {
         id: exam.id,
         title: exam.title,
         courseId: exam.courseId,
@@ -3355,19 +3462,22 @@ app.get('/api/instructor/exams', (req, res): any => {
         examType: exam.examType ?? 'quiz',
         gradingScaleMax: getExamScaleMax(exam),
         passThreshold: getExamPassThreshold(exam),
-        averageScore: getExamAverage(exam.id),
+        // Aggregate stats — real values from stored attempts
+        averageScore:      stats.avgPercentage,   // average % across all submissions
+        submissions:       stats.participants,     // COUNT(*)
+        passedCount:       stats.passedStudents,   // SUM(CASE WHEN passed THEN 1 ELSE 0 END)
         durationMinutes: getExamDurationMinutes(exam),
         maxAttempts: getExamMaxAttempts(exam),
-        submissions: Array.from(studentAttempts.values()).filter((attempts) => attempts.some((item) => item.examId === exam.id)).length,
-        successfulStudents: getSuccessfulStudentsForExam(exam),
-        allStudents: getAllStudentsForExam(exam),
+        successfulStudents: allStudents.filter((s) => s.passed),
+        allStudents,
         questions: exam.questions.map((question) => ({
           id: question.id,
           prompt: question.prompt,
           options: question.options,
           points: question.points,
         })),
-      }))
+        };
+      })
   );
 });
 

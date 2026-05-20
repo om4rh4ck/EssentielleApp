@@ -67,11 +67,11 @@ import { INSTRUCTOR_MENU_ITEMS } from './instructor-menu';
                   </div>
                   <div class="rounded-xl bg-[var(--color-brand-cream)] p-2">
                     <div class="text-[10px] uppercase tracking-wide text-[var(--color-brand-green-800)]/45">Reussi</div>
-                    <div class="mt-1 text-lg font-bold text-emerald-600">{{ exam.allStudents.filter(s => s.passed).length }}</div>
+                    <div class="mt-1 text-lg font-bold text-emerald-600">{{ exam.passedCount ?? exam.allStudents.filter(s => s.passed).length }}</div>
                   </div>
                   <div class="rounded-xl bg-[var(--color-brand-cream)] p-2">
-                    <div class="text-[10px] uppercase tracking-wide text-[var(--color-brand-green-800)]/45">Moyenne</div>
-                    <div class="mt-1 text-lg font-bold text-[var(--color-brand-green-900)]">{{ formatAvg(exam) }}</div>
+                    <div class="text-[10px] uppercase tracking-wide text-[var(--color-brand-green-800)]/45">Moy. %</div>
+                    <div class="mt-1 text-lg font-bold text-[var(--color-brand-green-900)]">{{ exam.averageScore > 0 ? exam.averageScore + '%' : '-' }}</div>
                   </div>
                   <div class="rounded-xl bg-[var(--color-brand-cream)] p-2">
                     <div class="text-[10px] uppercase tracking-wide text-[var(--color-brand-green-800)]/45">Seuil</div>
@@ -172,12 +172,12 @@ import { INSTRUCTOR_MENU_ITEMS } from './instructor-menu';
                                 <div class="text-xs text-[var(--color-brand-green-800)]/50">{{ student.studentEmail }}</div>
                               </td>
                               <td class="px-4 py-3 text-center">
-                                <span class="inline-flex h-9 w-16 items-center justify-center rounded-full text-sm font-bold"
+                                <span class="inline-flex h-9 w-20 items-center justify-center rounded-full text-sm font-bold"
                                       [class.bg-emerald-100]="student.passed"
                                       [class.text-emerald-800]="student.passed"
                                       [class.bg-red-100]="!student.passed"
                                       [class.text-red-700]="!student.passed">
-                                  {{ formatScore(student.score, exam.gradingScaleMax) }}
+                                  {{ student.percentage != null ? student.percentage + '%' : formatScore(student.score, exam.gradingScaleMax) }}
                                 </span>
                               </td>
                               <td class="px-4 py-3 text-center">

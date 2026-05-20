@@ -158,8 +158,9 @@ export interface ManagedExam {
   passThreshold: number;
   durationMinutes: number;
   maxAttempts: number;
-  averageScore: number;
-  submissions: number;
+  averageScore: number;    // average percentage across all submissions
+  submissions: number;     // total participants (COUNT(*))
+  passedCount?: number;    // participants who passed (SUM CASE WHEN passed)
   successfulStudents: Array<{
     studentId: string;
     studentName: string;
@@ -174,6 +175,8 @@ export interface ManagedExam {
     studentEmail: string;
     score: number;
     rawScore: number;
+    totalPoints: number;
+    percentage: number;
     passed: boolean;
     submittedAt: string;
     attemptCount: number;

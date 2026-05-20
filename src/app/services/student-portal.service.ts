@@ -110,8 +110,9 @@ export interface StudentExam {
   attemptsUsed: number;
   attemptsRemaining: number;
   status: 'available' | 'graded' | 'locked';
-  score: number | null;
-  rawScore: number | null;
+  score: number | null;         // scaled to gradingScaleMax
+  rawScore: number | null;      // earnedScore (sum of pts for correct answers)
+  percentage: number | null;    // (rawScore / rawMaxScore) × 100
   passed: boolean | null;
   average: number;
   dueDate: string;

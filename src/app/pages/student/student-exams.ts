@@ -29,14 +29,10 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                 <div class="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-brand-gold-700)]">Resultat du QCM</div>
                 <h3 class="mt-2 font-serif text-3xl text-[var(--color-brand-green-900)]">{{ resultExam.title }}</h3>
                 <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/75">
-                  @if (resultExam.gradingScaleMax === 100) {
-                    Formule : (bonnes reponses / {{ totalQuestions(resultExam) }}) &times; 100 = note finale en %.
-                  } @else {
-                    Formule de calcul : ((score brut / {{ resultExam.rawMaxScore }}) &times; {{ resultExam.gradingScaleMax }}) = note finale.
-                  }
-                </p>
-                <p class="mt-2 text-sm leading-7 text-[var(--color-brand-green-800)]/75">
-                  Detail : {{ correctAnswersCount(resultExam) }}/{{ totalQuestions(resultExam) }} bonnes reponses &rarr; {{ formatScore(resultExam.score, resultExam.gradingScaleMax) }}.
+                  Formule : earnedScore / totalPoints &times; 100 = pourcentage.
+                  {{ correctAnswersCount(resultExam) }}/{{ totalQuestions(resultExam) }} bonnes reponses
+                  &rarr; {{ resultExam.rawScore }}/{{ resultExam.rawMaxScore }} pts
+                  &rarr; {{ formatPct(resultExam.percentage) }}.
                 </p>
               </div>
 
@@ -50,12 +46,12 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                   <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatRawScore(resultExam.rawScore, resultExam.rawMaxScore) }}</div>
                 </div>
                 <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Note finale</div>
-                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatScore(resultExam.score, resultExam.gradingScaleMax) }}</div>
+                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Pourcentage</div>
+                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatPct(resultExam.percentage) }}</div>
                 </div>
                 <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne QCM</div>
-                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatScore(resultExam.average, resultExam.gradingScaleMax) }}</div>
+                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne classe</div>
+                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatPct(resultExam.average) }}</div>
                 </div>
               </div>
             </div>
@@ -103,10 +99,11 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                   {{ exam.passed ? 'EXAMEN REUSSI' : 'EXAMEN NON VALIDE' }}
                 </div>
                 <div class="text-7xl font-black leading-none" [class.text-emerald-700]="exam.passed" [class.text-red-600]="exam.passed === false">
-                  {{ formatScore(exam.score, exam.gradingScaleMax) }}
+                  {{ formatPct(exam.percentage) }}
                 </div>
-                <div class="text-sm" [class.text-emerald-600]="exam.passed" [class.text-red-500]="exam.passed === false">
-                  Seuil de reussite : {{ formatThreshold(exam) }}
+                <div class="text-sm opacity-75" [class.text-emerald-600]="exam.passed" [class.text-red-500]="exam.passed === false">
+                  {{ formatRawScore(exam.rawScore, exam.rawMaxScore) }} pts
+                  &mdash; Seuil : {{ formatThreshold(exam) }}
                 </div>
               </div>
 
@@ -119,7 +116,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                 <div class="rounded-[20px] bg-[var(--color-brand-cream)] p-4 text-center">
                   <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Score brut</div>
                   <div class="mt-2 text-2xl font-bold text-[var(--color-brand-green-900)]">{{ formatRawScore(exam.rawScore, exam.rawMaxScore) }}</div>
-                  <div class="text-xs text-[var(--color-brand-green-800)]/50">0,5 pt / bonne rep.</div>
+                  <div class="text-xs text-[var(--color-brand-green-800)]/50">pts gagnes</div>
                 </div>
                 <div class="rounded-[20px] bg-[var(--color-brand-cream)] p-4 text-center">
                   <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Essais utilises</div>
@@ -127,7 +124,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                 </div>
                 <div class="rounded-[20px] bg-[var(--color-brand-cream)] p-4 text-center">
                   <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne classe</div>
-                  <div class="mt-2 text-2xl font-bold text-[var(--color-brand-green-900)]">{{ formatScore(exam.average, exam.gradingScaleMax) }}</div>
+                  <div class="mt-2 text-2xl font-bold text-[var(--color-brand-green-900)]">{{ formatPct(exam.average) }}</div>
                 </div>
               </div>
 
@@ -289,7 +286,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                   </div>
                   <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
                     <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne</div>
-                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatScore(exam.average, exam.gradingScaleMax) }}</div>
+                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatPct(exam.average) }}</div>
                   </div>
                   <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
                     <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Seuil</div>
@@ -301,7 +298,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                   </div>
                   <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
                     <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Votre note</div>
-                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatScore(exam.score, exam.gradingScaleMax) }}</div>
+                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatPct(exam.percentage) }}</div>
                   </div>
                 </div>
               </div>
@@ -348,15 +345,16 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                      [class.text-red-500]="mExam.passed === false">
                   {{ mExam.passed ? 'EXAMEN REUSSI' : 'EXAMEN NON VALIDE' }}
                 </div>
+                <!-- percentage = (earnedScore / totalPoints) × 100 -->
                 <div class="mt-3 text-7xl font-black leading-none"
                      [class.text-emerald-700]="mExam.passed"
                      [class.text-red-600]="mExam.passed === false">
-                  {{ formatScore(mExam.score, mExam.gradingScaleMax) }}
+                  {{ formatPct(mExam.percentage) }}
                 </div>
-                <div class="mt-2 text-sm"
-                     [class.text-emerald-600]="mExam.passed"
+                <div class="mt-2 text-xs opacity-70"
+                     [class.text-emerald-700]="mExam.passed"
                      [class.text-red-500]="mExam.passed === false">
-                  Seuil de reussite : {{ formatThreshold(mExam) }}
+                  {{ formatRawScore(mExam.rawScore, mExam.rawMaxScore) }} pts &mdash; Seuil : {{ formatThreshold(mExam) }}
                 </div>
               </div>
 
@@ -366,12 +364,12 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                   <div class="mt-1.5 text-lg font-bold text-[var(--color-brand-green-900)]">{{ correctAnswersCount(mExam) }}/{{ totalQuestions(mExam) }}</div>
                 </div>
                 <div class="rounded-2xl bg-[var(--color-brand-cream)] p-3 text-center">
-                  <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-brand-green-800)]/50">Essais</div>
-                  <div class="mt-1.5 text-lg font-bold text-[var(--color-brand-green-900)]">{{ mExam.attemptsUsed }}/{{ mExam.maxAttempts }}</div>
+                  <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-brand-green-800)]/50">Pts gagnes</div>
+                  <div class="mt-1.5 text-lg font-bold text-[var(--color-brand-green-900)]">{{ formatRawScore(mExam.rawScore, mExam.rawMaxScore) }}</div>
                 </div>
                 <div class="rounded-2xl bg-[var(--color-brand-cream)] p-3 text-center">
-                  <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-brand-green-800)]/50">Score brut</div>
-                  <div class="mt-1.5 text-lg font-bold text-[var(--color-brand-green-900)]">{{ formatRawScore(mExam.rawScore, mExam.rawMaxScore) }}</div>
+                  <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-brand-green-800)]/50">Essais</div>
+                  <div class="mt-1.5 text-lg font-bold text-[var(--color-brand-green-900)]">{{ mExam.attemptsUsed }}/{{ mExam.maxAttempts }}</div>
                 </div>
               </div>
 
@@ -383,7 +381,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                       <div>
                         <p class="font-bold text-emerald-800">Felicitations ! Vous avez valide l'examen.</p>
                         <p class="mt-1 text-sm text-emerald-700">
-                          Votre note {{ formatScore(mExam.score, mExam.gradingScaleMax) }} depasse le seuil de {{ formatThreshold(mExam) }}.
+                          {{ formatPct(mExam.percentage) }} &mdash; depasse le seuil de {{ formatThreshold(mExam) }}.
                           @if (mExam.examType === 'final') { Votre certificat est disponible dans la section Certificats. }
                         </p>
                       </div>
@@ -396,7 +394,8 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                       <div>
                         <p class="font-bold text-amber-800">Seuil non atteint — ne vous decouragez pas !</p>
                         <p class="mt-1 text-sm text-amber-700">
-                          Il vous reste <strong>{{ mExam.attemptsRemaining }} essai(s)</strong>. Consultez la correction et repassez l'examen.
+                          {{ formatPct(mExam.percentage) }} obtenus &mdash; seuil requis {{ formatThreshold(mExam) }}.
+                          Il vous reste <strong>{{ mExam.attemptsRemaining }} essai(s)</strong>.
                         </p>
                       </div>
                     </div>
@@ -563,6 +562,11 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
 
   optionLetter(index: number): string {
     return String.fromCharCode(65 + index);
+  }
+
+  formatPct(value: number | null): string {
+    if (value === null) return '-';
+    return `${value}%`;
   }
 
   formatScore(score: number | null, scaleMax: number): string {
