@@ -1915,9 +1915,22 @@ async function countUsers(): Promise<number> {
 
 function ensureStudentWorkspace(user: PublicUser): StudentWorkspace {
   const existing = studentWorkspaces.get(user.id);
-  if (existing) return existing;
+  if (existing) {
+    // Ensure free-course enrollments are always present for any student
+    for (const course of courses) {
+      if (course.access === 'free' && course.status === 'published') {
+        if (!existing.enrollments.some((e) => e.courseId === course.id)) {
+          existing.enrollments.push({ courseId: course.id, progress: 0 });
+        }
+      }
+    }
+    return existing;
+  }
+  const freeCourseEnrollments: StudentEnrollment[] = courses
+    .filter((c) => c.access === 'free' && c.status === 'published')
+    .map((c) => ({ courseId: c.id, progress: 0 }));
   const created: StudentWorkspace = {
-    enrollments: [],
+    enrollments: freeCourseEnrollments,
     certificates: [],
     profile: {
       phone: '',
