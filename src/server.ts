@@ -1150,6 +1150,31 @@ const paymentRecords: PaymentRecord[] = [
 
 bootstrapRoleData();
 loadPersistedData();
+
+// ── DATA MIGRATION: re-grade all stored attempts with the real engine ────────
+// Repairs attempts saved by old code that wrote score=0 / percentage=0 even
+// when the student answered correctly (type mismatch or missing grading logic).
+// Safe to run every boot: it overwrites only the computed fields, not answers.
+(function regradeAllAttempts() {
+  let migratedCount = 0;
+  for (const [, attempts] of studentAttempts) {
+    for (const attempt of attempts) {
+      const exam = exams.find((e) => e.id === attempt.examId);
+      if (!exam || !attempt.answers?.length) continue;
+      const grade = gradeExamSubmission(exam, attempt.answers);
+      attempt.score       = grade.scaledScore;
+      attempt.rawScore    = grade.earnedScore;
+      attempt.totalPoints = grade.totalPoints;
+      attempt.percentage  = grade.percentage;
+      migratedCount++;
+    }
+  }
+  if (migratedCount > 0) {
+    savePersistedData();
+    console.log(`[MIGRATE] Re-graded ${migratedCount} stored attempt(s) with real grading engine.`);
+  }
+})();
+
 // Ensure the seed student always has access to the detox exam even if
 // the persisted workspace predates the course-13 enrollment being added.
 (function ensureSeedEnrollments() {
@@ -2043,13 +2068,20 @@ function getAttempt(studentId: string, examId: string): StudentAttempt | null {
 }
 
 function getExamAverage(examId: string): number {
-  const scores: number[] = [];
+  const pcts: number[] = [];
   for (const attempts of studentAttempts.values()) {
     const attempt = attempts.find((item) => item.examId === examId);
-    if (attempt) scores.push(attempt.score);
+    if (attempt) {
+      // Use percentage field; fall back to computing from score/scaleMax for legacy data
+      const exam = exams.find((e) => e.id === examId);
+      const pct = attempt.percentage != null
+        ? attempt.percentage
+        : (exam ? Number(((attempt.score / getExamScaleMax(exam)) * 100).toFixed(1)) : 0);
+      pcts.push(pct);
+    }
   }
-  if (!scores.length) return 0;
-  return Number((scores.reduce((sum, score) => sum + score, 0) / scores.length).toFixed(1));
+  if (!pcts.length) return 0;
+  return Number((pcts.reduce((sum, p) => sum + p, 0) / pcts.length).toFixed(1));
 }
 
 function normalizeScoreToTwenty(examId: string, score: number): number {
@@ -2095,7 +2127,13 @@ function gradeExamSubmission(exam: ExamTemplate, answers: number[]): GradeResult
 
   for (let i = 0; i < exam.questions.length; i++) {
     const question = exam.questions[i];
-    const isCorrect = answers[i] === question.correctIndex;
+    // Explicit Number() on both sides: guards against string/number type mismatch
+    // that would make strict === silently return false for every answer → score 0.
+    const studentAnswer  = Number(answers[i]);
+    const correctAnswer  = Number(question.correctIndex);
+    const isCorrect = !Number.isNaN(studentAnswer) && !Number.isNaN(correctAnswer)
+                      && studentAnswer !== -1
+                      && studentAnswer === correctAnswer;
     if (isCorrect) earnedScore += question.points;
     totalPoints += question.points;
     perQuestion.push({
