@@ -618,11 +618,23 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
       control.value === null || Number.isNaN(Number(control.value)) ? -1 : Number(control.value)
     );
 
+    // ── DEBUG STEP 1: verify answers before sending ──────────────────────────
+    console.log('[EXAM-DEBUG] examId:', exam.id);
+    console.log('[EXAM-DEBUG] answers array length:', answers.length);
+    console.log('[EXAM-DEBUG] answers (raw):', JSON.stringify(answers));
+    console.log('[EXAM-DEBUG] answered count (non -1):', answers.filter((a) => a !== -1).length);
+    console.log('[EXAM-DEBUG] payload to backend:', JSON.stringify({ answers }));
+    // ─────────────────────────────────────────────────────────────────────────
+
     this.portal.submitExam(exam.id, answers).subscribe({
       next: (data) => {
         this.stopTimer();
         this.exams.set(data);
         const refreshedExam = data.find((item) => item.id === exam.id) ?? null;
+        // ── DEBUG STEP 2: verify response from backend ───────────────────────
+        console.log('[EXAM-DEBUG] server response exam count:', data.length);
+        console.log('[EXAM-DEBUG] refreshedExam:', JSON.stringify(refreshedExam));
+        // ─────────────────────────────────────────────────────────────────────
         this.activeExam.set(refreshedExam);
         this.answerControls.clear();
         this.submitInProgress.set(false);
@@ -630,11 +642,16 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
           this.modalExam.set(refreshedExam);
           this.showResultModal.set(true);
         } else {
+          console.warn('[EXAM-DEBUG] refreshedExam is null — exam id not found in response');
           this.scrollToActiveExam();
         }
       },
       error: (error: HttpErrorResponse) => {
         this.submitInProgress.set(false);
+        // ── DEBUG STEP 3: log full error ─────────────────────────────────────
+        console.error('[EXAM-DEBUG] submit error status:', error.status);
+        console.error('[EXAM-DEBUG] submit error body:', JSON.stringify(error.error));
+        // ─────────────────────────────────────────────────────────────────────
         this.submitError.set(error.error?.error ?? 'Impossible d envoyer les reponses pour le moment.');
       },
     });

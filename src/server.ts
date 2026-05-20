@@ -2861,11 +2861,24 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
   const exam = exams.find((item) => item.id === req.params.examId);
   if (!exam) return res.status(404).json({ error: 'Examen introuvable.' });
 
+  // ── DEBUG STEP 4: log received payload ───────────────────────────────────
+  console.log('[EXAM-DEBUG] POST /submit — examId:', req.params.examId);
+  console.log('[EXAM-DEBUG] user:', user.id, user.email);
+  console.log('[EXAM-DEBUG] req.body:', JSON.stringify(req.body));
+  console.log('[EXAM-DEBUG] req.body.answers:', JSON.stringify(req.body?.answers));
+  console.log('[EXAM-DEBUG] answers is array?', Array.isArray(req.body?.answers));
+  // ─────────────────────────────────────────────────────────────────────────
+
   // Accept answers array of any length — pad with -1 (unanswered) or trim excess
   const raw = Array.isArray(req.body?.answers) ? req.body.answers.map((value: unknown) => Number(value)) : [];
   const answers: number[] = Array.from({ length: exam.questions.length }, (_, i) =>
     i < raw.length && !Number.isNaN(raw[i]) ? raw[i] : -1
   );
+
+  // ── DEBUG STEP 5: log normalized answers ─────────────────────────────────
+  console.log('[EXAM-DEBUG] raw array length:', raw.length, '| exam questions count:', exam.questions.length);
+  console.log('[EXAM-DEBUG] normalized answers:', JSON.stringify(answers));
+  // ─────────────────────────────────────────────────────────────────────────
 
   const workspace = ensureStudentWorkspace(user);
   // Auto-enroll in the course if accessible (free course or already enrolled)
@@ -2874,13 +2887,21 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
     workspace.enrollments.push({ courseId: exam.courseId, progress: 0 });
   }
   if (!workspace.enrollments.some((item) => item.courseId === exam.courseId)) {
+    console.log('[EXAM-DEBUG] BLOCKED — not enrolled in course:', exam.courseId, '| enrollments:', JSON.stringify(workspace.enrollments.map(e => e.courseId)));
     return res.status(403).json({ error: 'Examen non accessible. Demandez votre inscription a la formation.' });
   }
 
   const attempts = studentAttempts.get(user.id) ?? [];
   const existing = attempts.find((attempt) => attempt.examId === exam.id);
   const maxAttempts = getExamMaxAttempts(exam);
+
+  // ── DEBUG STEP 6: log attempt state ──────────────────────────────────────
+  console.log('[EXAM-DEBUG] existing attempt:', existing ? `attemptCount=${existing.attemptCount}` : 'none');
+  console.log('[EXAM-DEBUG] maxAttempts:', maxAttempts);
+  // ─────────────────────────────────────────────────────────────────────────
+
   if (existing && existing.attemptCount >= maxAttempts) {
+    console.log('[EXAM-DEBUG] BLOCKED — max attempts reached');
     return res.status(400).json({ error: 'Nombre maximum d essais atteint pour cet examen.' });
   }
 
@@ -2890,6 +2911,14 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
   // scaledScore = (earnedScore / totalPoints) × gradingScaleMax
   // passed = scaledScore >= passThreshold
   const grade = gradeExamSubmission(exam, answers);
+
+  // ── DEBUG STEP 7: log grading result ─────────────────────────────────────
+  console.log('[EXAM-DEBUG] grade.earnedScore:', grade.earnedScore);
+  console.log('[EXAM-DEBUG] grade.totalPoints:', grade.totalPoints);
+  console.log('[EXAM-DEBUG] grade.percentage:', grade.percentage);
+  console.log('[EXAM-DEBUG] grade.scaledScore:', grade.scaledScore);
+  console.log('[EXAM-DEBUG] grade.passed:', grade.passed);
+  // ─────────────────────────────────────────────────────────────────────────
 
   if (existing) {
     existing.answers      = answers;
@@ -2914,6 +2943,11 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
   studentAttempts.set(user.id, attempts);
   ensureExamCertificate(user, exam, grade.scaledScore);
   savePersistedData();
+
+  // ── DEBUG STEP 8: log saved attempt ──────────────────────────────────────
+  const saved = studentAttempts.get(user.id)?.find((a) => a.examId === exam.id);
+  console.log('[EXAM-DEBUG] saved attempt:', JSON.stringify(saved));
+  // ─────────────────────────────────────────────────────────────────────────
 
   // Return the full updated exam list so the client updates immediately
   res.json(toStudentExamView(user));
