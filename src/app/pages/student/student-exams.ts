@@ -18,7 +18,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
         <div class="rounded-[28px] border border-[var(--color-brand-gold-300)]/35 bg-white p-8 shadow-[0_24px_50px_rgba(0,0,0,0.04)]">
           <h2 class="font-serif text-3xl text-[var(--color-brand-green-900)]">Examens, devoirs et moyennes</h2>
           <p class="mt-3 max-w-3xl text-sm leading-7 text-[var(--color-brand-green-800)]/70">
-            Retrouvez ici votre examen final structure, votre note reelle sur 10, la moyenne generale du QCM et la correction detaillee question par question.
+            Retrouvez ici votre examen final structure, votre note reelle en pourcentage, la moyenne generale du QCM et la correction detaillee question par question.
           </p>
         </div>
 
@@ -97,33 +97,75 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
             </div>
 
             @if (exam.score !== null) {
-              <div class="mt-8 grid gap-4 md:grid-cols-4">
-                <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Score brut</div>
-                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ formatRawScore(exam.rawScore, exam.rawMaxScore) }}</div>
-                  <div class="mt-2 text-sm text-[var(--color-brand-green-800)]/65">0,5 point par bonne reponse</div>
+              <!-- Bloc score central style Cisco NetAcad -->
+              <div class="mt-8 flex flex-col items-center gap-2 rounded-[28px] py-8" [class.bg-emerald-50]="exam.passed" [class.bg-red-50]="exam.passed === false">
+                <div class="text-[11px] font-bold uppercase tracking-[0.2em]" [class.text-emerald-700]="exam.passed" [class.text-red-500]="exam.passed === false">
+                  {{ exam.passed ? 'EXAMEN REUSSI' : 'EXAMEN NON VALIDE' }}
                 </div>
-                <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Note finale</div>
-                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ formatScore(exam.score, exam.gradingScaleMax) }}</div>
-                  <div class="mt-2 text-sm text-[var(--color-brand-green-800)]/65">{{ exam.gradingScaleMax === 100 ? 'Note sur 100 %' : 'Resultat reel ramene sur ' + exam.gradingScaleMax }}</div>
+                <div class="text-7xl font-black leading-none" [class.text-emerald-700]="exam.passed" [class.text-red-600]="exam.passed === false">
+                  {{ formatScore(exam.score, exam.gradingScaleMax) }}
                 </div>
-                <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Resultat</div>
-                  <div class="mt-2 text-2xl font-bold" [class.text-emerald-700]="exam.passed" [class.text-red-600]="exam.passed === false">
-                    {{ exam.passed ? 'Reussi' : 'Non valide' }}
-                  </div>
-                </div>
-                <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne examen</div>
-                  <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ formatScore(exam.average, exam.gradingScaleMax) }}</div>
-                  <div class="mt-2 text-sm text-[var(--color-brand-green-800)]/65">Moyenne reelle sur 10</div>
+                <div class="text-sm" [class.text-emerald-600]="exam.passed" [class.text-red-500]="exam.passed === false">
+                  Seuil de reussite : {{ formatThreshold(exam) }}
                 </div>
               </div>
 
-              @if (exam.passed && exam.examType === 'final') {
-                <div class="mt-6 rounded-[24px] border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-800">
-                  Resultat valide. Votre certificat est disponible dans la section certificats.
+              <!-- Stats -->
+              <div class="mt-6 grid gap-3 sm:grid-cols-4">
+                <div class="rounded-[20px] bg-[var(--color-brand-cream)] p-4 text-center">
+                  <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Bonnes reponses</div>
+                  <div class="mt-2 text-2xl font-bold text-[var(--color-brand-green-900)]">{{ correctAnswersCount(exam) }}/{{ totalQuestions(exam) }}</div>
+                </div>
+                <div class="rounded-[20px] bg-[var(--color-brand-cream)] p-4 text-center">
+                  <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Score brut</div>
+                  <div class="mt-2 text-2xl font-bold text-[var(--color-brand-green-900)]">{{ formatRawScore(exam.rawScore, exam.rawMaxScore) }}</div>
+                  <div class="text-xs text-[var(--color-brand-green-800)]/50">0,5 pt / bonne rep.</div>
+                </div>
+                <div class="rounded-[20px] bg-[var(--color-brand-cream)] p-4 text-center">
+                  <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Essais utilises</div>
+                  <div class="mt-2 text-2xl font-bold text-[var(--color-brand-green-900)]">{{ exam.attemptsUsed }}/{{ exam.maxAttempts }}</div>
+                </div>
+                <div class="rounded-[20px] bg-[var(--color-brand-cream)] p-4 text-center">
+                  <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne classe</div>
+                  <div class="mt-2 text-2xl font-bold text-[var(--color-brand-green-900)]">{{ formatScore(exam.average, exam.gradingScaleMax) }}</div>
+                </div>
+              </div>
+
+              <!-- Bannieres resultat -->
+              @if (exam.passed) {
+                <div class="mt-6 rounded-[24px] border border-emerald-300 bg-emerald-50 px-6 py-5">
+                  <div class="flex items-start gap-4">
+                    <mat-icon class="mt-0.5 !text-emerald-600">verified</mat-icon>
+                    <div>
+                      <p class="text-base font-bold text-emerald-800">Felicitations ! Vous avez reussi l'examen.</p>
+                      <p class="mt-1 text-sm text-emerald-700">
+                        Votre note de {{ formatScore(exam.score, exam.gradingScaleMax) }} depasse le seuil de {{ formatThreshold(exam) }}.
+                        @if (exam.examType === 'final') { Votre certificat est disponible dans la section Certificats. }
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              } @else if (exam.attemptsRemaining > 0) {
+                <div class="mt-6 rounded-[24px] border border-amber-300 bg-amber-50 px-6 py-5">
+                  <div class="flex items-start gap-4">
+                    <mat-icon class="mt-0.5 !text-amber-600">replay</mat-icon>
+                    <div>
+                      <p class="text-base font-bold text-amber-800">Vous n'avez pas encore atteint le seuil de {{ formatThreshold(exam) }}.</p>
+                      <p class="mt-1 text-sm text-amber-700">
+                        Il vous reste <strong>{{ exam.attemptsRemaining }} essai(s)</strong>. Revisez les erreurs ci-dessous puis repassez l'examen.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              } @else {
+                <div class="mt-6 rounded-[24px] border border-red-200 bg-red-50 px-6 py-5">
+                  <div class="flex items-start gap-4">
+                    <mat-icon class="mt-0.5 !text-red-500">cancel</mat-icon>
+                    <div>
+                      <p class="text-base font-bold text-red-800">Vous avez epuise vos {{ exam.maxAttempts }} essais.</p>
+                      <p class="mt-1 text-sm text-red-700">Contactez votre formateur pour plus d'informations.</p>
+                    </div>
+                  </div>
                 </div>
               }
 
@@ -181,7 +223,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
 
                 <button type="submit" [disabled]="submitInProgress()" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-6 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)] disabled:opacity-60">
                   <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">task_alt</mat-icon>
-                  {{ submitInProgress() ? 'Validation en cours...' : 'Valider l examen' }}
+                  {{ submitInProgress() ? 'Validation en cours...' : "Valider l'examen" }}
                 </button>
               </form>
             }

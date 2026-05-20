@@ -1091,6 +1091,7 @@ function bootstrapRoleData(): void {
       enrollments: [
         { courseId: '1', progress: 45 },
         { courseId: '4', progress: 100 },
+        { courseId: '13', progress: 100 },
       ],
       certificates: [
         {
