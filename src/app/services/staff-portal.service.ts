@@ -401,6 +401,21 @@ export class StaffPortalService {
     return this.http.post<ManagedExam>('/api/instructor/exams', payload, this.authHeaders());
   }
 
+  updateInstructorExam(examId: string, payload: {
+    title?: string;
+    dueDate?: string;
+    durationMinutes?: number;
+    maxAttempts?: number;
+    passThreshold?: number;
+    gradingScaleMax?: number;
+  }): Observable<ManagedExam> {
+    return this.http.put<ManagedExam>(`/api/instructor/exams/${examId}`, payload, this.authHeaders());
+  }
+
+  deleteInstructorExam(examId: string): Observable<void> {
+    return this.http.delete<void>(`/api/instructor/exams/${examId}`, this.authHeaders());
+  }
+
   getInstructorProfile(): Observable<RoleProfile> {
     return this.http.get<RoleProfile>('/api/instructor/profile', this.authHeaders());
   }

@@ -80,6 +80,77 @@ import { INSTRUCTOR_MENU_ITEMS } from './instructor-menu';
                 </div>
 
                 <!-- Tableau de tous les eleves -->
+                <!-- Boutons modifier / supprimer -->
+                <div class="mt-4 flex gap-2 border-t border-[var(--color-brand-gold-300)]/20 pt-3">
+                  <button type="button" (click)="openEdit(exam)"
+                          class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-brand-gold-300)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--color-brand-green-900)] transition hover:bg-[var(--color-brand-cream)]">
+                    <mat-icon class="!h-[14px] !w-[14px] !text-[14px]">edit</mat-icon>
+                    Modifier
+                  </button>
+                  <button type="button" (click)="deleteExam(exam)"
+                          class="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50">
+                    <mat-icon class="!h-[14px] !w-[14px] !text-[14px]">delete_outline</mat-icon>
+                    Supprimer
+                  </button>
+                </div>
+
+                <!-- Formulaire d'edition inline -->
+                @if (editingId() === exam.id) {
+                  <form [formGroup]="editForm" (ngSubmit)="saveEdit(exam.id)"
+                        class="mt-4 space-y-3 rounded-[20px] border border-[var(--color-brand-gold-300)]/30 bg-[var(--color-brand-cream)] p-4">
+                    <div class="text-xs font-bold uppercase tracking-widest text-[var(--color-brand-gold-700)]">Modifier l'examen</div>
+                    <input formControlName="title" placeholder="Titre *"
+                           class="w-full rounded-2xl bg-white px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[var(--color-brand-gold-300)]" />
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="mb-1 block text-xs text-[var(--color-brand-green-800)]/55">Echeance</label>
+                        <input formControlName="dueDate" type="date"
+                               class="w-full rounded-2xl bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[var(--color-brand-gold-300)]" />
+                      </div>
+                      <div>
+                        <label class="mb-1 block text-xs text-[var(--color-brand-green-800)]/55">Duree (min)</label>
+                        <input formControlName="durationMinutes" type="number" min="5" max="180"
+                               class="w-full rounded-2xl bg-white px-3 py-2 text-sm outline-none" />
+                      </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                      <div>
+                        <label class="mb-1 block text-xs text-[var(--color-brand-green-800)]/55">Echelle</label>
+                        <select formControlName="gradingScaleMax"
+                                class="w-full rounded-2xl bg-white px-3 py-2 text-sm outline-none">
+                          <option value="20">/ 20</option>
+                          <option value="10">/ 10</option>
+                          <option value="100">100 %</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label class="mb-1 block text-xs text-[var(--color-brand-green-800)]/55">Seuil</label>
+                        <input formControlName="passThreshold" type="number" min="0"
+                               class="w-full rounded-2xl bg-white px-3 py-2 text-sm outline-none" />
+                      </div>
+                      <div>
+                        <label class="mb-1 block text-xs text-[var(--color-brand-green-800)]/55">Essais max</label>
+                        <select formControlName="maxAttempts"
+                                class="w-full rounded-2xl bg-white px-3 py-2 text-sm outline-none">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="flex gap-2">
+                      <button type="submit" [disabled]="editForm.invalid || editSaving()"
+                              class="rounded-full bg-[var(--color-brand-green-900)] px-5 py-2 text-xs font-bold text-white transition hover:bg-[var(--color-brand-green-800)] disabled:opacity-50">
+                        {{ editSaving() ? 'Sauvegarde...' : 'Enregistrer' }}
+                      </button>
+                      <button type="button" (click)="cancelEdit()"
+                              class="rounded-full border border-[var(--color-brand-gold-300)] bg-white px-4 py-2 text-xs font-semibold text-[var(--color-brand-green-900)] transition hover:bg-[var(--color-brand-cream)]">
+                        Annuler
+                      </button>
+                    </div>
+                  </form>
+                }
+
                 @if (exam.allStudents.length > 0) {
                   <div class="mt-4">
                     <div class="mb-2 text-xs font-bold uppercase tracking-widest text-[var(--color-brand-gold-700)]">Resultats eleves</div>
@@ -273,6 +344,17 @@ export class InstructorExamsComponent implements OnInit {
   exams = signal<ManagedExam[]>([]);
   saving = signal(false);
   createSuccess = signal(false);
+  editingId = signal<string | null>(null);
+  editSaving = signal(false);
+
+  editForm = this.fb.group({
+    title: ['', [Validators.required, Validators.minLength(3)]],
+    dueDate: ['', Validators.required],
+    durationMinutes: [20, Validators.required],
+    gradingScaleMax: [20, Validators.required],
+    passThreshold: [10, Validators.required],
+    maxAttempts: [1, Validators.required],
+  });
 
   form = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(3)]],
@@ -355,6 +437,51 @@ export class InstructorExamsComponent implements OnInit {
         setTimeout(() => this.createSuccess.set(false), 4000);
       },
       error: () => this.saving.set(false),
+    });
+  }
+
+  openEdit(exam: ManagedExam): void {
+    this.editingId.set(exam.id);
+    this.editForm.patchValue({
+      title: exam.title,
+      dueDate: exam.dueDate ? exam.dueDate.slice(0, 10) : '',
+      durationMinutes: exam.durationMinutes,
+      gradingScaleMax: exam.gradingScaleMax,
+      passThreshold: exam.passThreshold,
+      maxAttempts: exam.maxAttempts,
+    });
+  }
+
+  cancelEdit(): void {
+    this.editingId.set(null);
+  }
+
+  saveEdit(examId: string): void {
+    if (this.editForm.invalid) return;
+    this.editSaving.set(true);
+    const v = this.editForm.getRawValue();
+    this.staff.updateInstructorExam(examId, {
+      title: v.title ?? undefined,
+      dueDate: v.dueDate ?? undefined,
+      durationMinutes: Number(v.durationMinutes),
+      gradingScaleMax: Number(v.gradingScaleMax),
+      passThreshold: Number(v.passThreshold),
+      maxAttempts: Number(v.maxAttempts),
+    }).subscribe({
+      next: () => {
+        this.editSaving.set(false);
+        this.editingId.set(null);
+        this.load();
+      },
+      error: () => this.editSaving.set(false),
+    });
+  }
+
+  deleteExam(exam: ManagedExam): void {
+    if (!confirm(`Supprimer l'examen "${exam.title}" ? Cette action est irreversible.`)) return;
+    this.staff.deleteInstructorExam(exam.id).subscribe({
+      next: () => this.load(),
+      error: () => {},
     });
   }
 

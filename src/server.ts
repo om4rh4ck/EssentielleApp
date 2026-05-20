@@ -1070,6 +1070,7 @@ const publicEnrollmentRequests: PublicEnrollmentRequest[] = [];
 // Survives server restarts / deployments without a database.
 const STORE_FILE = join(process.cwd(), 'essentielle-data.json');
 const SEED_EXAM_IDS = new Set(['exam-1', 'exam-2', 'exam-detox-final']);
+const deletedExamIds = new Set<string>();
 
 function loadPersistedData(): void {
   try {
@@ -1080,6 +1081,7 @@ function loadPersistedData(): void {
       attempts?: Record<string, StudentAttempt[]>;
       requests?: PublicEnrollmentRequest[];
       dynamicExams?: ExamTemplate[];
+      deletedExamIds?: string[];
     };
     for (const u of saved.users ?? []) {
       const idx = memoryUsers.findIndex((m) => m.id === u.id);
@@ -1100,6 +1102,11 @@ function loadPersistedData(): void {
     for (const exam of saved.dynamicExams ?? []) {
       if (!exams.some((e) => e.id === exam.id)) exams.push(exam);
     }
+    for (const id of saved.deletedExamIds ?? []) {
+      deletedExamIds.add(id);
+      const idx = exams.findIndex((e) => e.id === id);
+      if (idx >= 0) exams.splice(idx, 1);
+    }
     console.log('[STORE] Data loaded from', STORE_FILE);
   } catch (err) {
     console.warn('[STORE] Could not load persisted data:', err);
@@ -1118,6 +1125,7 @@ function savePersistedData(): void {
         attempts: Object.fromEntries(studentAttempts),
         requests: publicEnrollmentRequests,
         dynamicExams: exams.filter((e) => !SEED_EXAM_IDS.has(e.id)),
+        deletedExamIds: Array.from(deletedExamIds),
       }, null, 2), 'utf8');
     } catch (err) {
       console.warn('[STORE] Could not save data:', err);
@@ -3390,6 +3398,63 @@ app.post('/api/instructor/exams', (req, res): any => {
       points: question.points,
     })),
   });
+});
+
+app.put('/api/instructor/exams/:examId', (req, res): any => {
+  const user = getCurrentUser(req, ['instructor']);
+  if (!user) return res.status(401).json({ error: 'Authentification requise.' });
+
+  const exam = exams.find((e) => {
+    if (e.id !== req.params.examId) return false;
+    const course = courses.find((c) => c.id === e.courseId);
+    return course ? instructorOwnsCourse(user, course) : false;
+  });
+  if (!exam) return res.status(404).json({ error: 'Examen introuvable.' });
+
+  if (typeof req.body?.title === 'string' && req.body.title.trim().length >= 3)
+    exam.title = req.body.title.trim();
+  if (typeof req.body?.dueDate === 'string')
+    exam.dueDate = req.body.dueDate;
+  if (req.body?.durationMinutes !== undefined)
+    exam.durationMinutes = Math.max(5, Math.min(180, Number(req.body.durationMinutes)));
+  if (req.body?.maxAttempts !== undefined)
+    exam.maxAttempts = Math.max(1, Math.min(5, Number(req.body.maxAttempts)));
+  if (req.body?.gradingScaleMax !== undefined && [10, 20, 100].includes(Number(req.body.gradingScaleMax)))
+    exam.gradingScaleMax = Number(req.body.gradingScaleMax);
+  if (req.body?.passThreshold !== undefined)
+    exam.passThreshold = Math.max(0, Math.min(getExamScaleMax(exam), Number(req.body.passThreshold)));
+
+  savePersistedData();
+  res.json({
+    id: exam.id, title: exam.title, courseId: exam.courseId,
+    courseTitle: getCourseTitle(exam.courseId), dueDate: exam.dueDate,
+    assignedBy: exam.assignedBy, examType: exam.examType ?? 'quiz',
+    gradingScaleMax: getExamScaleMax(exam), passThreshold: getExamPassThreshold(exam),
+    durationMinutes: getExamDurationMinutes(exam), maxAttempts: getExamMaxAttempts(exam),
+    averageScore: getExamAverage(exam.id),
+    submissions: Array.from(studentAttempts.values()).filter((a) => a.some((item) => item.examId === exam.id)).length,
+    successfulStudents: getSuccessfulStudentsForExam(exam),
+    allStudents: getAllStudentsForExam(exam),
+    questions: exam.questions.map((q) => ({ id: q.id, prompt: q.prompt, options: q.options, points: q.points })),
+  });
+});
+
+app.delete('/api/instructor/exams/:examId', (req, res): any => {
+  const user = getCurrentUser(req, ['instructor']);
+  if (!user) return res.status(401).json({ error: 'Authentification requise.' });
+
+  const idx = exams.findIndex((e) => {
+    if (e.id !== req.params.examId) return false;
+    const course = courses.find((c) => c.id === e.courseId);
+    return course ? instructorOwnsCourse(user, course) : false;
+  });
+  if (idx === -1) return res.status(404).json({ error: 'Examen introuvable.' });
+
+  const deletedId = exams[idx].id;
+  exams.splice(idx, 1);
+  deletedExamIds.add(deletedId);
+  savePersistedData();
+  res.status(204).end();
 });
 
 app.get('/api/instructor/profile', (req, res): any => {
