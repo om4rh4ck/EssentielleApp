@@ -332,6 +332,103 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
           }
         </div>
       </div>
+
+      @if (showResultModal()) {
+        @if (modalExam(); as mExam) {
+          <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm" (click)="closeModal()">
+            <div class="w-full max-w-md rounded-[32px] bg-white shadow-2xl" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+
+              <div class="rounded-t-[32px] px-8 pt-10 pb-6 text-center"
+                   [class.bg-emerald-50]="mExam.passed"
+                   [class.bg-red-50]="mExam.passed === false">
+                <div class="text-[11px] font-bold uppercase tracking-[0.25em]"
+                     [class.text-emerald-700]="mExam.passed"
+                     [class.text-red-500]="mExam.passed === false">
+                  {{ mExam.passed ? 'EXAMEN REUSSI' : 'EXAMEN NON VALIDE' }}
+                </div>
+                <div class="mt-3 text-7xl font-black leading-none"
+                     [class.text-emerald-700]="mExam.passed"
+                     [class.text-red-600]="mExam.passed === false">
+                  {{ formatScore(mExam.score, mExam.gradingScaleMax) }}
+                </div>
+                <div class="mt-2 text-sm"
+                     [class.text-emerald-600]="mExam.passed"
+                     [class.text-red-500]="mExam.passed === false">
+                  Seuil de reussite : {{ formatThreshold(mExam) }}
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-3 px-8 py-5">
+                <div class="rounded-2xl bg-[var(--color-brand-cream)] p-3 text-center">
+                  <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-brand-green-800)]/50">Bonnes rep.</div>
+                  <div class="mt-1.5 text-lg font-bold text-[var(--color-brand-green-900)]">{{ correctAnswersCount(mExam) }}/{{ totalQuestions(mExam) }}</div>
+                </div>
+                <div class="rounded-2xl bg-[var(--color-brand-cream)] p-3 text-center">
+                  <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-brand-green-800)]/50">Essais</div>
+                  <div class="mt-1.5 text-lg font-bold text-[var(--color-brand-green-900)]">{{ mExam.attemptsUsed }}/{{ mExam.maxAttempts }}</div>
+                </div>
+                <div class="rounded-2xl bg-[var(--color-brand-cream)] p-3 text-center">
+                  <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-brand-green-800)]/50">Score brut</div>
+                  <div class="mt-1.5 text-lg font-bold text-[var(--color-brand-green-900)]">{{ formatRawScore(mExam.rawScore, mExam.rawMaxScore) }}</div>
+                </div>
+              </div>
+
+              <div class="px-8 pb-5">
+                @if (mExam.passed) {
+                  <div class="rounded-[20px] border border-emerald-200 bg-emerald-50 px-5 py-4">
+                    <div class="flex items-start gap-3">
+                      <mat-icon class="mt-0.5 !text-emerald-600">verified</mat-icon>
+                      <div>
+                        <p class="font-bold text-emerald-800">Felicitations ! Vous avez valide l'examen.</p>
+                        <p class="mt-1 text-sm text-emerald-700">
+                          Votre note {{ formatScore(mExam.score, mExam.gradingScaleMax) }} depasse le seuil de {{ formatThreshold(mExam) }}.
+                          @if (mExam.examType === 'final') { Votre certificat est disponible dans la section Certificats. }
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                } @else if (mExam.attemptsRemaining > 0) {
+                  <div class="rounded-[20px] border border-amber-200 bg-amber-50 px-5 py-4">
+                    <div class="flex items-start gap-3">
+                      <mat-icon class="mt-0.5 !text-amber-600">replay</mat-icon>
+                      <div>
+                        <p class="font-bold text-amber-800">Seuil non atteint — ne vous decouragez pas !</p>
+                        <p class="mt-1 text-sm text-amber-700">
+                          Il vous reste <strong>{{ mExam.attemptsRemaining }} essai(s)</strong>. Consultez la correction et repassez l'examen.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="rounded-[20px] border border-red-200 bg-red-50 px-5 py-4">
+                    <div class="flex items-start gap-3">
+                      <mat-icon class="mt-0.5 !text-red-500">cancel</mat-icon>
+                      <div>
+                        <p class="font-bold text-red-800">Essais epuises.</p>
+                        <p class="mt-1 text-sm text-red-700">Vous avez utilise vos {{ mExam.maxAttempts }} essais. Contactez votre formateur.</p>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <div class="flex flex-wrap justify-center gap-3 rounded-b-[32px] bg-[var(--color-brand-cream)] px-8 py-6">
+                <button type="button" (click)="closeModal()" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-6 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)]">
+                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">grading</mat-icon>
+                  Voir la correction
+                </button>
+                @if (mExam.attemptsRemaining > 0 && mExam.questions?.length) {
+                  <button type="button" (click)="retryFromModal(mExam)" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-6 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-900)]">
+                    <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">replay</mat-icon>
+                    Repasser l'examen
+                  </button>
+                }
+              </div>
+
+            </div>
+          </div>
+        }
+      }
     </app-dashboard-layout>
   `,
 })
@@ -349,6 +446,8 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
   answerControls = this.fb.array<FormControl<number | null>>([]);
   answeredMask = signal<boolean[]>([]);
   answeredCount = computed(() => this.answeredMask().filter(Boolean).length);
+  showResultModal = signal(false);
+  modalExam = signal<StudentExam | null>(null);
 
   ngOnInit(): void {
     this.load();
@@ -489,6 +588,18 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
     return Math.round(exam.rawMaxScore / 0.5);
   }
 
+  closeModal(): void {
+    this.showResultModal.set(false);
+    this.modalExam.set(null);
+    this.scrollToActiveExam();
+  }
+
+  retryFromModal(exam: StudentExam): void {
+    this.showResultModal.set(false);
+    this.modalExam.set(null);
+    this.openExamForRetry(exam);
+  }
+
   submitExam(autoSubmit = false): void {
     const exam = this.activeExam();
     if (!exam || this.submitInProgress()) return;
@@ -510,7 +621,12 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
         this.activeExam.set(refreshedExam);
         this.answerControls.clear();
         this.submitInProgress.set(false);
-        this.scrollToActiveExam();
+        if (refreshedExam) {
+          this.modalExam.set(refreshedExam);
+          this.showResultModal.set(true);
+        } else {
+          this.scrollToActiveExam();
+        }
       },
       error: (error: HttpErrorResponse) => {
         this.submitInProgress.set(false);
