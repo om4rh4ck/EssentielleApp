@@ -22,42 +22,6 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
           </p>
         </div>
 
-        @if (latestResultExam(); as resultExam) {
-          <section class="rounded-[28px] border border-[var(--color-brand-gold-300)]/35 bg-white p-6 shadow-[0_24px_50px_rgba(0,0,0,0.04)]">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-              <div class="max-w-3xl">
-                <div class="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-brand-gold-700)]">Resultat du QCM</div>
-                <h3 class="mt-2 font-serif text-3xl text-[var(--color-brand-green-900)]">{{ resultExam.title }}</h3>
-                <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/75">
-                  Formule : earnedScore / totalPoints &times; 100 = pourcentage.
-                  {{ correctAnswersCount(resultExam) }}/{{ totalQuestions(resultExam) }} bonnes reponses
-                  &rarr; {{ resultExam.rawScore }}/{{ resultExam.rawMaxScore }} pts
-                  &rarr; {{ formatPct(resultExam.percentage) }}.
-                </p>
-              </div>
-
-              <div class="grid min-w-[340px] grid-cols-2 gap-3">
-                <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Bonnes reponses</div>
-                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ correctAnswersCount(resultExam) }}/{{ totalQuestions(resultExam) }}</div>
-                </div>
-                <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Score brut</div>
-                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatRawScore(resultExam.rawScore, resultExam.rawMaxScore) }}</div>
-                </div>
-                <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Pourcentage</div>
-                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatPct(resultExam.percentage) }}</div>
-                </div>
-                <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
-                  <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne classe</div>
-                  <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatPct(resultExam.average) }}</div>
-                </div>
-              </div>
-            </div>
-          </section>
-        }
-
         @if (activeExam(); as exam) {
           <section id="active-exam-panel" class="rounded-[28px] border border-[var(--color-brand-gold-300)]/35 bg-white p-6 shadow-[0_24px_50px_rgba(0,0,0,0.04)]">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -269,13 +233,25 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                   <div class="rounded-full bg-[var(--color-brand-cream)] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-gold-700)]">
                     {{ exam.courseTitle }}
                   </div>
-                  <h3 class="mt-3 font-serif text-2xl text-[var(--color-brand-green-900)]">{{ exam.title }}</h3>
-                  <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/75">
+                  <div class="mt-3 flex flex-wrap items-center gap-3">
+                    <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)]">{{ exam.title }}</h3>
+                    @if (exam.score !== null) {
+                      <span class="rounded-full px-3 py-1 text-sm font-bold"
+                            [class.bg-emerald-100]="exam.passed"
+                            [class.text-emerald-800]="exam.passed"
+                            [class.bg-red-100]="exam.passed === false"
+                            [class.text-red-700]="exam.passed === false">
+                        {{ formatPct(exam.percentage) }}
+                      </span>
+                    }
+                  </div>
+                  <p class="mt-2 text-sm leading-7 text-[var(--color-brand-green-800)]/75">
                     Affecte par {{ exam.assignedBy }} · echeance {{ exam.dueDate | date:'dd/MM/yyyy' }}
+                    @if (exam.score !== null) { · {{ exam.attemptsRemaining }} essai(s) restant(s) }
                   </p>
                 </div>
 
-                <div class="grid min-w-[340px] grid-cols-2 gap-3">
+                <div class="grid w-full grid-cols-2 gap-3 lg:min-w-[280px] lg:w-auto">
                   <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
                     <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Type</div>
                     <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ exam.examType === 'final' ? 'Examen final' : 'Quiz' }}</div>
@@ -285,20 +261,12 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                     <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ exam.durationMinutes }} min</div>
                   </div>
                   <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
-                    <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne</div>
-                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatPct(exam.average) }}</div>
-                  </div>
-                  <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
                     <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Seuil</div>
                     <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatThreshold(exam) }}</div>
                   </div>
                   <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
-                    <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Essais restants</div>
-                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ exam.attemptsRemaining }}/{{ exam.maxAttempts }}</div>
-                  </div>
-                  <div class="rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
-                    <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Votre note</div>
-                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatPct(exam.percentage) }}</div>
+                    <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Moyenne classe</div>
+                    <div class="mt-2 font-bold text-[var(--color-brand-green-900)]">{{ formatPct(exam.average) }}</div>
                   </div>
                 </div>
               </div>
@@ -459,10 +427,6 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
 
   load(): void {
     this.portal.getExams().subscribe((data) => this.exams.set(data));
-  }
-
-  latestResultExam(): StudentExam | null {
-    return this.exams().find((exam) => exam.score !== null) ?? null;
   }
 
   scrollToActiveExam(): void {
