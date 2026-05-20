@@ -29,10 +29,14 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                 <div class="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-brand-gold-700)]">Resultat du QCM</div>
                 <h3 class="mt-2 font-serif text-3xl text-[var(--color-brand-green-900)]">{{ resultExam.title }}</h3>
                 <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/75">
-                  Formule de calcul : ((score brut / {{ resultExam.rawMaxScore }}) × {{ resultExam.gradingScaleMax }}) = note finale.
+                  @if (resultExam.gradingScaleMax === 100) {
+                    Formule : (bonnes reponses / {{ totalQuestions(resultExam) }}) &times; 100 = note finale en %.
+                  } @else {
+                    Formule de calcul : ((score brut / {{ resultExam.rawMaxScore }}) &times; {{ resultExam.gradingScaleMax }}) = note finale.
+                  }
                 </p>
                 <p class="mt-2 text-sm leading-7 text-[var(--color-brand-green-800)]/75">
-                  Detail : {{ formatRawScore(resultExam.rawScore, resultExam.rawMaxScore) }} donne {{ formatScore(resultExam.score, resultExam.gradingScaleMax) }}.
+                  Detail : {{ correctAnswersCount(resultExam) }}/{{ totalQuestions(resultExam) }} bonnes reponses &rarr; {{ formatScore(resultExam.score, resultExam.gradingScaleMax) }}.
                 </p>
               </div>
 
@@ -102,7 +106,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                 <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
                   <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Note finale</div>
                   <div class="mt-2 text-3xl font-bold text-[var(--color-brand-green-900)]">{{ formatScore(exam.score, exam.gradingScaleMax) }}</div>
-                  <div class="mt-2 text-sm text-[var(--color-brand-green-800)]/65">Resultat reel ramene sur 10</div>
+                  <div class="mt-2 text-sm text-[var(--color-brand-green-800)]/65">{{ exam.gradingScaleMax === 100 ? 'Note sur 100 %' : 'Resultat reel ramene sur ' + exam.gradingScaleMax }}</div>
                 </div>
                 <div class="rounded-[24px] bg-[var(--color-brand-cream)] p-5">
                   <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Resultat</div>
@@ -148,7 +152,8 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
               </div>
             } @else {
               <div class="mt-8 rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-[#fffaf2] px-5 py-4 text-sm leading-7 text-[var(--color-brand-green-800)]/78">
-                Repondez a chaque question en selectionnant une proposition A, B, C ou D. Chaque bonne reponse vaut 0,5 point. Le score brut est ensuite ramene sur 10 pour afficher la note finale.
+                Repondez a chaque question en selectionnant une proposition A, B, C ou D. Chaque bonne reponse vaut 0,5 point.
+                {{ exam.gradingScaleMax === 100 ? 'Le score brut est ensuite converti en pourcentage sur 100 %.' : 'Le score brut est ensuite ramene sur ' + exam.gradingScaleMax + ' pour afficher la note finale.' }}
               </div>
 
               <form class="mt-8 space-y-6" (ngSubmit)="submitExam()">
@@ -362,6 +367,7 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
 
   formatScore(score: number | null, scaleMax: number): string {
     if (score === null) return '-';
+    if (scaleMax === 100) return `${score}%`;
     return `${score}/${scaleMax}`;
   }
 
@@ -371,6 +377,7 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
   }
 
   formatThreshold(exam: StudentExam): string {
+    if (exam.gradingScaleMax === 100) return `${exam.passThreshold}%`;
     return `${exam.passThreshold}/${exam.gradingScaleMax}`;
   }
 

@@ -1247,8 +1247,8 @@ function bootstrapRoleData(): void {
       examType: 'final',
       durationMinutes: 30,
       maxAttempts: 2,
-      gradingScaleMax: 10,
-      passThreshold: 7,
+      gradingScaleMax: 100,
+      passThreshold: 70,
       questions: DETOX_FINAL_EXAM_QUESTIONS.map((question, index) => ({
         id: `detox-final-q${index + 1}`,
         prompt: question.prompt,
