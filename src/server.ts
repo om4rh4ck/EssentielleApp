@@ -1139,6 +1139,22 @@ const paymentRecords: PaymentRecord[] = [
 
 bootstrapRoleData();
 loadPersistedData();
+// Ensure the seed student always has access to the detox exam even if
+// the persisted workspace predates the course-13 enrollment being added.
+(function ensureSeedEnrollments() {
+  const required = [
+    { courseId: '1', progress: 45 },
+    { courseId: '4', progress: 100 },
+    { courseId: '13', progress: 100 },
+  ];
+  const ws = studentWorkspaces.get('3');
+  if (!ws) return;
+  for (const req of required) {
+    if (!ws.enrollments.some((e) => e.courseId === req.courseId)) {
+      ws.enrollments.push(req);
+    }
+  }
+})();
 
 function bootstrapRoleData(): void {
   roleProfiles.set('1', {

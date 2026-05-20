@@ -333,10 +333,12 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
         </div>
       </div>
 
-      @if (showResultModal()) {
-        @if (modalExam(); as mExam) {
-          <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm" (click)="closeModal()">
-            <div class="w-full max-w-md rounded-[32px] bg-white shadow-2xl" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    </app-dashboard-layout>
+
+    @if (showResultModal()) {
+      @if (modalExam(); as mExam) {
+        <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4" (click)="closeModal()" style="backdrop-filter:blur(4px)">
+          <div class="w-full max-w-md rounded-[32px] bg-white shadow-2xl" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
 
               <div class="rounded-t-[32px] px-8 pt-10 pb-6 text-center"
                    [class.bg-emerald-50]="mExam.passed"
@@ -425,11 +427,10 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                 }
               </div>
 
-            </div>
           </div>
-        }
+        </div>
       }
-    </app-dashboard-layout>
+    }
   `,
 })
 export class StudentExamsComponent implements OnInit, OnDestroy {
