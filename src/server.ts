@@ -1309,7 +1309,7 @@ function bootstrapRoleData(): void {
       title: 'Quiz final - Nutrition et Pathologie courante',
       courseId: '1',
       assignedBy: 'Dr. Expert',
-      dueDate: '2026-05-20T23:59:00.000Z',
+      dueDate: '2026-12-31T23:59:00.000Z',
       examType: 'quiz',
       durationMinutes: 20,
       maxAttempts: 1,

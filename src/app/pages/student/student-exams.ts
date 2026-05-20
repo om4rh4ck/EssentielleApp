@@ -310,55 +310,72 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
         }
 
         @if (resultPopup(); as popup) {
-          <div class="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(15,23,15,0.55)] p-4">
-            <div class="w-full max-w-xl rounded-[28px] bg-white p-6 shadow-[0_24px_80px_rgba(0,0,0,0.18)]">
-              <div class="flex items-start justify-between gap-4">
-                <div>
-                  <div class="text-[11px] font-bold uppercase tracking-[0.28em]"
-                       [class.text-emerald-700]="popup.passed"
-                       [class.text-red-600]="!popup.passed">
-                    {{ popup.passed ? 'Examen validé' : 'Résultat enregistré' }}
-                  </div>
-                  <h3 class="mt-2 font-serif text-2xl text-[var(--color-brand-green-900)]">{{ popup.title }}</h3>
-                </div>
+          <!-- Full overlay — click backdrop to dismiss -->
+          <div class="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4"
+               (click)="closeResultPopup()">
+            <div class="w-full max-w-md overflow-hidden rounded-t-[32px] bg-white shadow-[0_-8px_80px_rgba(0,0,0,0.3)] sm:rounded-[32px] sm:shadow-[0_32px_80px_rgba(0,0,0,0.3)]"
+                 (click)="$event.stopPropagation()">
+
+              <!-- Colored header band -->
+              <div class="relative px-6 py-10 text-center"
+                   [class.bg-emerald-500]="popup.passed"
+                   [class.bg-red-500]="!popup.passed">
                 <button type="button" (click)="closeResultPopup()"
-                        class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-brand-cream)] text-[var(--color-brand-green-900)] transition hover:bg-[var(--color-brand-gold-100)]">
-                  <mat-icon>close</mat-icon>
+                        class="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white transition hover:bg-white/30">
+                  <mat-icon class="!h-5 !w-5 !text-[20px]">close</mat-icon>
                 </button>
+                <mat-icon class="!h-14 !w-14 !text-[56px] text-white drop-shadow-sm">
+                  {{ popup.passed ? 'verified' : 'cancel' }}
+                </mat-icon>
+                <h2 class="mt-3 font-serif text-3xl font-bold text-white">
+                  {{ popup.passed ? 'Félicitations !' : 'Résultat enregistré' }}
+                </h2>
+                <p class="mt-1 text-sm text-white/80">{{ popup.title }}</p>
               </div>
 
-              <div class="mt-5 rounded-[22px] px-5 py-6 text-center"
-                   [class.bg-emerald-50]="popup.passed"
-                   [class.bg-red-50]="!popup.passed">
-                <div class="text-sm font-semibold text-[var(--color-brand-green-900)]">Votre note</div>
-                <div class="mt-2 text-6xl font-black leading-none"
-                     [class.text-emerald-700]="popup.passed"
-                     [class.text-red-600]="!popup.passed">
+              <!-- Score zone -->
+              <div class="px-6 py-6 text-center">
+                <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--color-brand-green-800)]/50">Votre note finale</p>
+                <div class="mt-1 text-8xl font-black leading-none tabular-nums"
+                     [class.text-emerald-600]="popup.passed"
+                     [class.text-red-500]="!popup.passed">
                   {{ popup.scoreLabel }}
                 </div>
-                <div class="mt-3 text-sm text-[var(--color-brand-green-800)]/75">
-                  {{ popup.correctAnswers }}/{{ popup.totalQuestions }} bonne(s) réponse(s)
-                  · Score brut {{ popup.rawScoreLabel }}
-                </div>
-              </div>
-
-              <div class="mt-4 rounded-[18px] bg-[var(--color-brand-cream)] px-4 py-4 text-sm text-[var(--color-brand-green-900)]">
-                <p class="font-semibold">Calcul de la note</p>
-                <p class="mt-1 text-[var(--color-brand-green-800)]/70">
-                  (score brut ÷ score maximum) × barème = note finale
-                </p>
-                <p class="mt-2">
-                  ({{ popup.rawScore }} ÷ {{ popup.rawMaxScore }}) × {{ popup.gradingScaleMax }} = <span class="font-bold">{{ popup.scoreLabel }}</span>
+                <p class="mt-3 text-sm text-[var(--color-brand-green-800)]/65">
+                  <span class="font-semibold text-[var(--color-brand-green-900)]">{{ popup.correctAnswers }}</span>
+                  bonne(s) réponse(s) sur
+                  <span class="font-semibold text-[var(--color-brand-green-900)]">{{ popup.totalQuestions }}</span>
+                  &mdash; Score brut {{ popup.rawScoreLabel }}
                 </p>
               </div>
 
-              <div class="mt-5 flex flex-wrap justify-end gap-3">
+              <!-- Formula breakdown -->
+              <div class="mx-5 mb-5 rounded-[18px] bg-[var(--color-brand-cream)] px-4 py-4">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-brand-green-800)]/50">Calcul du barème</p>
+                <p class="mt-2 text-sm text-[var(--color-brand-green-900)]">
+                  ({{ popup.rawScore }} pts ÷ {{ popup.rawMaxScore }} pts) × {{ popup.gradingScaleMax }}
+                  = <span class="font-bold">{{ popup.scoreLabel }}</span>
+                </p>
+                <p class="mt-1 text-xs"
+                   [class.text-emerald-700]="popup.passed"
+                   [class.text-red-500]="!popup.passed">
+                  {{ popup.passed ? 'Seuil de validation atteint — bravo !' : 'Seuil de validation non atteint.' }}
+                </p>
+              </div>
+
+              <!-- CTA -->
+              <div class="flex justify-center px-5 pb-8">
                 <button type="button" (click)="closeResultPopup()"
-                        class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)]">
-                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">check_circle</mat-icon>
-                  Voir le résultat
+                        class="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-bold text-white transition"
+                        [class.bg-emerald-600]="popup.passed"
+                        [class.hover:bg-emerald-700]="popup.passed"
+                        [class.bg-red-500]="!popup.passed"
+                        [class.hover:bg-red-600]="!popup.passed">
+                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">grading</mat-icon>
+                  Voir la correction détaillée
                 </button>
               </div>
+
             </div>
           </div>
         }
