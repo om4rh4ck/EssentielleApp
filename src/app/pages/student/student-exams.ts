@@ -417,18 +417,46 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
     this.portal.submitExam(exam.id, answers).subscribe({
       next: (data) => {
         this.stopTimer();
-        this.exams.set(data);
-        const refreshed = data.find(e => e.id === exam.id) ?? null;
-        console.log('[EXAM] result pct=', refreshed?.percentage, 'passed=', refreshed?.passed);
-        this.activeExam.set(refreshed);
         this.controls.clear();
         this.submitting.set(false);
-        if (!refreshed) this.submitError.set('Résultat non disponible — actualisez la page.');
+        this.exams.set(data);
+        const refreshed = data.find(e => e.id === exam.id) ?? null;
+        console.log('[EXAM] POST result — score=', refreshed?.score, 'pct=', refreshed?.percentage, 'passed=', refreshed?.passed);
+        if (refreshed?.score !== null && refreshed?.score !== undefined) {
+          this.activeExam.set(refreshed);
+        } else {
+          // POST response didn't include a graded result → fetch fresh from GET
+          console.warn('[EXAM] score null in POST response, falling back to GET /exams');
+          this.portal.getExams().subscribe({
+            next: (fresh) => {
+              this.exams.set(fresh);
+              const freshExam = fresh.find(e => e.id === exam.id) ?? null;
+              console.log('[EXAM] GET fallback — score=', freshExam?.score);
+              this.activeExam.set(freshExam);
+              if (!freshExam || freshExam.score === null) {
+                this.submitError.set('Résultat non disponible — actualisez la page.');
+              }
+            },
+            error: () => this.submitError.set('Résultat non disponible — actualisez la page.'),
+          });
+        }
       },
       error: (err: HttpErrorResponse) => {
+        this.stopTimer();
         this.submitting.set(false);
-        console.error('[EXAM] error', err.status, err.error);
-        this.submitError.set(err.error?.error ?? "Impossible d'envoyer les réponses.");
+        console.error('[EXAM] submit error', err.status, err.error);
+        const msg = typeof err.error === 'object' && err.error?.error
+          ? String(err.error.error)
+          : err.status === 0
+            ? 'Erreur réseau — vérifiez votre connexion.'
+            : err.status === 401
+              ? 'Session expirée — reconnectez-vous.'
+              : err.status === 403
+                ? 'Examen non accessible. Contactez votre formatrice.'
+                : err.status === 400
+                  ? "Nombre d'essais épuisé pour cet examen."
+                  : "Erreur lors de l'envoi des réponses.";
+        this.submitError.set(msg);
       },
     });
   }
@@ -442,6 +470,10 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
     const m = Math.floor(Math.max(s, 0) / 60);
     return `${String(m).padStart(2,'0')}:${String(Math.max(s,0)%60).padStart(2,'0')}`;
   }
-  correctCount(e: StudentExam): number { return e.rawScore !== null ? Math.round(e.rawScore / 0.5) : 0; }
-  totalQ(e: StudentExam): number { return Math.round(e.rawMaxScore / 0.5); }
+  correctCount(e: StudentExam): number {
+    return e.reviewQuestions?.filter(q => q.isCorrect).length ?? 0;
+  }
+  totalQ(e: StudentExam): number {
+    return e.reviewQuestions?.length ?? e.questions?.length ?? 0;
+  }
 }
