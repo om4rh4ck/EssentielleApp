@@ -274,7 +274,7 @@ interface ExamTemplate {
 
 interface StudentAttempt {
   examId: string;
-  answers: number[];
+  answers: Record<string, number>; // {questionId: selectedOptionIndex}
   score: number;        // scaled to gradingScaleMax (e.g. 84 for 84/100 or 17 for 17/20)
   rawScore: number;     // earnedScore: sum of points for correct answers
   totalPoints: number;  // max possible earnedScore
@@ -1160,7 +1160,7 @@ loadPersistedData();
   for (const [, attempts] of studentAttempts) {
     for (const attempt of attempts) {
       const exam = exams.find((e) => e.id === attempt.examId);
-      if (!exam || !attempt.answers?.length) continue;
+      if (!exam || !attempt.answers || Object.keys(attempt.answers).length === 0) continue;
       const grade = gradeExamSubmission(exam, attempt.answers);
       attempt.score       = grade.scaledScore;
       attempt.rawScore    = grade.earnedScore;
@@ -1829,8 +1829,21 @@ async function loadAttemptsFromDb(pool: Pool): Promise<void> {
       const sid = String(row['student_id']);
       const arr = studentAttempts.get(sid) ?? [];
       if (!arr.some((a) => a.examId === String(row['exam_id']))) {
-        let answers: number[] = [];
-        try { answers = JSON.parse(String(row['answers_json'] ?? '[]')); } catch { answers = []; }
+        let answers: Record<string, number> = {};
+        try {
+          const parsed = JSON.parse(String(row['answers_json'] ?? '{}'));
+          if (Array.isArray(parsed)) {
+            // Migrate legacy positional array → question-id keyed object
+            const examForRow = exams.find((e) => e.id === String(row['exam_id']));
+            if (examForRow) {
+              parsed.forEach((val: number, i: number) => {
+                if (examForRow.questions[i]) answers[examForRow.questions[i].id] = Number(val);
+              });
+            }
+          } else if (parsed && typeof parsed === 'object') {
+            answers = parsed as Record<string, number>;
+          }
+        } catch { answers = {}; }
         arr.push({
           examId:       String(row['exam_id']),
           answers,
@@ -2363,16 +2376,14 @@ function getExamPassThreshold(exam: ExamTemplate): number {
  *   scaledScore  = (earnedScore / totalPoints) * gradingScaleMax
  *   passed       = scaledScore >= passThreshold
  */
-function gradeExamSubmission(exam: ExamTemplate, answers: number[]): GradeResult {
+function gradeExamSubmission(exam: ExamTemplate, answers: Record<string, number>): GradeResult {
   let earnedScore = 0;
   let totalPoints = 0;
   const perQuestion: GradeResult['perQuestion'] = [];
 
-  for (let i = 0; i < exam.questions.length; i++) {
-    const question = exam.questions[i];
-    // Explicit Number() on both sides: guards against string/number type mismatch
-    // that would make strict === silently return false for every answer → score 0.
-    const studentAnswer  = Number(answers[i]);
+  for (const question of exam.questions) {
+    // Look up by question ID; -1 means unanswered
+    const studentAnswer  = Number(answers[question.id] ?? -1);
     const correctAnswer  = Number(question.correctIndex);
     const isCorrect = !Number.isNaN(studentAnswer) && !Number.isNaN(correctAnswer)
                       && studentAnswer !== -1
@@ -2404,7 +2415,7 @@ function gradeExamSubmission(exam: ExamTemplate, answers: number[]): GradeResult
 function getExamRawMax(exam: ExamTemplate): number {
   return Number(exam.questions.reduce((sum, q) => sum + q.points, 0).toFixed(2));
 }
-function getExamRawScore(exam: ExamTemplate, answers: number[]): number {
+function getExamRawScore(exam: ExamTemplate, answers: Record<string, number>): number {
   return gradeExamSubmission(exam, answers).earnedScore;
 }
 
@@ -2434,8 +2445,8 @@ function ensureExamCertificate(student: PublicUser, exam: ExamTemplate, score: n
 }
 
 function buildStudentExamReview(exam: ExamTemplate, attempt: StudentAttempt) {
-  return exam.questions.map((question, index) => {
-    const selectedIndex = attempt.answers[index] ?? -1;
+  return exam.questions.map((question) => {
+    const selectedIndex = attempt.answers[question.id] ?? -1;
     return {
       id: question.id,
       prompt: question.prompt,
@@ -3153,11 +3164,22 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
   console.log('[EXAM-DEBUG] answers is array?', Array.isArray(req.body?.answers));
   // ─────────────────────────────────────────────────────────────────────────
 
-  // Accept answers array of any length — pad with -1 (unanswered) or trim excess
-  const raw = Array.isArray(req.body?.answers) ? req.body.answers.map((value: unknown) => Number(value)) : [];
-  const answers: number[] = Array.from({ length: exam.questions.length }, (_, i) =>
-    i < raw.length && !Number.isNaN(raw[i]) ? raw[i] : -1
-  );
+  // Accept answers as {questionId: optionIndex} object OR legacy positional array
+  const answers: Record<string, number> = {};
+  const body = req.body?.answers;
+  if (body && !Array.isArray(body) && typeof body === 'object') {
+    // New format: {questionId: optionIndex}
+    for (const q of exam.questions) {
+      const val = Number((body as Record<string, unknown>)[q.id]);
+      answers[q.id] = Number.isNaN(val) ? -1 : val;
+    }
+  } else {
+    // Legacy array format — map by position
+    const raw = Array.isArray(body) ? (body as unknown[]).map((v) => Number(v)) : [];
+    exam.questions.forEach((q, i) => {
+      answers[q.id] = i < raw.length && !Number.isNaN(raw[i]) ? raw[i] : -1;
+    });
+  }
 
   // ── DEBUG STEP 5: log normalized answers ─────────────────────────────────
   console.log('[EXAM-DEBUG] raw array length:', raw.length, '| exam questions count:', exam.questions.length);

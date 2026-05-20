@@ -408,9 +408,11 @@ export class StudentExamsComponent implements OnInit, OnDestroy {
     this.submitting.set(true);
     if (auto) this.submitError.set('Temps écoulé — examen soumis automatiquement.');
 
-    const answers = this.controls.controls.map(c =>
-      c.value === null || Number.isNaN(Number(c.value)) ? -1 : Number(c.value)
-    );
+    const answers: Record<string, number> = {};
+    (exam.questions ?? []).forEach((q, qi) => {
+      const c = this.controls.at(qi);
+      answers[q.id] = (c && c.value !== null && !Number.isNaN(Number(c.value))) ? Number(c.value) : -1;
+    });
 
     console.log('[EXAM] submit', exam.id, answers);
 

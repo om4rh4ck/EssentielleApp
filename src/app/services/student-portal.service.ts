@@ -201,7 +201,7 @@ export class StudentPortalService {
     return this.http.get<StudentExam[]>('/api/student/exams', this.authHeaders());
   }
 
-  submitExam(examId: string, answers: number[]): Observable<StudentExam[]> {
+  submitExam(examId: string, answers: Record<string, number>): Observable<StudentExam[]> {
     return this.http.post<StudentExam[]>(`/api/student/exams/${examId}/submit`, { answers }, this.authHeaders());
   }
 
