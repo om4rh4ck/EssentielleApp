@@ -2767,12 +2767,20 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
   const exam = exams.find((item) => item.id === req.params.examId);
   if (!exam) return res.status(404).json({ error: 'Examen introuvable.' });
 
-  const answers = Array.isArray(req.body?.answers) ? req.body.answers.map((value: unknown) => Number(value)) : [];
-  if (answers.length !== exam.questions.length) return res.status(400).json({ error: 'Réponses incomplètes.' });
+  // Accept answers array of any length — pad with -1 (unanswered) or trim excess
+  const raw = Array.isArray(req.body?.answers) ? req.body.answers.map((value: unknown) => Number(value)) : [];
+  const answers: number[] = Array.from({ length: exam.questions.length }, (_, i) =>
+    i < raw.length && !Number.isNaN(raw[i]) ? raw[i] : -1
+  );
 
   const workspace = ensureStudentWorkspace(user);
+  // Auto-enroll in the course if accessible (free course or already enrolled)
+  const examCourse = courses.find((c) => c.id === exam.courseId);
+  if (examCourse?.access === 'free' && !workspace.enrollments.some((item) => item.courseId === exam.courseId)) {
+    workspace.enrollments.push({ courseId: exam.courseId, progress: 0 });
+  }
   if (!workspace.enrollments.some((item) => item.courseId === exam.courseId)) {
-    return res.status(403).json({ error: 'Examen non accessible.' });
+    return res.status(403).json({ error: 'Examen non accessible. Demandez votre inscription a la formation.' });
   }
 
   const attempts = studentAttempts.get(user.id) ?? [];
