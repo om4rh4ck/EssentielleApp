@@ -3527,7 +3527,12 @@ app.get('/api/instructor/exams', (req, res): any => {
       })
       .map((exam) => {
         const allStudents = getAllStudentsForExam(exam);
-        const stats = getExamAggregateStats(exam.id, exam);
+        // Compute aggregate stats from the already-fetched rows (avoid double scan)
+        const participants   = allStudents.length;
+        const passedStudents = allStudents.filter((s) => s.passed).length;
+        const avgPercentage  = participants > 0
+          ? Number((allStudents.reduce((sum, s) => sum + s.percentage, 0) / participants).toFixed(1))
+          : 0;
         return {
         id: exam.id,
         title: exam.title,
@@ -3538,10 +3543,9 @@ app.get('/api/instructor/exams', (req, res): any => {
         examType: exam.examType ?? 'quiz',
         gradingScaleMax: getExamScaleMax(exam),
         passThreshold: getExamPassThreshold(exam),
-        // Aggregate stats — real values from stored attempts
-        averageScore:      stats.avgPercentage,   // average % across all submissions
-        submissions:       stats.participants,     // COUNT(*)
-        passedCount:       stats.passedStudents,   // SUM(CASE WHEN passed THEN 1 ELSE 0 END)
+        averageScore:      avgPercentage,   // average % across all submissions
+        submissions:       participants,    // COUNT(*)
+        passedCount:       passedStudents,  // SUM(CASE WHEN passed THEN 1 ELSE 0 END)
         durationMinutes: getExamDurationMinutes(exam),
         maxAttempts: getExamMaxAttempts(exam),
         successfulStudents: allStudents.filter((s) => s.passed),
