@@ -2250,10 +2250,13 @@ function getAllStudentsForExam(exam: ExamTemplate) {
     attemptCount: number;
     certificateIssued: boolean;
   }> = [];
+  // ── DEBUG: trace what's in memory for this exam ────────────────────────────
+  console.log(`[EXAM-INSTRUCTOR] exam="${exam.id}" — scanning ${studentAttempts.size} student(s) in memory`);
   for (const [studentId, attempts] of studentAttempts.entries()) {
     const attempt = attempts.find((item) => item.examId === exam.id);
     if (!attempt) continue;
     const student = getStoredUserById(studentId);
+    console.log(`[EXAM-INSTRUCTOR] found attempt for student ${studentId} → user lookup: ${student ? student.email : 'NOT FOUND in memoryUsers'}`);
     if (!student) continue;
     const workspace = ensureStudentWorkspace(toPublicUser(student));
     const earned = attempt.rawScore ?? gradeExamSubmission(exam, attempt.answers).earnedScore;
@@ -2985,6 +2988,7 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
   // ── DEBUG STEP 8: log saved attempt ──────────────────────────────────────
   const saved = studentAttempts.get(user.id)?.find((a) => a.examId === exam.id);
   console.log('[EXAM-DEBUG] saved attempt:', JSON.stringify(saved));
+  console.log(`[EXAM-DEBUG] studentAttempts now has ${studentAttempts.size} student(s) — user ${user.id} has ${studentAttempts.get(user.id)?.length ?? 0} attempt(s)`);
   // ─────────────────────────────────────────────────────────────────────────
 
   // Return the full updated exam list so the client updates immediately
