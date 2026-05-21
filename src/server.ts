@@ -4020,10 +4020,11 @@ app.get('/api/instructor/quiz-results', (req, res): any => {
 
 // Issue quiz certificate for a student (supports optional PDF upload via multipart/form-data)
 const certUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
-app.post('/api/instructor/courses/:courseId/quiz-certificate/:studentId', (req, res, next) => {
+app.post('/api/instructor/courses/:courseId/quiz-certificate/:studentId', (req, res, next): void => {
   certUpload.single('certificate')(req, res, (err) => {
     if (err) {
-      return res.status(400).json({ error: 'Erreur lecture fichier: ' + String(err instanceof Error ? err.message : err) });
+      res.status(400).json({ error: 'Erreur lecture fichier: ' + String(err instanceof Error ? err.message : err) });
+      return;
     }
     next();
   });
@@ -4031,13 +4032,16 @@ app.post('/api/instructor/courses/:courseId/quiz-certificate/:studentId', (req, 
   const user = getCurrentUser(req, ['instructor']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });
 
-  const course = courses.find((c) => c.id === req.params['courseId'] && instructorOwnsCourse(user, c));
+  const courseId  = String(req.params.courseId);
+  const studentId = String(req.params.studentId);
+
+  const course = courses.find((c) => c.id === courseId && instructorOwnsCourse(user, c));
   if (!course) return res.status(404).json({ error: 'Formation introuvable.' });
 
-  const student = getStoredUserById(req.params['studentId']);
+  const student = getStoredUserById(studentId);
   if (!student) return res.status(404).json({ error: 'Étudiant introuvable.' });
 
-  const attempt = courseQuizAttempts.get(course.id)?.get(req.params['studentId']);
+  const attempt = courseQuizAttempts.get(course.id)?.get(studentId);
   if (!attempt?.passed) return res.status(400).json({ error: 'L\'étudiante n\'a pas validé le quiz.' });
 
   // Save PDF if provided
