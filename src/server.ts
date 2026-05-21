@@ -3199,7 +3199,7 @@ app.get('/api/student/exams', (req, res): any => {
   res.json(toStudentExamView(user));
 });
 
-app.post('/api/student/exams/:examId/submit', (req, res): any => {
+app.post('/api/student/exams/:examId/submit', async (req, res): Promise<any> => {
   const user = getCurrentUser(req, ['student']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });
   const exam = exams.find((item) => item.id === req.params.examId);
