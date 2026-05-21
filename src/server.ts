@@ -3817,6 +3817,87 @@ app.get('/api/instructor/students', (_req, res): any => {
   res.json(students);
 });
 
+// ── Instructor quiz results ────────────────────────────────────────────────
+app.get('/api/instructor/quiz-results', (req, res): any => {
+  const user = getCurrentUser(req, ['instructor']);
+  if (!user) return res.status(401).json({ error: 'Authentification requise.' });
+
+  const ownCourses = courses.filter((c) => instructorOwnsCourse(user, c) && c.quizQuestions?.length);
+  const results = ownCourses.map((course) => {
+    const courseAttempts = courseQuizAttempts.get(course.id);
+    const students: object[] = [];
+    if (courseAttempts) {
+      for (const [studentId, attempt] of courseAttempts.entries()) {
+        const student = getStoredUserById(studentId);
+        if (!student) continue;
+        const ws = ensureStudentWorkspace(toPublicUser(student));
+        const certIssued = ws.certificates.some((c) => c.courseId === course.id && c.status === 'issued');
+        students.push({
+          studentId,
+          studentName:  student.name,
+          studentEmail: student.email,
+          score:        attempt.score,
+          total:        attempt.total,
+          percentage:   attempt.percentage,
+          passed:       attempt.passed,
+          attemptCount: attempt.attemptCount,
+          submittedAt:  attempt.submittedAt,
+          certificateIssued: certIssued,
+        });
+      }
+    }
+    const passed   = (students as any[]).filter((s) => s.passed).length;
+    const avgScore = students.length
+      ? Math.round((students as any[]).reduce((s, r) => s + r.percentage, 0) / students.length)
+      : 0;
+    return {
+      courseId:     course.id,
+      courseTitle:  course.title,
+      quizTitle:    course.quizTitle ?? 'Quiz',
+      questions:    course.quizQuestions?.length ?? 0,
+      totalStudents: students.length,
+      passedCount:  passed,
+      avgScore,
+      students,
+    };
+  });
+  res.json(results);
+});
+
+// Issue quiz certificate for a student
+app.post('/api/instructor/courses/:courseId/quiz-certificate/:studentId', (req, res): any => {
+  const user = getCurrentUser(req, ['instructor']);
+  if (!user) return res.status(401).json({ error: 'Authentification requise.' });
+
+  const course = courses.find((c) => c.id === req.params.courseId && instructorOwnsCourse(user, c));
+  if (!course) return res.status(404).json({ error: 'Formation introuvable.' });
+
+  const student = getStoredUserById(req.params.studentId);
+  if (!student) return res.status(404).json({ error: 'Étudiant introuvable.' });
+
+  const attempt = courseQuizAttempts.get(course.id)?.get(req.params.studentId);
+  if (!attempt?.passed) return res.status(400).json({ error: 'L\'étudiante n\'a pas validé le quiz.' });
+
+  const ws = ensureStudentWorkspace(toPublicUser(student));
+  const existing = ws.certificates.find((c) => c.courseId === course.id);
+  if (existing) {
+    existing.status   = 'issued';
+    existing.issuedAt = new Date().toISOString();
+    existing.signedBy = user.name;
+  } else {
+    ws.certificates.unshift({
+      id:       `cert-quiz-${course.id}-${student.id}-${Date.now()}`,
+      courseId: course.id,
+      title:    `Certificat — ${course.quizTitle ?? 'Quiz'} — ${course.title}`,
+      issuedAt: new Date().toISOString(),
+      status:   'issued',
+      signedBy: user.name,
+    });
+  }
+  savePersistedData();
+  res.json({ ok: true, studentName: student.name, courseTitle: course.title });
+});
+
 app.get('/api/instructor/messages', (req, res): any => {
   const user = getCurrentUser(req, ['instructor']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });

@@ -147,6 +147,30 @@ export interface ScheduleEntry {
 }
 
 
+export interface StudentQuizResult {
+  studentId: string;
+  studentName: string;
+  studentEmail: string;
+  score: number;
+  total: number;
+  percentage: number;
+  passed: boolean;
+  attemptCount: number;
+  submittedAt: string;
+  certificateIssued: boolean;
+}
+
+export interface CourseQuizResults {
+  courseId: string;
+  courseTitle: string;
+  quizTitle: string;
+  questions: number;
+  totalStudents: number;
+  passedCount: number;
+  avgScore: number;
+  students: StudentQuizResult[];
+}
+
 export interface AdminOverview {
   totalUsers: number;
   activeCourses: number;
@@ -343,6 +367,16 @@ export class StaffPortalService {
     return this.http.post<ConversationMessage>('/api/admin/messages', payload, this.authHeaders());
   }
 
+
+  getInstructorQuizResults(): Observable<CourseQuizResults[]> {
+    return this.http.get<CourseQuizResults[]>('/api/instructor/quiz-results', this.authHeaders());
+  }
+
+  issueQuizCertificate(courseId: string, studentId: string): Observable<{ ok: boolean; studentName: string; courseTitle: string }> {
+    return this.http.post<{ ok: boolean; studentName: string; courseTitle: string }>(
+      `/api/instructor/courses/${courseId}/quiz-certificate/${studentId}`, {}, this.authHeaders()
+    );
+  }
 
   getInstructorProfile(): Observable<RoleProfile> {
     return this.http.get<RoleProfile>('/api/instructor/profile', this.authHeaders());

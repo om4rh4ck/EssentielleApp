@@ -123,6 +123,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/instructor/instructor-messages').then(m => m.InstructorMessagesComponent)
   },
   {
+    path: 'instructor/exams',
+    canActivate: [authGuard, roleGuard(['instructor'])],
+    loadComponent: () => import('./pages/instructor/instructor-exams').then(m => m.InstructorExamsComponent)
+  },
+  {
     path: 'instructor/settings',
     canActivate: [authGuard, roleGuard(['instructor'])],
     loadComponent: () => import('./pages/instructor/instructor-profile').then(m => m.InstructorProfileComponent)

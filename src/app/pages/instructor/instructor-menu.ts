@@ -6,5 +6,6 @@ export const INSTRUCTOR_MENU_ITEMS = [
   { label: 'Sessions & Ressources', icon: 'perm_media', path: '/instructor/resources' },
   { label: 'Étudiantes', icon: 'groups', path: '/instructor/students' },
   { label: 'Messages / Q&A', icon: 'forum', path: '/instructor/messages' },
+  { label: 'Examens & Résultats', icon: 'workspace_premium', path: '/instructor/exams' },
   { label: 'Profil', icon: 'person', path: '/instructor/settings' },
 ] as const;
