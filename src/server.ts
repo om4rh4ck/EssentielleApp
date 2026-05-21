@@ -412,6 +412,48 @@ const courses: Course[] = [
       { id: 'chapter-1-5', title: 'Chapitre 5 : Troubles digestifs', content: 'Analyser les causes fréquentes, renforcer la digestion et proposer un protocole alimentaire plus confortable.' },
     ],
     moduleItems: [],
+    quizQuestions: [
+      {
+        id: 'nutrition-q1',
+        prompt: 'Quel nutriment est la principale source d\'énergie du corps humain ?',
+        options: ['Les lipides', 'Les glucides', 'Les protéines', 'Les vitamines'],
+        correctIndex: 1,
+      },
+      {
+        id: 'nutrition-q2',
+        prompt: 'Quel aliment est recommandé pour réduire l\'inflammation chronique ?',
+        options: ['Sucre raffiné', 'Huile de palme', 'Poisson gras (oméga-3)', 'Charcuterie'],
+        correctIndex: 2,
+      },
+      {
+        id: 'nutrition-q3',
+        prompt: 'Quel est le facteur alimentaire principal dans la gestion du diabète de type 2 ?',
+        options: [
+          'Augmenter la consommation de graisses saturées',
+          'Réduire les sucres rapides et équilibrer les glucides',
+          'Supprimer toutes les protéines',
+          'Manger uniquement des fruits',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'nutrition-q4',
+        prompt: 'Quel minéral joue un rôle clé dans la régulation de la pression artérielle ?',
+        options: ['Le fer', 'Le zinc', 'Le potassium', 'Le cuivre'],
+        correctIndex: 2,
+      },
+      {
+        id: 'nutrition-q5',
+        prompt: 'Quelle habitude alimentaire favorise une bonne digestion ?',
+        options: [
+          'Manger rapidement sans mâcher',
+          'Boire beaucoup d\'eau froide pendant les repas',
+          'Consommer des fibres et bien mastiquer',
+          'Sauter le petit-déjeuner',
+        ],
+        correctIndex: 2,
+      },
+    ],
   },
   {
     id: '2',
@@ -3057,12 +3099,14 @@ app.post('/api/student/courses/:courseId/quiz/submit', (req, res): any => {
     if (answers[question.id] === question.correctIndex) correctCount++;
   }
   const percentage = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+  // Score scaled to 10 (French grading: X/10)
+  const scaledScore = total > 0 ? Math.round((correctCount / total) * 10) : 0;
   const passed = percentage >= 50;
 
   const attempt = {
     answers,
-    score: correctCount,
-    total,
+    score: scaledScore,
+    total: 10,
     percentage,
     passed,
     submittedAt: new Date().toISOString(),

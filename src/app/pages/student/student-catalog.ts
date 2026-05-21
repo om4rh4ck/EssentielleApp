@@ -111,7 +111,7 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
                               {{ course.quizResult.passed ? 'Quiz reussi !' : 'Quiz non reussi' }}
                             </div>
                             <div class="text-sm mt-1" [class.text-emerald-600]="course.quizResult.passed" [class.text-rose-600]="!course.quizResult.passed">
-                              {{ course.quizResult.score }} / {{ course.quizResult.total }} bonnes reponses &mdash; {{ course.quizResult.percentage }}%
+                              Note : {{ course.quizResult.score }}/{{ course.quizResult.total }} &mdash; {{ course.quizResult.percentage }}%
                             </div>
                           </div>
                           <button (click)="openQuiz(course.id)" class="ml-auto rounded-full bg-white/70 px-3 py-2 text-xs font-semibold text-[var(--color-brand-green-900)] border border-[var(--color-brand-green-900)]/20">
