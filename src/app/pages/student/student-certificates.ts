@@ -43,13 +43,21 @@ import { STUDENT_MENU_ITEMS } from './student-menu';
               </div>
 
               <div class="mt-6 flex flex-wrap gap-3">
-                <button type="button" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)]" [disabled]="certificate.status !== 'issued'">
-                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">download</mat-icon>
-                  Télécharger
-                </button>
-                <span class="inline-flex items-center rounded-full bg-[var(--color-brand-cream)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/55">
-                  Validation administrative requise
-                </span>
+                @if (certificate.pdfUrl) {
+                  <a [href]="certificate.pdfUrl" target="_blank" download
+                     class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)]">
+                    <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">download</mat-icon>
+                    Télécharger le PDF
+                  </a>
+                } @else {
+                  <button type="button" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)] opacity-40 cursor-not-allowed" disabled>
+                    <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">download</mat-icon>
+                    Télécharger
+                  </button>
+                  <span class="inline-flex items-center rounded-full bg-[var(--color-brand-cream)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/55">
+                    Validation administrative requise
+                  </span>
+                }
               </div>
             </article>
           }

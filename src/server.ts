@@ -5,8 +5,9 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express, { Request } from 'express';
+import multer from 'multer';
 import { join } from 'node:path';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import mysql, { Pool } from 'mysql2/promise';
 import nodemailer from 'nodemailer';
 import {
@@ -184,6 +185,7 @@ interface StudentCertificate {
   issuedAt: string;
   status: 'issued' | 'pending';
   signedBy: string;
+  pdfUrl?: string;
 }
 
 interface StudentProfileData {
@@ -1099,6 +1101,8 @@ const courseQuizAttempts = new Map<string, Map<string, {
   passed: boolean;
   submittedAt: string;
   attemptCount: number;
+  bestScore?: number;
+  bestPercentage?: number;
 }>>();
 const roleProfiles = new Map<string, RoleProfileData>();
 const messages: MessageRecord[] = [];
@@ -1992,6 +1996,10 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `);
 
+  // Add best_score / best_percentage columns to course_quiz_attempts (migration-safe)
+  await dbAddCol(pool, 'course_quiz_attempts', 'best_score',      'DECIMAL(6,2) NOT NULL DEFAULT 0');
+  await dbAddCol(pool, 'course_quiz_attempts', 'best_percentage', 'DECIMAL(5,2) NOT NULL DEFAULT 0');
+
   // Sync all MySQL users into memoryUsers so getStoredUserById works for any registered user
   await loadUsersFromDb(pool);
   // Immediately backup MySQL users to JSON so next boot works even without MySQL
@@ -2036,7 +2044,7 @@ async function loadCourseQuizAttemptsFromDb(pool: Pool): Promise<void> {
   try {
     const [rows] = await pool.query<mysql.RowDataPacket[]>(
       `SELECT course_id, student_id, answers_json, score, total, percentage,
-              passed, attempt_count, submitted_at
+              passed, attempt_count, submitted_at, best_score, best_percentage
        FROM course_quiz_attempts`
     );
     let loaded = 0;
@@ -2047,14 +2055,20 @@ async function loadCourseQuizAttemptsFromDb(pool: Pool): Promise<void> {
       if (!courseQuizAttempts.get(cid)!.has(sid)) {
         let answers: Record<string, number> = {};
         try { answers = JSON.parse(String(row['answers_json'] ?? '{}')); } catch { answers = {}; }
+        const latestScore = Number(row['score'] ?? 0);
+        const latestPct   = Number(row['percentage'] ?? 0);
+        const bestScore   = Number(row['best_score'] ?? latestScore);
+        const bestPct     = Number(row['best_percentage'] ?? latestPct);
         courseQuizAttempts.get(cid)!.set(sid, {
           answers,
-          score:        Number(row['score']        ?? 0),
-          total:        Number(row['total']         ?? 10),
-          percentage:   Number(row['percentage']    ?? 0),
-          passed:       Boolean(row['passed']),
-          attemptCount: Number(row['attempt_count'] ?? 1),
-          submittedAt:  String(row['submitted_at']  ?? new Date().toISOString()),
+          score:           latestScore,
+          total:           Number(row['total']         ?? 10),
+          percentage:      latestPct,
+          passed:          bestPct >= 50,
+          attemptCount:    Number(row['attempt_count'] ?? 1),
+          submittedAt:     String(row['submitted_at']  ?? new Date().toISOString()),
+          bestScore,
+          bestPercentage:  bestPct,
         });
         loaded++;
       }
@@ -2069,27 +2083,30 @@ async function upsertCourseQuizAttemptToDb(
   pool: Pool,
   courseId: string,
   studentId: string,
-  attempt: { answers: Record<string, number>; score: number; total: number; percentage: number; passed: boolean; attemptCount: number; submittedAt: string }
+  attempt: { answers: Record<string, number>; score: number; total: number; percentage: number; passed: boolean; attemptCount: number; submittedAt: string; bestScore: number; bestPercentage: number }
 ): Promise<void> {
   try {
     await pool.query(
       `INSERT INTO course_quiz_attempts
-         (course_id, student_id, answers_json, score, total, percentage, passed, attempt_count, submitted_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+         (course_id, student_id, answers_json, score, total, percentage, passed, attempt_count, submitted_at, best_score, best_percentage)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
-         answers_json  = VALUES(answers_json),
-         score         = VALUES(score),
-         total         = VALUES(total),
-         percentage    = VALUES(percentage),
-         passed        = VALUES(passed),
-         attempt_count = VALUES(attempt_count),
-         submitted_at  = VALUES(submitted_at)`,
+         answers_json     = VALUES(answers_json),
+         score            = VALUES(score),
+         total            = VALUES(total),
+         percentage       = VALUES(percentage),
+         passed           = VALUES(passed),
+         attempt_count    = VALUES(attempt_count),
+         submitted_at     = VALUES(submitted_at),
+         best_score       = VALUES(best_score),
+         best_percentage  = VALUES(best_percentage)`,
       [courseId, studentId, JSON.stringify(attempt.answers),
        attempt.score, attempt.total, attempt.percentage,
        attempt.passed ? 1 : 0, attempt.attemptCount,
-       toMysqlDatetime(attempt.submittedAt)]
+       toMysqlDatetime(attempt.submittedAt),
+       attempt.bestScore, attempt.bestPercentage]
     );
-    console.log(`[DB] Quiz attempt saved ✓ course=${courseId} student=${studentId} score=${attempt.score}/${attempt.total} (${attempt.percentage}%)`);
+    console.log(`[DB] Quiz attempt saved ✓ course=${courseId} student=${studentId} score=${attempt.score}/${attempt.total} (${attempt.percentage}%) best=${attempt.bestScore} (${attempt.bestPercentage}%)`);
   } catch (err) {
     console.error('[DB] upsertCourseQuizAttemptToDb FAILED — course:', courseId, 'student:', studentId, 'error:', err);
   }
@@ -2779,7 +2796,11 @@ function serializeCatalog(user: PublicUser) {
 
       // Look up quiz result for this student + course
       const quizAttempt = isEnrolled ? (courseQuizAttempts.get(course.id)?.get(user.id) ?? null) : null;
-      const quizResult = quizAttempt;
+      const quizResult = quizAttempt ? {
+        ...quizAttempt,
+        bestScore:      quizAttempt.bestScore      ?? quizAttempt.score,
+        bestPercentage: quizAttempt.bestPercentage ?? quizAttempt.percentage,
+      } : null;
       const quizAttemptsRemaining = Math.max(0, 2 - (quizAttempt?.attemptCount ?? 0));
 
       return {
@@ -3224,7 +3245,12 @@ app.post('/api/student/courses/:courseId/quiz/submit', async (req, res): Promise
   }
   const percentage = total > 0 ? Math.round((correctCount / total) * 100) : 0;
   const scaledScore = total > 0 ? Math.round((correctCount / total) * 10) : 0;
-  const passed = percentage >= 50;
+
+  // Best score tracking: keep highest percentage across attempts
+  const prevBestPct   = existingAttempt?.bestPercentage ?? existingAttempt?.percentage ?? -1;
+  const bestScore     = percentage > prevBestPct ? scaledScore : (existingAttempt?.bestScore ?? scaledScore);
+  const bestPercentage = percentage > prevBestPct ? percentage  : (existingAttempt?.bestPercentage ?? percentage);
+  const passed = bestPercentage >= 50;
 
   const attempt = {
     answers,
@@ -3234,6 +3260,8 @@ app.post('/api/student/courses/:courseId/quiz/submit', async (req, res): Promise
     passed,
     submittedAt: new Date().toISOString(),
     attemptCount: (existingAttempt?.attemptCount ?? 0) + 1,
+    bestScore,
+    bestPercentage,
   };
 
   if (!courseQuizAttempts.has(course.id)) {
@@ -3958,15 +3986,17 @@ app.get('/api/instructor/quiz-results', (req, res): any => {
         const certIssued = ws.certificates.some((c) => c.courseId === course.id && c.status === 'issued');
         students.push({
           studentId,
-          studentName:  student.name,
-          studentEmail: student.email,
-          score:        attempt.score,
-          total:        attempt.total,
-          percentage:   attempt.percentage,
-          passed:       attempt.passed,
-          attemptCount: attempt.attemptCount,
-          submittedAt:  attempt.submittedAt,
+          studentName:     student.name,
+          studentEmail:    student.email,
+          score:           attempt.score,
+          total:           attempt.total,
+          percentage:      attempt.percentage,
+          passed:          attempt.passed,
+          attemptCount:    attempt.attemptCount,
+          submittedAt:     attempt.submittedAt,
           certificateIssued: certIssued,
+          bestScore:       attempt.bestScore      ?? attempt.score,
+          bestPercentage:  attempt.bestPercentage ?? attempt.percentage,
         });
       }
     }
@@ -3988,19 +4018,38 @@ app.get('/api/instructor/quiz-results', (req, res): any => {
   res.json(results);
 });
 
-// Issue quiz certificate for a student
-app.post('/api/instructor/courses/:courseId/quiz-certificate/:studentId', (req, res): any => {
+// Issue quiz certificate for a student (supports optional PDF upload via multipart/form-data)
+const certUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
+app.post('/api/instructor/courses/:courseId/quiz-certificate/:studentId', (req, res, next) => {
+  certUpload.single('certificate')(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ error: 'Erreur lecture fichier: ' + String(err instanceof Error ? err.message : err) });
+    }
+    next();
+  });
+}, (req: Request, res: any): any => {
   const user = getCurrentUser(req, ['instructor']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });
 
-  const course = courses.find((c) => c.id === req.params.courseId && instructorOwnsCourse(user, c));
+  const course = courses.find((c) => c.id === req.params['courseId'] && instructorOwnsCourse(user, c));
   if (!course) return res.status(404).json({ error: 'Formation introuvable.' });
 
-  const student = getStoredUserById(req.params.studentId);
+  const student = getStoredUserById(req.params['studentId']);
   if (!student) return res.status(404).json({ error: 'Étudiant introuvable.' });
 
-  const attempt = courseQuizAttempts.get(course.id)?.get(req.params.studentId);
+  const attempt = courseQuizAttempts.get(course.id)?.get(req.params['studentId']);
   if (!attempt?.passed) return res.status(400).json({ error: 'L\'étudiante n\'a pas validé le quiz.' });
+
+  // Save PDF if provided
+  let pdfUrl: string | undefined;
+  const file = (req as Request & { file?: Express.Multer.File }).file;
+  if (file) {
+    const certDir = join(process.cwd(), 'public', 'uploads', 'certificates');
+    if (!existsSync(certDir)) mkdirSync(certDir, { recursive: true });
+    const filename = `cert-${course.id}-${student.id}.pdf`;
+    writeFileSync(join(certDir, filename), file.buffer);
+    pdfUrl = `/uploads/certificates/${filename}`;
+  }
 
   const ws = ensureStudentWorkspace(toPublicUser(student));
   const existing = ws.certificates.find((c) => c.courseId === course.id);
@@ -4008,6 +4057,7 @@ app.post('/api/instructor/courses/:courseId/quiz-certificate/:studentId', (req, 
     existing.status   = 'issued';
     existing.issuedAt = new Date().toISOString();
     existing.signedBy = user.name;
+    if (pdfUrl) existing.pdfUrl = pdfUrl;
   } else {
     ws.certificates.unshift({
       id:       `cert-quiz-${course.id}-${student.id}-${Date.now()}`,
@@ -4016,10 +4066,40 @@ app.post('/api/instructor/courses/:courseId/quiz-certificate/:studentId', (req, 
       issuedAt: new Date().toISOString(),
       status:   'issued',
       signedBy: user.name,
+      pdfUrl,
     });
   }
   savePersistedData();
-  res.json({ ok: true, studentName: student.name, courseTitle: course.title });
+  res.json({ ok: true, studentName: student.name, courseTitle: course.title, pdfUrl });
+});
+
+// Reset (delete) a student's quiz attempt for a course
+app.delete('/api/instructor/courses/:courseId/quiz-attempts/:studentId', async (req, res): Promise<any> => {
+  const user = getCurrentUser(req, ['instructor']);
+  if (!user) return res.status(401).json({ error: 'Authentification requise.' });
+
+  const course = courses.find((c) => c.id === req.params.courseId && instructorOwnsCourse(user, c));
+  if (!course) return res.status(404).json({ error: 'Formation introuvable.' });
+
+  const studentId = req.params.studentId;
+  // Remove from in-memory map
+  courseQuizAttempts.get(course.id)?.delete(studentId);
+
+  // Remove from DB
+  try {
+    const pool = await getDbPool();
+    if (pool) {
+      await pool.query(
+        'DELETE FROM course_quiz_attempts WHERE course_id = ? AND student_id = ?',
+        [course.id, studentId]
+      );
+    }
+  } catch (dbErr) {
+    console.error('[DB] Quiz attempt reset error:', dbErr);
+  }
+
+  savePersistedData();
+  res.json({ ok: true });
 });
 
 app.get('/api/instructor/messages', (req, res): any => {

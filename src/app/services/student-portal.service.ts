@@ -75,6 +75,7 @@ export interface StudentCertificate {
   issuedAt: string;
   status: 'issued' | 'pending';
   signedBy: string;
+  pdfUrl?: string;
 }
 
 export interface StudentMessage {

@@ -158,6 +158,8 @@ export interface StudentQuizResult {
   attemptCount: number;
   submittedAt: string;
   certificateIssued: boolean;
+  bestScore?: number;
+  bestPercentage?: number;
 }
 
 export interface CourseQuizResults {
@@ -279,6 +281,11 @@ export class StaffPortalService {
     };
   }
 
+  /** Auth headers WITHOUT Content-Type — required when sending FormData so the browser sets the boundary. */
+  private authHeadersNoContentType(): { headers: HttpHeaders } {
+    return this.authHeaders();
+  }
+
   getInstructorOverview(): Observable<InstructorOverview> {
     return this.http.get<InstructorOverview>('/api/instructor/overview', this.authHeaders());
   }
@@ -372,10 +379,16 @@ export class StaffPortalService {
     return this.http.get<CourseQuizResults[]>('/api/instructor/quiz-results', this.authHeaders());
   }
 
-  issueQuizCertificate(courseId: string, studentId: string): Observable<{ ok: boolean; studentName: string; courseTitle: string }> {
-    return this.http.post<{ ok: boolean; studentName: string; courseTitle: string }>(
-      `/api/instructor/courses/${courseId}/quiz-certificate/${studentId}`, {}, this.authHeaders()
+  issueQuizCertificate(courseId: string, studentId: string, pdfFile?: File): Observable<{ ok: boolean; studentName: string; courseTitle: string; pdfUrl?: string }> {
+    const formData = new FormData();
+    if (pdfFile) formData.append('certificate', pdfFile);
+    return this.http.post<{ ok: boolean; studentName: string; courseTitle: string; pdfUrl?: string }>(
+      `/api/instructor/courses/${courseId}/quiz-certificate/${studentId}`, formData, this.authHeadersNoContentType()
     );
+  }
+
+  resetStudentQuizAttempt(courseId: string, studentId: string): Observable<{ ok: boolean }> {
+    return this.http.delete<{ ok: boolean }>(`/api/instructor/courses/${courseId}/quiz-attempts/${studentId}`, this.authHeaders());
   }
 
   getInstructorProfile(): Observable<RoleProfile> {
