@@ -9,7 +9,6 @@ import { join } from 'node:path';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import mysql, { Pool } from 'mysql2/promise';
 import nodemailer from 'nodemailer';
-import { DETOX_FINAL_EXAM_QUESTIONS } from './data/detox-final-exam';
 import {
   assertTokenSecretConfigured,
   createPasswordResetToken,
@@ -1303,97 +1302,6 @@ function bootstrapRoleData(): void {
     }
   );
 
-  exams.push(
-    {
-      id: 'exam-1',
-      title: 'Quiz final - Nutrition et Pathologie courante',
-      courseId: '1',
-      assignedBy: 'Dr. Expert',
-      dueDate: '2026-12-31T23:59:00.000Z',
-      examType: 'quiz',
-      durationMinutes: 20,
-      maxAttempts: 1,
-      gradingScaleMax: 20,
-      passThreshold: 10,
-      questions: [
-        {
-          id: 'q1',
-          prompt: 'Quel appareil est pertinent pour le suivi de l’hypertension ?',
-          options: ['Tensiomètre', 'Oxymètre', 'Nébuliseur'],
-          correctIndex: 0,
-          points: 8,
-        },
-        {
-          id: 'q2',
-          prompt: 'La prise en charge du diabète repose en partie sur :',
-          options: ['Le sommeil uniquement', 'L’équilibre nutritionnel', 'Le jeûne sans suivi'],
-          correctIndex: 1,
-          points: 12,
-        },
-      ],
-    },
-    {
-      id: 'exam-2',
-      title: 'Étude de cas - Détox peau',
-      courseId: '4',
-      assignedBy: 'Dr. Expert',
-      dueDate: '2026-05-28T23:59:00.000Z',
-      examType: 'quiz',
-      durationMinutes: 20,
-      maxAttempts: 1,
-      gradingScaleMax: 20,
-      passThreshold: 10,
-      questions: [
-        {
-          id: 'q3',
-          prompt: 'Quel organe est fréquemment associé aux déséquilibres de peau dans une logique de détox ?',
-          options: ['Le foie', 'Le cœur', 'La rate uniquement'],
-          correctIndex: 0,
-          points: 10,
-        },
-        {
-          id: 'q4',
-          prompt: 'Un accompagnement peau doit aussi considérer :',
-          options: ['L’hydratation et l’alimentation', 'Uniquement les cosmétiques', 'Uniquement le maquillage'],
-          correctIndex: 0,
-          points: 10,
-        },
-      ],
-    },
-    {
-      id: 'exam-detox-final',
-      title: 'Examen final - Formation Detox Therapeutique Complete',
-      courseId: '13',
-      assignedBy: 'Dr. Expert',
-      dueDate: '2026-12-31T23:59:00.000Z',
-      examType: 'final',
-      durationMinutes: 30,
-      maxAttempts: 2,
-      gradingScaleMax: 100,
-      passThreshold: 70,
-      questions: DETOX_FINAL_EXAM_QUESTIONS.map((question, index) => ({
-        id: `detox-final-q${index + 1}`,
-        prompt: question.prompt,
-        options: question.options,
-        correctIndex: question.correctIndex,
-        points: 0.5,
-      })),
-    }
-  );
-
-  // exam-1: quiz for course 1 — 2 questions, points 8 and 12 → totalPoints=20, both correct
-  studentAttempts.set('3', [
-    {
-      examId:      'exam-1',
-      answers:     { q1: 0, q2: 1 },
-      score:       20,        // scaledScore = (20/20) × 20 = 20
-      rawScore:    20,        // earnedScore = 8 + 12
-      totalPoints: 20,        // 8 + 12
-      percentage:  100,       // (20/20) × 100
-      submittedAt: '2026-05-02T13:00:00.000Z',
-      attemptCount: 1,
-    },
-  ]);
 }
 
 // hashPassword, verifyPassword, normalizeEmail, getUsernameFromEmail
