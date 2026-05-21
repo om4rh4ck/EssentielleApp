@@ -1,0 +1,242 @@
+{
+  "savedAt": "2026-05-21T01:17:46.306Z",
+  "users": [
+    {
+      "id": "1",
+      "name": "Admin User",
+      "email": "admin@lessentielle-sante.site",
+      "username": "admin",
+      "role": "admin",
+      "passwordHash": "2771aad925c103002926c2a8cd68a0b1:4c4d283473cbecde51d926c6c6133d68fea42d5084add5386f8463dbf85646fa3f517f2128c48e23f7293e3211cedcf41ae13bce113068afc6e1d82fedfcf962"
+    },
+    {
+      "id": "2",
+      "name": "Dr. Expert",
+      "email": "instructor@lessentielle-sante.site",
+      "username": "instructor",
+      "role": "instructor",
+      "passwordHash": "aa9d2f52293b8d154af318ff136bdd9f:f749200316c540300ad08b409c4acad5844c97273b2010a2049c3f69b6bf00e695c2275e72e60efa61a2d9ae5a91b6c41266b755d3bf52f2516ba2df8da42b09"
+    },
+    {
+      "id": "3",
+      "name": "Jane Doe",
+      "email": "student@lessentielle-sante.site",
+      "username": "student",
+      "role": "student",
+      "passwordHash": "c72b7f7b7c201fe070f9672462859a10:2516a79aaa13511197d8125aa7911c3e6a0d45bf1ccaaf74063b9b7af7a5357ecf1821fb664e3a5d8b2f40caa1ebde84d87c5c83aa8675c881e6f5d0a078e2e8"
+    },
+    {
+      "id": "4",
+      "name": "claire.dubois@company.com",
+      "email": "dridiomar615@gmail.com",
+      "username": "dridiomar615",
+      "role": "student",
+      "passwordHash": "e37bf7e8f8d53241c02343b6b347d31a:3099dfec1e010d39eaa63f97edb3bf42dd643a7cdcda2fe81549f02d1fee2827f900be289f0d5d9623db71f68f52d9c398f73bcb29b4eaf0cbf201de1f0e724e"
+    },
+    {
+      "id": "5",
+      "name": "Test Etudiant",
+      "email": "testexam@test.com",
+      "username": "testexam",
+      "role": "student",
+      "passwordHash": "7ecce9533bd75e5d7b2ef918f2d1adf2:9ee471970aee8de65ebd0cf215c5e7cd1f66fa8747e17c461d0b03f6f3cc17b3c1a5a13e0a9445ae268270366ebffe63ef1a3864b900e3a768883c4fbbfba697"
+    },
+    {
+      "id": "6",
+      "name": "Test Etudiant",
+      "email": "testexam2@test.com",
+      "username": "testexam2",
+      "role": "student",
+      "passwordHash": "42684d9e5008479291096aff88f8d27a:98863e72233bee35c0938eb085cf1c5f2c75ffc90656be64529df7d28968dabf06ff0074c0f63e8a9ada1c86de865eca844d50ad18ddc1904541ce98b06c2382"
+    },
+    {
+      "id": "7",
+      "name": "Demo Etudiante",
+      "email": "demo@essenti.test",
+      "username": "demo",
+      "role": "student",
+      "passwordHash": "eb9894c29b75d69bcb5b0b58b48c743c:c55df9144462d8f803e6529eaeac63f3d285dac03268ea2e1582be4ec21196fdba026e8da84da11324e318f199e87ef0f593067eba2c8cb3d006d525b1d20b97"
+    }
+  ],
+  "workspaces": {
+    "3": {
+      "enrollments": [
+        {
+          "courseId": "1",
+          "progress": 45
+        },
+        {
+          "courseId": "4",
+          "progress": 100
+        },
+        {
+          "courseId": "13",
+          "progress": 100
+        }
+      ],
+      "certificates": [
+        {
+          "id": "cert-3-4",
+          "courseId": "4",
+          "title": "Certificat - Détox peau",
+          "issuedAt": "2026-04-12T09:00:00.000Z",
+          "status": "issued",
+          "signedBy": "Direction Essenti’Elle Santé"
+        },
+        {
+          "id": "cert-3-1",
+          "courseId": "1",
+          "title": "Certificat - Nutrition et Pathologie courante",
+          "issuedAt": "2026-05-22T09:00:00.000Z",
+          "status": "pending",
+          "signedBy": "Administration pédagogique"
+        }
+      ],
+      "profile": {
+        "phone": "+216 55 000 000",
+        "city": "Djerba",
+        "country": "Tunisie",
+        "objective": "Développer une activité durable dans le bien-être féminin et obtenir mes certifications."
+      }
+    },
+    "4": {
+      "enrollments": [
+        {
+          "courseId": "1",
+          "progress": 0
+        },
+        {
+          "courseId": "4",
+          "progress": 0
+        }
+      ],
+      "certificates": [],
+      "profile": {
+        "phone": "+21653755860",
+        "city": "tunis",
+        "country": "Tunisia",
+        "objective": ""
+      }
+    },
+    "5": {
+      "enrollments": [
+        {
+          "courseId": "1",
+          "progress": 0
+        },
+        {
+          "courseId": "4",
+          "progress": 0
+        }
+      ],
+      "certificates": [],
+      "profile": {
+        "phone": "0600000000",
+        "city": "Paris",
+        "country": "France",
+        "objective": ""
+      }
+    },
+    "6": {
+      "enrollments": [
+        {
+          "courseId": "1",
+          "progress": 0
+        },
+        {
+          "courseId": "4",
+          "progress": 0
+        }
+      ],
+      "certificates": [],
+      "profile": {
+        "phone": "0600",
+        "city": "Paris",
+        "country": "France",
+        "objective": ""
+      }
+    },
+    "7": {
+      "enrollments": [
+        {
+          "courseId": "1",
+          "progress": 0
+        },
+        {
+          "courseId": "4",
+          "progress": 0
+        }
+      ],
+      "certificates": [],
+      "profile": {
+        "phone": "0600000001",
+        "city": "Tunis",
+        "country": "Tunisie",
+        "objective": ""
+      }
+    }
+  },
+  "attempts": {
+    "3": [
+      {
+        "examId": "exam-1",
+        "answers": {
+          "q1": 0,
+          "q2": 1
+        },
+        "score": 20,
+        "rawScore": 20,
+        "totalPoints": 20,
+        "percentage": 100,
+        "submittedAt": "2026-05-02T13:00:00.000Z",
+        "attemptCount": 1
+      }
+    ],
+    "6": [
+      {
+        "examId": "exam-1",
+        "answers": {
+          "q1": 0,
+          "q2": 1
+        },
+        "score": 20,
+        "rawScore": 20,
+        "totalPoints": 20,
+        "percentage": 100,
+        "submittedAt": "2026-05-20T20:13:25.975Z",
+        "attemptCount": 1
+      }
+    ],
+    "7": [
+      {
+        "examId": "exam-1",
+        "answers": {
+          "q1": 0,
+          "q2": 1
+        },
+        "score": 20,
+        "rawScore": 20,
+        "totalPoints": 20,
+        "percentage": 100,
+        "submittedAt": "2026-05-21T01:17:45.699Z",
+        "attemptCount": 1
+      },
+      {
+        "examId": "exam-2",
+        "answers": {
+          "q3": 1,
+          "q4": 2
+        },
+        "score": 0,
+        "rawScore": 0,
+        "totalPoints": 20,
+        "percentage": 0,
+        "submittedAt": "2026-05-21T01:17:45.703Z",
+        "attemptCount": 1
+      }
+    ]
+  },
+  "requests": [],
+  "dynamicExams": [],
+  "deletedExamIds": []
+}

@@ -96,43 +96,6 @@ export interface StudentProfile {
   objective: string;
 }
 
-export interface StudentExam {
-  id: string;
-  title: string;
-  courseTitle: string;
-  assignedBy: string;
-  examType: 'quiz' | 'final';
-  durationMinutes: number;
-  gradingScaleMax: number;
-  passThreshold: number;
-  rawMaxScore: number;
-  maxAttempts: number;
-  attemptsUsed: number;
-  attemptsRemaining: number;
-  status: 'available' | 'graded' | 'locked';
-  score: number | null;         // scaled to gradingScaleMax
-  rawScore: number | null;      // earnedScore (sum of pts for correct answers)
-  percentage: number | null;    // (rawScore / rawMaxScore) × 100
-  passed: boolean | null;
-  average: number;
-  dueDate: string;
-  questions?: Array<{
-    id: string;
-    prompt: string;
-    options: string[];
-    points: number;
-  }>;
-  reviewQuestions?: Array<{
-    id: string;
-    prompt: string;
-    selectedIndex: number;
-    selectedOption: string;
-    correctIndex: number;
-    correctOption: string;
-    isCorrect: boolean;
-    points: number;
-  }>;
-}
 
 export interface StudentScheduleEntry {
   id: string;
@@ -197,13 +160,6 @@ export class StudentPortalService {
     return this.http.put<StudentProfile>('/api/student/profile', payload, this.authHeaders());
   }
 
-  getExams(): Observable<StudentExam[]> {
-    return this.http.get<StudentExam[]>('/api/student/exams', this.authHeaders());
-  }
-
-  submitExam(examId: string, answers: Record<string, number>): Observable<StudentExam[]> {
-    return this.http.post<StudentExam[]>(`/api/student/exams/${examId}/submit`, { answers }, this.authHeaders());
-  }
 
   getSchedule(): Observable<StudentScheduleEntry[]> {
     return this.http.get<StudentScheduleEntry[]>('/api/student/schedule', this.authHeaders());

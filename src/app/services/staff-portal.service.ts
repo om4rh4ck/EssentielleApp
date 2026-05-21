@@ -139,56 +139,6 @@ export interface ScheduleEntry {
   notes: string;
 }
 
-export interface ExamQuestionPayload {
-  prompt: string;
-  options: string[];
-  correctIndex: number;
-  points: number;
-}
-
-export interface ManagedExam {
-  id: string;
-  title: string;
-  courseId: string;
-  courseTitle: string;
-  dueDate: string;
-  assignedBy: string;
-  examType: 'quiz' | 'final';
-  gradingScaleMax: number;
-  passThreshold: number;
-  durationMinutes: number;
-  maxAttempts: number;
-  averageScore: number;    // average percentage across all submissions
-  submissions: number;     // total participants (COUNT(*))
-  passedCount?: number;    // participants who passed (SUM CASE WHEN passed)
-  successfulStudents: Array<{
-    studentId: string;
-    studentName: string;
-    studentEmail: string;
-    score: number;
-    submittedAt: string;
-    certificateIssued: boolean;
-  }>;
-  allStudents: Array<{
-    studentId: string;
-    studentName: string;
-    studentEmail: string;
-    score: number;
-    rawScore: number;
-    totalPoints: number;
-    percentage: number;
-    passed: boolean;
-    submittedAt: string;
-    attemptCount: number;
-    certificateIssued: boolean;
-  }>;
-  questions: Array<{
-    id: string;
-    prompt: string;
-    options: string[];
-    points: number;
-  }>;
-}
 
 export interface AdminOverview {
   totalUsers: number;
@@ -386,38 +336,6 @@ export class StaffPortalService {
     return this.http.post<ConversationMessage>('/api/admin/messages', payload, this.authHeaders());
   }
 
-  getInstructorExams(): Observable<ManagedExam[]> {
-    return this.http.get<ManagedExam[]>('/api/instructor/exams', this.authHeaders());
-  }
-
-  createInstructorExam(payload: {
-    title: string;
-    courseId: string;
-    dueDate: string;
-    examType?: 'quiz' | 'final';
-    durationMinutes?: number;
-    gradingScaleMax?: number;
-    passThreshold?: number;
-    maxAttempts?: number;
-    questions: ExamQuestionPayload[];
-  }): Observable<ManagedExam> {
-    return this.http.post<ManagedExam>('/api/instructor/exams', payload, this.authHeaders());
-  }
-
-  updateInstructorExam(examId: string, payload: {
-    title?: string;
-    dueDate?: string;
-    durationMinutes?: number;
-    maxAttempts?: number;
-    passThreshold?: number;
-    gradingScaleMax?: number;
-  }): Observable<ManagedExam> {
-    return this.http.put<ManagedExam>(`/api/instructor/exams/${examId}`, payload, this.authHeaders());
-  }
-
-  deleteInstructorExam(examId: string): Observable<void> {
-    return this.http.delete<void>(`/api/instructor/exams/${examId}`, this.authHeaders());
-  }
 
   getInstructorProfile(): Observable<RoleProfile> {
     return this.http.get<RoleProfile>('/api/instructor/profile', this.authHeaders());

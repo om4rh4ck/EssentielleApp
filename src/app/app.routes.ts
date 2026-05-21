@@ -76,11 +76,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/student/student-messages').then(m => m.StudentMessagesComponent)
   },
   {
-    path: 'student/exams',
-    canActivate: [authGuard, roleGuard(['student'])],
-    loadComponent: () => import('./pages/student/student-exams').then(m => m.StudentExamsComponent)
-  },
-  {
     path: 'student/profile',
     canActivate: [authGuard, roleGuard(['student'])],
     loadComponent: () => import('./pages/student/student-profile').then(m => m.StudentProfileComponent)
@@ -126,11 +121,6 @@ export const routes: Routes = [
     path: 'instructor/messages',
     canActivate: [authGuard, roleGuard(['instructor'])],
     loadComponent: () => import('./pages/instructor/instructor-messages').then(m => m.InstructorMessagesComponent)
-  },
-  {
-    path: 'instructor/exams',
-    canActivate: [authGuard, roleGuard(['instructor'])],
-    loadComponent: () => import('./pages/instructor/instructor-exams').then(m => m.InstructorExamsComponent)
   },
   {
     path: 'instructor/settings',
