@@ -2635,17 +2635,16 @@ function toStudentExamView(user: PublicUser) {
         maxAttempts,
         attemptsUsed,
         attemptsRemaining,
-        status:     attemptsRemaining === 0 ? 'locked' : attempt ? 'graded' : 'available',
+        status:     attempt ? 'graded' : 'available',
         score:      scaledScore,
         rawScore:   earnedScore,
-        percentage,               // explicit: (earnedScore / totalPoints) × 100
+        percentage,
         passed,
         average:    getExamAverage(exam.id),
         dueDate:    exam.dueDate,
         reviewQuestions: attempt ? buildStudentExamReview(exam, attempt) : undefined,
-        questions: attemptsRemaining === 0
-          ? undefined
-          : exam.questions.map((q) => ({
+        // Questions always available — no attempt limit
+        questions: exam.questions.map((q) => ({
               id:      q.id,
               prompt:  q.prompt,
               options: q.options,
@@ -3258,10 +3257,7 @@ app.post('/api/student/exams/:examId/submit', async (req, res): Promise<any> => 
   console.log('[EXAM-DEBUG] maxAttempts:', maxAttempts);
   // ─────────────────────────────────────────────────────────────────────────
 
-  if (existing && existing.attemptCount >= maxAttempts) {
-    console.log('[EXAM-DEBUG] BLOCKED — max attempts reached');
-    return res.status(400).json({ error: 'Nombre maximum d essais atteint pour cet examen.' });
-  }
+  // No attempt limit — students can retake as many times as needed
 
   // ── REAL GRADING ENGINE ────────────────────────────────────────────────────
   // For each question: compare answer with correctIndex, accumulate earned pts.
