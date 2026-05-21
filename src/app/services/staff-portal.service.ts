@@ -46,6 +46,12 @@ export interface ManagedCourse {
     audioName?: string;
     audioDataUrl?: string;
   }>;
+  quizQuestions?: Array<{
+    id: string;
+    prompt: string;
+    options: string[];
+    correctIndex: number;
+  }>;
 }
 
 export interface ManagedFormula {

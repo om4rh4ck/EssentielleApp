@@ -56,6 +56,14 @@ export interface StudentCourse {
     audioName?: string;
     audioDataUrl?: string;
   }>;
+  quizQuestions?: Array<{ id: string; prompt: string; options: string[] }> | null;
+  quizResult?: {
+    score: number;
+    total: number;
+    percentage: number;
+    passed: boolean;
+    answers: Record<string, number>;
+  } | null;
 }
 
 export interface StudentCertificate {
@@ -163,6 +171,10 @@ export class StudentPortalService {
 
   getSchedule(): Observable<StudentScheduleEntry[]> {
     return this.http.get<StudentScheduleEntry[]>('/api/student/schedule', this.authHeaders());
+  }
+
+  submitCourseQuiz(courseId: string, answers: Record<string, number>): Observable<StudentCourse[]> {
+    return this.http.post<StudentCourse[]>(`/api/student/courses/${courseId}/quiz/submit`, { answers }, this.authHeaders());
   }
 
   currentUser(): User | null {

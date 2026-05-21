@@ -8,6 +8,7 @@ import { INSTRUCTOR_MENU_ITEMS } from './instructor-menu';
 type CourseModuleItem = NonNullable<ManagedCourse['moduleItems']>[number];
 type CourseContentItem = NonNullable<ManagedCourse['contentItems']>[number];
 type CourseChapterItem = NonNullable<ManagedCourse['chapters']>[number];
+type CourseQuizQuestion = NonNullable<ManagedCourse['quizQuestions']>[number];
 
 @Component({
   selector: 'app-instructor-courses',
@@ -190,6 +191,41 @@ type CourseChapterItem = NonNullable<ManagedCourse['chapters']>[number];
               </div>
             </div>
 
+            <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-white/75 p-4">
+              <div class="flex items-center justify-between gap-4">
+                <div>
+                  <div class="text-sm font-semibold text-[var(--color-brand-green-900)]">Questions QCM</div>
+                  <div class="mt-1 text-xs uppercase tracking-[0.16em] text-[var(--color-brand-green-800)]/48">{{ quizQuestions.length }} question(s)</div>
+                </div>
+                <button type="button" (click)="addQuizQuestion()" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-green-900)]">
+                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">add</mat-icon>
+                  Ajouter une question
+                </button>
+              </div>
+              <div formArrayName="quizQuestions" class="mt-4 space-y-6">
+                @for (q of quizQuestions.controls; track $index) {
+                  <div [formGroupName]="$index" class="rounded-[22px] bg-[var(--color-brand-cream)]/65 p-4 space-y-3">
+                    <div class="flex items-start gap-3">
+                      <span class="mt-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-green-900)] text-xs font-bold text-white">{{ $index + 1 }}</span>
+                      <input formControlName="prompt" placeholder="Enonce de la question" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
+                      <button type="button" (click)="removeQuizQuestion($index)" class="mt-1 rounded-full bg-[#f8e7e7] px-3 py-2 text-sm font-semibold text-[#9b2c2c]">
+                        <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">delete</mat-icon>
+                      </button>
+                    </div>
+                    <div class="grid gap-2 pl-10">
+                      @for (label of ['A', 'B', 'C', 'D']; track label; let optIdx = $index) {
+                        <div class="flex items-center gap-3">
+                          <input type="radio" [formControlName]="'correctIndex'" [value]="optIdx" class="h-4 w-4 accent-[var(--color-brand-green-900)]" />
+                          <input [formControlName]="'option_' + label.toLowerCase()" [placeholder]="'Option ' + label" class="w-full rounded-xl bg-white px-3 py-2 text-sm outline-none" />
+                        </div>
+                      }
+                    </div>
+                    <p class="pl-10 text-[11px] text-[var(--color-brand-green-800)]/50">Selectionnez le bouton radio a cote de la bonne reponse.</p>
+                  </div>
+                }
+              </div>
+            </div>
+
             <div class="grid gap-4 md:grid-cols-3">
               <select formControlName="access" class="w-full rounded-2xl bg-[var(--color-brand-cream)] px-4 py-3 text-sm outline-none">
                 <option value="free">Gratuit</option>
@@ -305,6 +341,7 @@ export class InstructorCoursesComponent implements OnInit {
     contentItems: this.fb.array([]),
     chapters: this.fb.array([]),
     moduleItems: this.fb.array([]),
+    quizQuestions: this.fb.array([]),
   });
 
   get moduleItems(): FormArray {
@@ -321,6 +358,10 @@ export class InstructorCoursesComponent implements OnInit {
 
   get chapters(): FormArray {
     return this.form.get('chapters') as FormArray;
+  }
+
+  get quizQuestions(): FormArray {
+    return this.form.get('quizQuestions') as FormArray;
   }
 
   ngOnInit(): void {
@@ -359,6 +400,19 @@ export class InstructorCoursesComponent implements OnInit {
     });
   }
 
+  private createQuizQuestionGroup(q?: CourseQuizQuestion) {
+    const options = q?.options ?? ['', '', '', ''];
+    return this.fb.nonNullable.group({
+      id: [q?.id ?? `quiz-${Date.now()}-${this.quizQuestions.length}`],
+      prompt: [q?.prompt ?? ''],
+      option_a: [options[0] ?? ''],
+      option_b: [options[1] ?? ''],
+      option_c: [options[2] ?? ''],
+      option_d: [options[3] ?? ''],
+      correctIndex: [q?.correctIndex ?? 0],
+    });
+  }
+
   addObjective(): void {
     this.objectives.push(this.fb.nonNullable.control(''));
   }
@@ -389,6 +443,14 @@ export class InstructorCoursesComponent implements OnInit {
 
   removeModule(index: number): void {
     this.moduleItems.removeAt(index);
+  }
+
+  addQuizQuestion(): void {
+    this.quizQuestions.push(this.createQuizQuestionGroup());
+  }
+
+  removeQuizQuestion(index: number): void {
+    this.quizQuestions.removeAt(index);
   }
 
   modulePdfCount(): number {
@@ -455,11 +517,13 @@ export class InstructorCoursesComponent implements OnInit {
     this.contentItems.clear();
     this.chapters.clear();
     this.moduleItems.clear();
+    this.quizQuestions.clear();
 
     (course.objectives ?? []).forEach((objective) => this.objectives.push(this.fb.nonNullable.control(objective)));
     (course.contentItems ?? []).forEach((item) => this.contentItems.push(this.createContentItemGroup(item)));
     (course.chapters ?? []).forEach((chapter) => this.chapters.push(this.createChapterGroup(chapter)));
     (course.moduleItems ?? []).forEach((module) => this.moduleItems.push(this.createModuleGroup(module)));
+    (course.quizQuestions ?? []).forEach((q) => this.quizQuestions.push(this.createQuizQuestionGroup(q)));
 
     this.form.patchValue({
       title: course.title,
@@ -506,6 +570,7 @@ export class InstructorCoursesComponent implements OnInit {
     this.contentItems.clear();
     this.chapters.clear();
     this.moduleItems.clear();
+    this.quizQuestions.clear();
   }
 
   save(): void {
@@ -517,6 +582,18 @@ export class InstructorCoursesComponent implements OnInit {
 
     const raw = this.form.getRawValue();
     const validModules = (raw.moduleItems as CourseModuleItem[]).filter((item) => item.title.trim() && item.pdfDataUrl);
+
+    type RawQuizQuestion = { id: string; prompt: string; option_a: string; option_b: string; option_c: string; option_d: string; correctIndex: number };
+    const validQuiz = (raw.quizQuestions as RawQuizQuestion[])
+      .filter((q) => q.prompt.trim())
+      .map((q) => ({
+        id: q.id,
+        prompt: q.prompt.trim(),
+        options: [q.option_a, q.option_b, q.option_c, q.option_d].map((o) => o.trim()).filter(Boolean),
+        correctIndex: Number(q.correctIndex),
+      }))
+      .filter((q) => q.options.length >= 2);
+
     const payload: Partial<ManagedCourse> = {
       ...raw,
       objectives: (raw.objectives as string[]).map((item) => item.trim()).filter(Boolean),
@@ -524,6 +601,7 @@ export class InstructorCoursesComponent implements OnInit {
       chapters: (raw.chapters as CourseChapterItem[]).filter((item) => item.title.trim() || item.content.trim()),
       moduleItems: validModules,
       modules: validModules.length,
+      quizQuestions: validQuiz,
       priceEur: raw.access === 'paid' ? Number(raw.priceEur) : 0,
       priceTnd: raw.access === 'paid' ? Number(raw.priceTnd) : 0,
       priceUsd: raw.access === 'paid' ? Number(raw.priceUsd) : 0,

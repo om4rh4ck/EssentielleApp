@@ -109,6 +109,12 @@ interface Course {
     audioName?: string;
     audioDataUrl?: string;
   }>;
+  quizQuestions?: Array<{
+    id: string;
+    prompt: string;
+    options: string[];
+    correctIndex: number;
+  }>;
 }
 
 interface TrainingFormula {
@@ -1042,6 +1048,14 @@ const revenue: RevenueRow[] = [
 ];
 
 const studentWorkspaces = new Map<string, StudentWorkspace>();
+const courseQuizAttempts = new Map<string, Map<string, {
+  answers: Record<string, number>;
+  score: number;
+  total: number;
+  percentage: number;
+  passed: boolean;
+  submittedAt: string;
+}>>();
 const roleProfiles = new Map<string, RoleProfileData>();
 const messages: MessageRecord[] = [];
 const liveSessions: LiveSession[] = [];
@@ -1573,6 +1587,23 @@ function parseChapterItems(items: unknown): Array<{ id: string; title: string; c
       content: typeof item?.content === 'string' ? item.content.trim() : '',
     }))
     .filter((item) => item.title.length > 0 || item.content.length > 0);
+}
+
+function parseQuizQuestions(items: unknown): Array<{ id: string; prompt: string; options: string[]; correctIndex: number }> {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item: any, index: number) => {
+      const options: string[] = Array.isArray(item?.options)
+        ? item.options.map((o: unknown) => typeof o === 'string' ? o.trim() : '').filter((o: string) => o.length > 0)
+        : [];
+      return {
+        id: typeof item?.id === 'string' && item.id ? item.id : `quiz-${Date.now()}-${index}`,
+        prompt: typeof item?.prompt === 'string' ? item.prompt.trim() : '',
+        options,
+        correctIndex: Number.isInteger(Number(item?.correctIndex)) ? Math.max(0, Number(item.correctIndex)) : 0,
+      };
+    })
+    .filter((item) => item.prompt.length > 0 && item.options.length >= 2);
 }
 
 function hasDatabaseConfig(): boolean {
@@ -2583,9 +2614,22 @@ function serializeCatalog(user: PublicUser) {
         )
       );
 
+      const isEnrolled = Boolean(enrollment);
+      // Only expose quiz questions (without correctIndex) to enrolled students
+      const quizQuestions = isEnrolled && course.quizQuestions?.length
+        ? course.quizQuestions.map(({ id, prompt, options }) => ({ id, prompt, options }))
+        : undefined;
+
+      // Look up quiz result for this student + course
+      const quizResult = isEnrolled
+        ? (courseQuizAttempts.get(course.id)?.get(user.id) ?? null)
+        : null;
+
       return {
         ...course,
-        enrolled: Boolean(enrollment),
+        quizQuestions: quizQuestions ?? null,
+        quizResult,
+        enrolled: isEnrolled,
         progress: enrollment?.progress ?? 0,
         enrollmentRequestStatus: pendingRequest?.status ?? null,
         enrollmentRequestId: pendingRequest?.id ?? null,
@@ -2985,6 +3029,53 @@ app.post('/api/student/catalog/:courseId/enroll', (req, res): any => {
   res.json(serializeCatalog(user).find((item) => item.id === course.id));
 });
 
+app.post('/api/student/courses/:courseId/quiz/submit', (req, res): any => {
+  const user = getCurrentUser(req, ['student']);
+  if (!user) return res.status(401).json({ error: 'Authentification requise.' });
+
+  const course = courses.find((item) => item.id === req.params.courseId);
+  if (!course) return res.status(404).json({ error: 'Formation introuvable.' });
+
+  const workspace = ensureStudentWorkspace(user);
+  const isEnrolled = workspace.enrollments.some((item) => item.courseId === course.id);
+  if (!isEnrolled) return res.status(403).json({ error: 'Vous n\'etes pas inscrite a cette formation.' });
+
+  if (!course.quizQuestions || course.quizQuestions.length === 0) {
+    return res.status(400).json({ error: 'Cette formation n\'a pas de quiz.' });
+  }
+
+  const answers: Record<string, number> = {};
+  if (req.body?.answers && typeof req.body.answers === 'object') {
+    for (const [qId, val] of Object.entries(req.body.answers)) {
+      if (Number.isInteger(Number(val))) answers[qId] = Number(val);
+    }
+  }
+
+  const total = course.quizQuestions.length;
+  let correctCount = 0;
+  for (const question of course.quizQuestions) {
+    if (answers[question.id] === question.correctIndex) correctCount++;
+  }
+  const percentage = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+  const passed = percentage >= 50;
+
+  const attempt = {
+    answers,
+    score: correctCount,
+    total,
+    percentage,
+    passed,
+    submittedAt: new Date().toISOString(),
+  };
+
+  if (!courseQuizAttempts.has(course.id)) {
+    courseQuizAttempts.set(course.id, new Map());
+  }
+  courseQuizAttempts.get(course.id)!.set(user.id, attempt);
+
+  res.json(serializeCatalog(user));
+});
+
 app.get('/api/student/certificates', (req, res): any => {
   const user = getCurrentUser(req, ['student']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });
@@ -3285,9 +3376,10 @@ app.post('/api/instructor/courses', (req, res): any => {
     const chapters = parseChapterItems(req.body?.chapters);
     const presentation = typeof req.body?.presentation === 'string' ? req.body.presentation.trim() : '';
     const warning = typeof req.body?.warning === 'string' ? req.body.warning.trim() : '';
+    const quizQuestions = parseQuizQuestions(req.body?.quizQuestions);
 
     const status = req.body?.status === 'draft' ? 'draft' : 'published';
-    
+
     if (status === 'published' && moduleItems.length === 0) {
       return res.status(400).json({ error: 'Vous devez ajouter au moins un module PDF pour publier la formation.' });
     }
@@ -3317,6 +3409,7 @@ app.post('/api/instructor/courses', (req, res): any => {
       contentItems,
       chapters,
       moduleItems,
+      quizQuestions,
     };
     courses.unshift(course);
     console.log(`✅ Formation créée: ${course.id} par ${user.name}`);
@@ -3382,7 +3475,10 @@ app.put('/api/instructor/courses/:courseId', (req, res): any => {
     if (Array.isArray(req.body?.chapters)) {
       course.chapters = parseChapterItems(req.body.chapters);
     }
-    
+    if (Array.isArray(req.body?.quizQuestions)) {
+      course.quizQuestions = parseQuizQuestions(req.body.quizQuestions);
+    }
+
     course.modules = course.moduleItems?.length || Number(req.body?.modules ?? course.modules);
     course.priceEur = Math.max(0, Number(req.body?.priceEur ?? course.priceEur));
     course.priceTnd = Math.max(0, Number(req.body?.priceTnd ?? course.priceTnd ?? 0));
@@ -3395,7 +3491,7 @@ app.put('/api/instructor/courses/:courseId', (req, res): any => {
     course.category = typeof req.body?.category === 'string' && req.body.category.trim() ? req.body.category.trim() : course.category;
     course.access = req.body?.access === 'paid' ? 'paid' : 'free';
     course.status = req.body?.status === 'draft' ? 'draft' : 'published';
-    
+
     console.log(`✅ Formation mise à jour: ${course.id}`);
     res.json(course);
   } catch (error) {
@@ -4138,7 +4234,10 @@ app.put('/api/admin/courses/:courseId', (req, res): any => {
     if (Array.isArray(req.body?.chapters)) {
       course.chapters = parseChapterItems(req.body.chapters);
     }
-    
+    if (Array.isArray(req.body?.quizQuestions)) {
+      course.quizQuestions = parseQuizQuestions(req.body.quizQuestions);
+    }
+
     course.modules = course.moduleItems?.length || Number(req.body?.modules ?? course.modules);
     course.priceEur = Math.max(0, Number(req.body?.priceEur ?? course.priceEur));
     course.priceTnd = Math.max(0, Number(req.body?.priceTnd ?? course.priceTnd ?? 0));
@@ -4151,7 +4250,7 @@ app.put('/api/admin/courses/:courseId', (req, res): any => {
     course.category = typeof req.body?.category === 'string' && req.body.category.trim() ? req.body.category.trim() : course.category;
     course.access = req.body?.access === 'paid' ? 'paid' : 'free';
     course.status = req.body?.status === 'draft' ? 'draft' : 'published';
-    
+
     console.log(`✅ Formation mise à jour par admin: ${course.id}`);
     res.json(course);
   } catch (error) {
