@@ -1992,6 +1992,9 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `);
 
+  // Sync all MySQL users into memoryUsers so getStoredUserById works for any registered user
+  await loadUsersFromDb(pool);
+
   // Load exam + attempt data from DB into in-memory maps
   await loadExamsFromDb(pool);
   await loadAttemptsFromDb(pool);
@@ -1999,6 +2002,32 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
 
   // Persist seed exams to MySQL so phpMyAdmin shows them and attempts FK works
   await seedExamsToDb(pool);
+}
+
+async function loadUsersFromDb(pool: Pool): Promise<void> {
+  try {
+    const [rows] = await pool.query<mysql.RowDataPacket[]>(
+      'SELECT id, name, email, role, password_hash FROM users'
+    );
+    let loaded = 0;
+    for (const row of rows) {
+      const sid = String(row['id']);
+      if (!memoryUsers.find((u) => u.id === sid)) {
+        memoryUsers.push({
+          id:           sid,
+          name:         String(row['name']          ?? ''),
+          email:        String(row['email']         ?? ''),
+          username:     getUsernameFromEmail(String(row['email'] ?? '')),
+          role:         (row['role'] as UserRole)   ?? 'student',
+          passwordHash: String(row['password_hash'] ?? ''),
+        });
+        loaded++;
+      }
+    }
+    console.log(`[DB] Synced ${loaded} MySQL user(s) into memoryUsers (total: ${memoryUsers.length})`);
+  } catch (err) {
+    console.warn('[DB] Could not load users from MySQL:', err);
+  }
 }
 
 async function loadCourseQuizAttemptsFromDb(pool: Pool): Promise<void> {
