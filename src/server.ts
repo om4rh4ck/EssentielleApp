@@ -1974,12 +1974,94 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
   await insertSeedUser(pool, 'Dr. Expert', 'instructor@lessentielle-sante.site', 'instructor', 'password123');
   await insertSeedUser(pool, 'Jane Doe', 'student@lessentielle-sante.site', 'student', 'password123');
 
+  // course_quiz_attempts — persists student quiz results per course
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS course_quiz_attempts (
+      id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      course_id VARCHAR(64) NOT NULL,
+      student_id VARCHAR(64) NOT NULL,
+      answers_json MEDIUMTEXT NOT NULL DEFAULT '{}',
+      score DECIMAL(6,2) NOT NULL DEFAULT 0,
+      total INT NOT NULL DEFAULT 10,
+      percentage DECIMAL(5,2) NOT NULL DEFAULT 0,
+      passed TINYINT(1) NOT NULL DEFAULT 0,
+      attempt_count INT NOT NULL DEFAULT 1,
+      submitted_at DATETIME NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE KEY uq_course_student (course_id, student_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+
   // Load exam + attempt data from DB into in-memory maps
   await loadExamsFromDb(pool);
   await loadAttemptsFromDb(pool);
+  await loadCourseQuizAttemptsFromDb(pool);
 
   // Persist seed exams to MySQL so phpMyAdmin shows them and attempts FK works
   await seedExamsToDb(pool);
+}
+
+async function loadCourseQuizAttemptsFromDb(pool: Pool): Promise<void> {
+  try {
+    const [rows] = await pool.query<mysql.RowDataPacket[]>(
+      `SELECT course_id, student_id, answers_json, score, total, percentage,
+              passed, attempt_count, submitted_at
+       FROM course_quiz_attempts`
+    );
+    let loaded = 0;
+    for (const row of rows) {
+      const cid = String(row['course_id']);
+      const sid = String(row['student_id']);
+      if (!courseQuizAttempts.has(cid)) courseQuizAttempts.set(cid, new Map());
+      if (!courseQuizAttempts.get(cid)!.has(sid)) {
+        let answers: Record<string, number> = {};
+        try { answers = JSON.parse(String(row['answers_json'] ?? '{}')); } catch { answers = {}; }
+        courseQuizAttempts.get(cid)!.set(sid, {
+          answers,
+          score:        Number(row['score']        ?? 0),
+          total:        Number(row['total']         ?? 10),
+          percentage:   Number(row['percentage']    ?? 0),
+          passed:       Boolean(row['passed']),
+          attemptCount: Number(row['attempt_count'] ?? 1),
+          submittedAt:  String(row['submitted_at']  ?? new Date().toISOString()),
+        });
+        loaded++;
+      }
+    }
+    console.log(`[DB] Loaded ${loaded} course quiz attempt(s) from MySQL`);
+  } catch (err) {
+    console.warn('[DB] Could not load course quiz attempts from MySQL:', err);
+  }
+}
+
+async function upsertCourseQuizAttemptToDb(
+  pool: Pool,
+  courseId: string,
+  studentId: string,
+  attempt: { answers: Record<string, number>; score: number; total: number; percentage: number; passed: boolean; attemptCount: number; submittedAt: string }
+): Promise<void> {
+  try {
+    await pool.query(
+      `INSERT INTO course_quiz_attempts
+         (course_id, student_id, answers_json, score, total, percentage, passed, attempt_count, submitted_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE
+         answers_json  = VALUES(answers_json),
+         score         = VALUES(score),
+         total         = VALUES(total),
+         percentage    = VALUES(percentage),
+         passed        = VALUES(passed),
+         attempt_count = VALUES(attempt_count),
+         submitted_at  = VALUES(submitted_at)`,
+      [courseId, studentId, JSON.stringify(attempt.answers),
+       attempt.score, attempt.total, attempt.percentage,
+       attempt.passed ? 1 : 0, attempt.attemptCount,
+       toMysqlDatetime(attempt.submittedAt)]
+    );
+    console.log(`[DB] Quiz attempt saved ✓ course=${courseId} student=${studentId} score=${attempt.score}/${attempt.total} (${attempt.percentage}%)`);
+  } catch (err) {
+    console.error('[DB] upsertCourseQuizAttemptToDb FAILED — course:', courseId, 'student:', studentId, 'error:', err);
+  }
 }
 
 async function seedExamsToDb(pool: Pool): Promise<void> {
@@ -3075,7 +3157,7 @@ app.post('/api/student/catalog/:courseId/enroll', (req, res): any => {
   res.json(serializeCatalog(user).find((item) => item.id === course.id));
 });
 
-app.post('/api/student/courses/:courseId/quiz/submit', (req, res): any => {
+app.post('/api/student/courses/:courseId/quiz/submit', async (req, res): Promise<any> => {
   const user = getCurrentUser(req, ['student']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });
 
@@ -3126,6 +3208,16 @@ app.post('/api/student/courses/:courseId/quiz/submit', (req, res): any => {
     courseQuizAttempts.set(course.id, new Map());
   }
   courseQuizAttempts.get(course.id)!.set(user.id, attempt);
+
+  // Persist to JSON backup
+  savePersistedData();
+  // Persist to MySQL (awaited — errors visible in logs)
+  try {
+    const pool = await getDbPool();
+    if (pool) await upsertCourseQuizAttemptToDb(pool, course.id, user.id, attempt);
+  } catch (dbErr) {
+    console.error('[DB] Quiz submit persistence error:', dbErr);
+  }
 
   res.json(serializeCatalog(user));
 });
