@@ -1994,6 +1994,8 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
 
   // Sync all MySQL users into memoryUsers so getStoredUserById works for any registered user
   await loadUsersFromDb(pool);
+  // Immediately backup MySQL users to JSON so next boot works even without MySQL
+  savePersistedData();
 
   // Load exam + attempt data from DB into in-memory maps
   await loadExamsFromDb(pool);
@@ -2949,6 +2951,7 @@ app.post('/api/register', authLimiter, async (req, res) => {
       console.error('[MAIL] Registration success email failed', mailError);
     }
     const token = createToken(user);
+    savePersistedData(); // Persist new user to JSON backup immediately
     res.status(201).json({ token, user });
   } catch (error: unknown) {
     if (error instanceof Error && error.message === 'EMAIL_EXISTS') {
