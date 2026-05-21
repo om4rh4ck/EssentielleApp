@@ -1784,7 +1784,7 @@ async function upsertExamToDb(pool: Pool, exam: ExamTemplate): Promise<void> {
          exam_type = VALUES(exam_type), duration_minutes = VALUES(duration_minutes),
          max_attempts = VALUES(max_attempts), grading_scale_max = VALUES(grading_scale_max),
          pass_threshold = VALUES(pass_threshold)`,
-      [exam.id, exam.title, exam.courseId, exam.assignedBy, exam.dueDate,
+      [exam.id, exam.title, exam.courseId, exam.assignedBy, toMysqlDatetime(exam.dueDate),
        exam.examType ?? 'quiz', exam.durationMinutes ?? 20, exam.maxAttempts ?? 1,
        exam.gradingScaleMax ?? 20, exam.passThreshold ?? 10]
     );
@@ -1864,6 +1864,12 @@ async function loadAttemptsFromDb(pool: Pool): Promise<void> {
   }
 }
 
+function toMysqlDatetime(iso: string): string {
+  // Convert ISO 8601 "2026-05-21T10:30:45.123Z" → MySQL "2026-05-21 10:30:45"
+  try { return new Date(iso).toISOString().slice(0, 19).replace('T', ' '); }
+  catch { return new Date().toISOString().slice(0, 19).replace('T', ' '); }
+}
+
 async function upsertAttemptToDb(pool: Pool, studentId: string, attempt: StudentAttempt): Promise<void> {
   try {
     await pool.query(
@@ -1882,10 +1888,11 @@ async function upsertAttemptToDb(pool: Pool, studentId: string, attempt: Student
       [studentId, attempt.examId, JSON.stringify(attempt.answers),
        attempt.score, attempt.rawScore ?? 0, attempt.totalPoints ?? 0,
        attempt.percentage ?? 0, attempt.attemptCount,
-       attempt.submittedAt]
+       toMysqlDatetime(attempt.submittedAt)]
     );
+    console.log(`[DB] Attempt saved ✓ student=${studentId} exam=${attempt.examId} score=${attempt.score}/${attempt.totalPoints} (${attempt.percentage}%)`);
   } catch (err) {
-    console.warn('[DB] Could not upsert attempt:', err);
+    console.error('[DB] upsertAttemptToDb FAILED — student:', studentId, 'exam:', attempt.examId, 'error:', err);
   }
 }
 
@@ -2006,7 +2013,7 @@ async function seedExamsToDb(pool: Pool): Promise<void> {
            exam_type = VALUES(exam_type), duration_minutes = VALUES(duration_minutes),
            max_attempts = VALUES(max_attempts), grading_scale_max = VALUES(grading_scale_max),
            pass_threshold = VALUES(pass_threshold)`,
-        [exam.id, exam.title, exam.courseId, exam.assignedBy, exam.dueDate,
+        [exam.id, exam.title, exam.courseId, exam.assignedBy, toMysqlDatetime(exam.dueDate),
          exam.examType ?? 'quiz', exam.durationMinutes ?? 20, exam.maxAttempts ?? 1,
          exam.gradingScaleMax ?? 20, exam.passThreshold ?? 10]
       );
@@ -3294,10 +3301,15 @@ app.post('/api/student/exams/:examId/submit', (req, res): any => {
   studentAttempts.set(user.id, attempts);
   ensureExamCertificate(user, exam, grade.scaledScore);
   savePersistedData();
-  // Persist attempt to MySQL (fire-and-forget — response is not delayed)
+  // Persist attempt to MySQL — awaited so errors are visible in logs
   const savedAttemptForDb = studentAttempts.get(user.id)?.find((a) => a.examId === exam.id);
   if (savedAttemptForDb) {
-    void getDbPool().then((pool) => { if (pool) void upsertAttemptToDb(pool, user.id, savedAttemptForDb); });
+    try {
+      const pool = await getDbPool();
+      if (pool) await upsertAttemptToDb(pool, user.id, savedAttemptForDb);
+    } catch (dbErr) {
+      console.error('[DB] submit: attempt persistence error:', dbErr);
+    }
   }
 
   // ── DEBUG STEP 8: log saved attempt ──────────────────────────────────────
