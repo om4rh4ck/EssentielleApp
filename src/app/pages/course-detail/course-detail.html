@@ -157,60 +157,88 @@
           </div>
         </section>
       }
+
       <!-- ── QCM Section ── -->
       @if (quizQuestions().length > 0) {
         <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-[var(--color-brand-gold-300)]/30">
-          <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-2 flex items-center gap-2">
-            <mat-icon class="text-[var(--color-brand-gold-500)]">quiz</mat-icon>
-            Quiz de la formation
-          </h2>
-          <p class="text-sm text-[var(--color-brand-green-800)]/60 mb-5">
-            {{ quizQuestions().length }} question(s) — notée sur 10
-          </p>
 
-          <!-- Result -->
+          <!-- Header -->
+          <div class="flex items-start justify-between gap-4 mb-2">
+            <div>
+              <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] flex items-center gap-2">
+                <mat-icon class="text-[var(--color-brand-gold-500)]">quiz</mat-icon>
+                {{ quizTitle() }}
+              </h2>
+              <p class="text-sm text-[var(--color-brand-green-800)]/60 mt-1">
+                {{ quizQuestions().length }} question(s) · notée sur 10 · 30 min · {{ attemptsRemaining() }}/2 essai(s) restant(s)
+              </p>
+            </div>
+          </div>
+
+          <!-- Previous result -->
           @if (quizResult(); as result) {
-            <div class="rounded-[20px] p-6 text-center mb-4"
+            <div class="rounded-[20px] p-5 mb-4 flex items-center gap-4"
                  [class.bg-emerald-50]="result.passed"
                  [class.bg-red-50]="!result.passed">
-              <mat-icon class="!h-12 !w-12 !text-[48px]"
+              <mat-icon class="!h-10 !w-10 !text-[40px] shrink-0"
                         [class.text-emerald-500]="result.passed"
                         [class.text-red-400]="!result.passed">
                 {{ result.passed ? 'verified' : 'cancel' }}
               </mat-icon>
-              <div class="mt-2 text-6xl font-black leading-none"
-                   [class.text-emerald-700]="result.passed"
-                   [class.text-red-600]="!result.passed">
-                {{ result.score }}/{{ result.total }}
-              </div>
-              <div class="mt-2 font-bold text-lg"
-                   [class.text-emerald-700]="result.passed"
-                   [class.text-red-600]="!result.passed">
-                {{ result.passed ? 'Quiz réussi !' : 'Quiz non validé' }}
-              </div>
-              <div class="mt-1 text-sm opacity-70"
-                   [class.text-emerald-600]="result.passed"
-                   [class.text-red-500]="!result.passed">
-                {{ result.percentage }}% de bonnes réponses
+              <div class="flex-1">
+                <div class="font-bold text-lg"
+                     [class.text-emerald-700]="result.passed"
+                     [class.text-red-600]="!result.passed">
+                  {{ result.passed ? 'Quiz réussi !' : 'Quiz non validé' }}
+                </div>
+                <div class="text-sm mt-0.5 opacity-80"
+                     [class.text-emerald-600]="result.passed"
+                     [class.text-rose-600]="!result.passed">
+                  Note : {{ result.score }}/{{ result.total }} — {{ result.percentage }}%
+                  · Essai {{ result.attemptCount }}/2
+                </div>
               </div>
             </div>
-            @if (!quizOpen()) {
-              <button (click)="openQuiz()"
-                      class="w-full rounded-full border border-[var(--color-brand-green-900)]/30 py-3 text-sm font-semibold text-[var(--color-brand-green-900)] hover:bg-[var(--color-brand-cream)] transition">
-                Repasser le quiz
-              </button>
-            }
-          } @else if (!quizOpen()) {
+          }
+
+          <!-- Locked -->
+          @if (attemptsRemaining() <= 0 && !quizOpen()) {
+            <div class="flex items-center gap-3 rounded-[18px] bg-gray-100 border border-gray-200 px-5 py-4 text-sm text-gray-600">
+              <mat-icon class="text-gray-400">lock</mat-icon>
+              Nombre maximum d'essais atteint (2/2). Quiz verrouillé.
+            </div>
+          }
+
+          <!-- Start button -->
+          @if (attemptsRemaining() > 0 && !quizOpen()) {
             <button (click)="openQuiz()"
-                    class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-6 py-3 text-sm font-bold text-white hover:bg-[var(--color-brand-green-900)] transition">
+                    class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-6 py-3 text-sm font-bold text-white hover:bg-[var(--color-brand-green-900)] transition mt-2">
               <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">play_arrow</mat-icon>
-              Passer le quiz
+              {{ quizResult() ? 'Repasser le quiz' : 'Passer le quiz' }}
             </button>
           }
 
-          <!-- Questions form -->
+          <!-- Quiz form -->
           @if (quizOpen()) {
             <div class="mt-4 space-y-5">
+
+              <!-- Timer bar -->
+              <div class="flex items-center justify-between rounded-[18px] px-5 py-3"
+                   [class.bg-[var(--color-brand-cream)]]="timeRemaining() >= 60"
+                   [class.bg-red-50]="timeRemaining() < 60">
+                <div class="flex items-center gap-2">
+                  <mat-icon [class.text-[var(--color-brand-gold-600)]]="timeRemaining() >= 60"
+                             [class.text-red-500]="timeRemaining() < 60">timer</mat-icon>
+                  <span class="font-bold text-xl tabular-nums"
+                        [class.text-[var(--color-brand-green-900)]]="timeRemaining() >= 60"
+                        [class.text-red-600]="timeRemaining() < 60">
+                    {{ formatTime(timeRemaining()) }}
+                  </span>
+                </div>
+                <span class="text-xs text-[var(--color-brand-green-800)]/55">Temps restant — soumission automatique</span>
+              </div>
+
+              <!-- Questions -->
               @for (q of quizQuestions(); track q.id; let qi = $index) {
                 <div class="rounded-[18px] bg-[var(--color-brand-cream)] p-4">
                   <p class="text-sm font-semibold text-[var(--color-brand-green-900)] mb-3">
@@ -225,7 +253,7 @@
                                [checked]="quizAnswers()[q.id] === oi"
                                (change)="setAnswer(q.id, oi)"
                                class="accent-[var(--color-brand-green-900)]" />
-                        <span class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                        <span class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white transition"
                               [class.bg-emerald-500]="quizAnswers()[q.id] === oi"
                               [class.bg-gray-600]="quizAnswers()[q.id] !== oi">
                           {{ letter(oi) }}
@@ -263,4 +291,65 @@
       </section>
     }
   </div>
+
+  <!-- ── Result popup ── -->
+  @if (showResultPopup() && lastResult(); as r) {
+    <div class="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4"
+         (click)="closePopup()">
+      <div class="w-full max-w-md overflow-hidden rounded-t-[32px] bg-white shadow-[0_-8px_80px_rgba(0,0,0,0.3)] sm:rounded-[32px]"
+           (click)="$event.stopPropagation()">
+
+        <!-- Colored header -->
+        <div class="relative px-6 py-10 text-center"
+             [class.bg-emerald-500]="r.passed"
+             [class.bg-red-500]="!r.passed">
+          <button (click)="closePopup()"
+                  class="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition">
+            <mat-icon class="!h-5 !w-5 !text-[20px]">close</mat-icon>
+          </button>
+          <mat-icon class="!h-14 !w-14 !text-[56px] text-white">
+            {{ r.passed ? 'verified' : 'cancel' }}
+          </mat-icon>
+          <h2 class="mt-3 font-serif text-3xl font-bold text-white">
+            {{ r.passed ? 'Félicitations !' : 'Résultat enregistré' }}
+          </h2>
+          <p class="mt-1 text-sm text-white/80">{{ quizTitle() }}</p>
+        </div>
+
+        <!-- Score -->
+        <div class="px-6 py-6 text-center">
+          <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--color-brand-green-800)]/50">Votre note</p>
+          <div class="mt-1 text-8xl font-black leading-none tabular-nums"
+               [class.text-emerald-600]="r.passed"
+               [class.text-red-500]="!r.passed">
+            {{ r.score }}/{{ r.total }}
+          </div>
+          <p class="mt-3 text-sm text-[var(--color-brand-green-800)]/65">
+            {{ r.percentage }}% de bonnes réponses · Essai {{ r.attemptCount }}/2
+          </p>
+          @if (!r.passed && (attemptsRemaining() > 0)) {
+            <p class="mt-2 text-xs text-amber-600 font-semibold">
+              Il vous reste {{ attemptsRemaining() }} essai(s) — vous pouvez repasser le quiz.
+            </p>
+          } @else if (!r.passed) {
+            <p class="mt-2 text-xs text-red-500 font-semibold">
+              Aucun essai restant — quiz verrouillé.
+            </p>
+          }
+        </div>
+
+        <!-- CTA -->
+        <div class="flex justify-center px-5 pb-8">
+          <button (click)="closePopup()"
+                  class="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-bold text-white transition"
+                  [class.bg-emerald-600]="r.passed"
+                  [class.bg-red-500]="!r.passed">
+            <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">grading</mat-icon>
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
 </app-dashboard-layout>

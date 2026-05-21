@@ -46,6 +46,7 @@ export interface ManagedCourse {
     audioName?: string;
     audioDataUrl?: string;
   }>;
+  quizTitle?: string;
   quizQuestions?: Array<{
     id: string;
     prompt: string;

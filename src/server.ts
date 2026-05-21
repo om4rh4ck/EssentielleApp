@@ -109,6 +109,7 @@ interface Course {
     audioName?: string;
     audioDataUrl?: string;
   }>;
+  quizTitle?: string;
   quizQuestions?: Array<{
     id: string;
     prompt: string;
@@ -1097,6 +1098,7 @@ const courseQuizAttempts = new Map<string, Map<string, {
   percentage: number;
   passed: boolean;
   submittedAt: string;
+  attemptCount: number;
 }>>();
 const roleProfiles = new Map<string, RoleProfileData>();
 const messages: MessageRecord[] = [];
@@ -2663,14 +2665,16 @@ function serializeCatalog(user: PublicUser) {
         : undefined;
 
       // Look up quiz result for this student + course
-      const quizResult = isEnrolled
-        ? (courseQuizAttempts.get(course.id)?.get(user.id) ?? null)
-        : null;
+      const quizAttempt = isEnrolled ? (courseQuizAttempts.get(course.id)?.get(user.id) ?? null) : null;
+      const quizResult = quizAttempt;
+      const quizAttemptsRemaining = Math.max(0, 2 - (quizAttempt?.attemptCount ?? 0));
 
       return {
         ...course,
+        quizTitle: course.quizTitle ?? null,
         quizQuestions: quizQuestions ?? null,
         quizResult,
+        quizAttemptsRemaining,
         enrolled: isEnrolled,
         progress: enrollment?.progress ?? 0,
         enrollmentRequestStatus: pendingRequest?.status ?? null,
@@ -3086,6 +3090,12 @@ app.post('/api/student/courses/:courseId/quiz/submit', (req, res): any => {
     return res.status(400).json({ error: 'Cette formation n\'a pas de quiz.' });
   }
 
+  // Check attempt limit (max 2)
+  const existingAttempt = courseQuizAttempts.get(course.id)?.get(user.id);
+  if (existingAttempt && existingAttempt.attemptCount >= 2) {
+    return res.status(400).json({ error: 'Nombre maximum d\'essais atteint (2/2). Quiz verrouillé.' });
+  }
+
   const answers: Record<string, number> = {};
   if (req.body?.answers && typeof req.body.answers === 'object') {
     for (const [qId, val] of Object.entries(req.body.answers)) {
@@ -3099,7 +3109,6 @@ app.post('/api/student/courses/:courseId/quiz/submit', (req, res): any => {
     if (answers[question.id] === question.correctIndex) correctCount++;
   }
   const percentage = total > 0 ? Math.round((correctCount / total) * 100) : 0;
-  // Score scaled to 10 (French grading: X/10)
   const scaledScore = total > 0 ? Math.round((correctCount / total) * 10) : 0;
   const passed = percentage >= 50;
 
@@ -3110,6 +3119,7 @@ app.post('/api/student/courses/:courseId/quiz/submit', (req, res): any => {
     percentage,
     passed,
     submittedAt: new Date().toISOString(),
+    attemptCount: (existingAttempt?.attemptCount ?? 0) + 1,
   };
 
   if (!courseQuizAttempts.has(course.id)) {
@@ -3453,6 +3463,7 @@ app.post('/api/instructor/courses', (req, res): any => {
       contentItems,
       chapters,
       moduleItems,
+      quizTitle: typeof req.body?.quizTitle === 'string' ? req.body.quizTitle.trim().slice(0, 200) || undefined : undefined,
       quizQuestions,
     };
     courses.unshift(course);
@@ -3521,6 +3532,9 @@ app.put('/api/instructor/courses/:courseId', (req, res): any => {
     }
     if (Array.isArray(req.body?.quizQuestions)) {
       course.quizQuestions = parseQuizQuestions(req.body.quizQuestions);
+    }
+    if (req.body?.quizTitle !== undefined) {
+      course.quizTitle = typeof req.body.quizTitle === 'string' ? req.body.quizTitle.trim().slice(0, 200) || undefined : undefined;
     }
 
     course.modules = course.moduleItems?.length || Number(req.body?.modules ?? course.modules);
@@ -4280,6 +4294,9 @@ app.put('/api/admin/courses/:courseId', (req, res): any => {
     }
     if (Array.isArray(req.body?.quizQuestions)) {
       course.quizQuestions = parseQuizQuestions(req.body.quizQuestions);
+    }
+    if (req.body?.quizTitle !== undefined) {
+      course.quizTitle = typeof req.body.quizTitle === 'string' ? req.body.quizTitle.trim().slice(0, 200) || undefined : undefined;
     }
 
     course.modules = course.moduleItems?.length || Number(req.body?.modules ?? course.modules);

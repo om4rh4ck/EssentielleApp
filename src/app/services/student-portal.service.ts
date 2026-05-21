@@ -56,13 +56,16 @@ export interface StudentCourse {
     audioName?: string;
     audioDataUrl?: string;
   }>;
+  quizTitle?: string | null;
   quizQuestions?: Array<{ id: string; prompt: string; options: string[] }> | null;
+  quizAttemptsRemaining?: number;
   quizResult?: {
     score: number;
     total: number;
     percentage: number;
     passed: boolean;
     answers: Record<string, number>;
+    attemptCount: number;
   } | null;
 }
 

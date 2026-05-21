@@ -192,10 +192,16 @@ type CourseQuizQuestion = NonNullable<ManagedCourse['quizQuestions']>[number];
             </div>
 
             <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-white/75 p-4">
+              <!-- Quiz title -->
+              <div class="mb-4">
+                <label class="block text-xs font-bold uppercase tracking-widest text-[var(--color-brand-green-800)]/60 mb-1">Nom du quiz</label>
+                <input formControlName="quizTitle" type="text" placeholder="ex : Quiz de validation — Nutrition" maxlength="200"
+                       class="w-full rounded-[14px] border border-[var(--color-brand-gold-300)]/30 bg-white px-4 py-2.5 text-sm text-[var(--color-brand-green-900)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-gold-400)]" />
+              </div>
               <div class="flex items-center justify-between gap-4">
                 <div>
                   <div class="text-sm font-semibold text-[var(--color-brand-green-900)]">Questions QCM</div>
-                  <div class="mt-1 text-xs uppercase tracking-[0.16em] text-[var(--color-brand-green-800)]/48">{{ quizQuestions.length }} question(s)</div>
+                  <div class="mt-1 text-xs uppercase tracking-[0.16em] text-[var(--color-brand-green-800)]/48">{{ quizQuestions.length }} question(s) · 30 min · 2 essais max</div>
                 </div>
                 <button type="button" (click)="addQuizQuestion()" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-green-900)]">
                   <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">add</mat-icon>
@@ -341,6 +347,7 @@ export class InstructorCoursesComponent implements OnInit {
     contentItems: this.fb.array([]),
     chapters: this.fb.array([]),
     moduleItems: this.fb.array([]),
+    quizTitle: [''],
     quizQuestions: this.fb.array([]),
   });
 
@@ -542,6 +549,7 @@ export class InstructorCoursesComponent implements OnInit {
       promoPriceTnd: course.promoPriceTnd ?? 0,
       promoPriceUsd: course.promoPriceUsd ?? 0,
       status: course.status,
+      quizTitle: course.quizTitle ?? '',
     });
   }
 
@@ -565,6 +573,7 @@ export class InstructorCoursesComponent implements OnInit {
       promoPriceTnd: 0,
       promoPriceUsd: 0,
       status: 'published',
+      quizTitle: '',
     });
     this.objectives.clear();
     this.contentItems.clear();
@@ -601,6 +610,7 @@ export class InstructorCoursesComponent implements OnInit {
       chapters: (raw.chapters as CourseChapterItem[]).filter((item) => item.title.trim() || item.content.trim()),
       moduleItems: validModules,
       modules: validModules.length,
+      quizTitle: (raw as any).quizTitle?.trim() || undefined,
       quizQuestions: validQuiz,
       priceEur: raw.access === 'paid' ? Number(raw.priceEur) : 0,
       priceTnd: raw.access === 'paid' ? Number(raw.priceTnd) : 0,
