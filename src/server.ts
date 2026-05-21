@@ -1987,6 +1987,48 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
   // Load exam + attempt data from DB into in-memory maps
   await loadExamsFromDb(pool);
   await loadAttemptsFromDb(pool);
+
+  // Persist seed exams to MySQL so phpMyAdmin shows them and attempts FK works
+  await seedExamsToDb(pool);
+}
+
+async function seedExamsToDb(pool: Pool): Promise<void> {
+  const seedExams = exams.filter((e) => SEED_EXAM_IDS.has(e.id));
+  for (const exam of seedExams) {
+    try {
+      await pool.query(
+        `INSERT INTO exams
+           (id, title, course_id, assigned_by, due_date, exam_type, duration_minutes,
+            max_attempts, grading_scale_max, pass_threshold)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE
+           title = VALUES(title), due_date = VALUES(due_date),
+           exam_type = VALUES(exam_type), duration_minutes = VALUES(duration_minutes),
+           max_attempts = VALUES(max_attempts), grading_scale_max = VALUES(grading_scale_max),
+           pass_threshold = VALUES(pass_threshold)`,
+        [exam.id, exam.title, exam.courseId, exam.assignedBy, exam.dueDate,
+         exam.examType ?? 'quiz', exam.durationMinutes ?? 20, exam.maxAttempts ?? 1,
+         exam.gradingScaleMax ?? 20, exam.passThreshold ?? 10]
+      );
+      // Upsert questions (delete + re-insert to keep them in sync)
+      await pool.query('DELETE FROM exam_questions WHERE exam_id = ?', [exam.id]);
+      for (let i = 0; i < exam.questions.length; i++) {
+        const q = exam.questions[i];
+        await pool.query(
+          `INSERT INTO exam_questions
+             (id, exam_id, prompt, option_a, option_b, option_c, option_d,
+              correct_index, points, sort_index)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [q.id, exam.id, q.prompt,
+           q.options[0] ?? '', q.options[1] ?? '', q.options[2] ?? '', q.options[3] ?? null,
+           q.correctIndex, q.points, i]
+        );
+      }
+      console.log(`[DB] Seed exam "${exam.title}" (${exam.questions.length} questions) persisted to MySQL.`);
+    } catch (err) {
+      console.warn(`[DB] Could not seed exam ${exam.id}:`, err);
+    }
+  }
 }
 
 async function insertSeedUser(pool: Pool, name: string, email: string, role: UserRole, password: string): Promise<void> {
