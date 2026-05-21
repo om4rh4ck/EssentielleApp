@@ -4032,8 +4032,8 @@ app.post('/api/instructor/courses/:courseId/quiz-certificate/:studentId', (req, 
   const user = getCurrentUser(req, ['instructor']);
   if (!user) return res.status(401).json({ error: 'Authentification requise.' });
 
-  const courseId  = String(req.params.courseId);
-  const studentId = String(req.params.studentId);
+  const courseId  = String(req.params['courseId']);
+  const studentId = String(req.params['studentId']);
 
   const course = courses.find((c) => c.id === courseId && instructorOwnsCourse(user, c));
   if (!course) return res.status(404).json({ error: 'Formation introuvable.' });
