@@ -40,6 +40,21 @@ import { DisplayPreferencesService, LocalizedText } from '../../shared/services/
       color: #e2c17a;
       transform: translateY(-2px);
     }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .feat-card {
+      animation: fadeUp 0.65s cubic-bezier(.4,0,.2,1) both;
+    }
+    .feat-card:nth-child(1) { animation-delay: 0.05s; }
+    .feat-card:nth-child(2) { animation-delay: 0.18s; }
+    .feat-card:nth-child(3) { animation-delay: 0.31s; }
+    .feat-card:nth-child(4) { animation-delay: 0.44s; }
+    .feat-card:hover .feat-icon { transform: scale(1.12) rotate(-4deg); }
+    .feat-icon { transition: transform 0.35s cubic-bezier(.4,0,.2,1); }
+    .feat-card:hover { transform: translateY(-6px); }
+    .feat-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
   `]
 })
 export class LandingComponent implements AfterViewInit {

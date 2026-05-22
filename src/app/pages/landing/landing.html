@@ -118,61 +118,80 @@
   </div>
 </section>
 
-<!-- SaaS Features Section -->
-<section id="features" class="py-24 bg-white relative border-t border-[var(--color-brand-gold-300)]/30">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="flex flex-col items-center text-center mb-16">
-      <div class="text-[var(--color-brand-gold-500)] font-bold tracking-widest uppercase text-xs mb-3">{{ t({ fr: "Plateforme Essenti' Elle Formation et Bien Être", en: 'EssentiElle Platform', ar: 'منصة إيسونتيال' }) }}</div>
-      <h2 class="font-serif text-4xl text-[var(--color-brand-green-900)] mb-4">{{ t({ fr: 'Une plateforme pensée pour votre évolution', en: 'A platform designed for your growth', ar: 'منصة مصممة لتطورك' }) }}</h2>
-      <p class="font-sans text-[var(--color-brand-green-800)]/70 max-w-2xl font-light text-lg">
-        {{ t({ fr: 'Un espace de formation complet pour apprendre, pratiquer, valider vos acquis et construire une activité durable dans le bien-être féminin.', en: 'A complete training space to learn, practice, validate your skills and build a lasting business in women’s wellness.', ar: 'مساحة تدريب متكاملة للتعلم والتطبيق وتأكيد المهارات وبناء نشاط مستدام في الرفاه النسائي.' }) }}
+<!-- Platform Features Premium -->
+<section id="features" class="relative overflow-hidden py-24" style="background: linear-gradient(160deg, #0c1610 0%, #132619 55%, #0f1e14 100%)">
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    <div class="absolute -left-24 -top-24 h-96 w-96 rounded-full opacity-20" style="background: radial-gradient(circle, rgba(200,169,106,0.3) 0%, transparent 70%)"></div>
+    <div class="absolute -right-20 bottom-10 h-80 w-80 rounded-full opacity-15" style="background: radial-gradient(circle, rgba(45,90,64,0.5) 0%, transparent 70%)"></div>
+    <div class="absolute inset-0 opacity-[0.035]" style="background-image: linear-gradient(rgba(200,169,106,1) 1px,transparent 1px), linear-gradient(90deg,rgba(200,169,106,1) 1px,transparent 1px); background-size: 60px 60px"></div>
+  </div>
+  <div class="relative mx-auto max-w-7xl px-6">
+    <div class="mx-auto max-w-3xl text-center mb-16">
+      <div class="inline-flex items-center gap-2 rounded-full border border-[rgba(200,169,106,0.3)] bg-[rgba(200,169,106,0.08)] px-5 py-2 text-[10px] font-bold uppercase tracking-[0.28em] text-[#e2c17a] mb-6">
+        <span class="inline-block h-1.5 w-1.5 rounded-full bg-[#c8a96a]"></span>
+        {{ t({ fr: "Plateforme Essenti' Elle", en: 'EssentiElle Platform', ar: 'منصة إيسونتيال' }) }}
+      </div>
+      <h2 class="font-serif text-4xl text-white sm:text-5xl leading-tight">
+        {{ t({ fr: 'Une plateforme pensée pour', en: 'A platform designed for', ar: 'منصة مصممة لـ' }) }}
+        <span class="text-[#e2c17a]">
+          {{ t({ fr: ' votre évolution', en: ' your growth', ar: ' تطورك' }) }}
+        </span>
+      </h2>
+      <p class="mt-5 text-base text-white/50 leading-relaxed max-w-xl mx-auto">
+        {{ t({ fr: 'Un espace complet pour apprendre, pratiquer, valider vos acquis et construire une activité durable.', en: 'A complete space to learn, practice and build a lasting wellness business.', ar: 'مساحة تدريب متكاملة للتعلم والتطبيق.' }) }}
       </p>
     </div>
-
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center">
-      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-[var(--color-brand-gold-300)]/50 transition-all opacity-100 group w-full max-w-sm">
-        <div class="w-12 h-12 bg-[var(--color-brand-green-800)]/5 text-[var(--color-brand-green-800)] flex items-center justify-center rounded-xl mb-6 group-hover:scale-110 group-hover:bg-[var(--color-brand-green-800)] group-hover:text-white transition-all">
-          <mat-icon>query_stats</mat-icon>
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div class="feat-card group relative overflow-hidden rounded-[24px] border border-white/8 p-7" style="background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%)">
+        <div class="absolute -right-3 -top-4 font-black text-[7rem] leading-none text-white/[0.04] select-none pointer-events-none">01</div>
+        <div class="mb-6 h-[3px] w-10 rounded-full" style="background: linear-gradient(90deg,#c8a96a,#e2c17a)"></div>
+        <div class="feat-icon mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] text-white" style="background: linear-gradient(135deg, #1a4a30 0%, #2d6a4a 100%); box-shadow: 0 8px 24px rgba(26,74,48,0.35)">
+          <mat-icon style="font-size:26px;width:26px;height:26px">query_stats</mat-icon>
         </div>
-        <p class="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-green-800)]/55">Modules progressifs</p>
-        <h3 class="font-sans font-bold text-[var(--color-brand-green-900)] mb-2">{{ t({ fr: 'Parcours de Formation', en: 'Training Paths', ar: 'مسارات التكوين' }) }}</h3>
-        <p class="font-sans text-[var(--color-brand-green-800)]/70 text-sm font-light leading-relaxed">
-          {{ t({ fr: 'Des modules structurés, progressifs et accessibles pour apprendre à votre rythme et développer des compétences concrètes.', en: 'Structured, progressive and accessible modules to learn at your own pace and build practical skills.', ar: 'وحدات منظمة ومتدرجة وسهلة الوصول للتعلم حسب وتيرتك وبناء مهارات عملية.' }) }}
-        </p>
+        <p class="mb-2 text-[9px] font-bold uppercase tracking-[0.3em] text-[#c8a96a]/70">{{ t({ fr: 'Modules progressifs', en: 'Progressive modules', ar: 'وحدات متدرجة' }) }}</p>
+        <h3 class="font-serif text-lg text-white mb-3">{{ t({ fr: 'Parcours de Formation', en: 'Training Paths', ar: 'مسارات التكوين' }) }}</h3>
+        <p class="text-sm text-white/45 leading-relaxed">{{ t({ fr: 'Des modules structurés et progressifs pour apprendre à votre rythme et développer des compétences concrètes.', en: 'Structured modules to learn at your pace and build real skills.', ar: 'وحدات منظمة للتعلم حسب وتيرتك.' }) }}</p>
+        <div class="pointer-events-none absolute inset-0 rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="box-shadow: inset 0 0 0 1px rgba(200,169,106,0.32)"></div>
       </div>
-
-      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-[var(--color-brand-gold-300)]/50 transition-all opacity-100 group w-full max-w-sm">
-        <div class="w-12 h-12 bg-[var(--color-brand-gold-300)]/30 text-[var(--color-brand-gold-500)] flex items-center justify-center rounded-xl mb-6 group-hover:scale-110 group-hover:bg-[var(--color-brand-gold-500)] group-hover:text-white transition-all">
-          <mat-icon>fact_check</mat-icon>
+      <div class="feat-card group relative overflow-hidden rounded-[24px] border border-white/8 p-7" style="background: linear-gradient(145deg, rgba(200,169,106,0.08) 0%, rgba(200,169,106,0.04) 100%)">
+        <div class="absolute -right-3 -top-4 font-black text-[7rem] leading-none text-white/[0.04] select-none pointer-events-none">02</div>
+        <div class="mb-6 h-[3px] w-10 rounded-full" style="background: linear-gradient(90deg,#c8a96a,#e2c17a)"></div>
+        <div class="feat-icon mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] text-white" style="background: linear-gradient(135deg, #8a6b20 0%, #c8a96a 100%); box-shadow: 0 8px 24px rgba(26,74,48,0.35)">
+          <mat-icon style="font-size:26px;width:26px;height:26px">workspace_premium</mat-icon>
         </div>
-        <p class="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-gold-500)]/70">Validation officielle</p>
-        <h3 class="font-sans font-bold text-[var(--color-brand-green-900)] mb-2">{{ t({ fr: 'Évaluations & Certifications', en: 'Assessments & Certifications', ar: 'التقييمات والشهادات' }) }}</h3>
-        <p class="font-sans text-[var(--color-brand-green-800)]/70 text-sm font-light leading-relaxed">
-          {{ t({ fr: 'Validez vos acquis grâce à des évaluations claires et obtenez des certifications valorisantes pour votre parcours professionnel.', en: 'Validate your skills with clear assessments and earn certifications that strengthen your professional path.', ar: 'أكدي مهاراتك من خلال تقييمات واضحة واحصلي على شهادات تعزز مسارك المهني.' }) }}
-        </p>
+        <p class="mb-2 text-[9px] font-bold uppercase tracking-[0.3em] text-[#c8a96a]/70">{{ t({ fr: 'Validation officielle', en: 'Official validation', ar: 'تحقق رسمي' }) }}</p>
+        <h3 class="font-serif text-lg text-white mb-3">{{ t({ fr: 'Évaluations &amp; Certifications', en: 'Assessments &amp; Certifications', ar: 'التقييمات والشهادات' }) }}</h3>
+        <p class="text-sm text-white/45 leading-relaxed">{{ t({ fr: 'Validez vos acquis grâce à des évaluations claires et obtenez des certifications valorisantes.', en: 'Validate your skills and earn valuable certifications.', ar: 'أكدي مهاراتك واحصلي على شهادات معتمدة.' }) }}</p>
+        <div class="pointer-events-none absolute inset-0 rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="box-shadow: inset 0 0 0 1px rgba(200,169,106,0.32)"></div>
       </div>
-
-      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-[var(--color-brand-gold-300)]/50 transition-all opacity-100 group w-full max-w-sm">
-        <div class="w-12 h-12 bg-[var(--color-brand-green-800)]/5 text-[var(--color-brand-green-800)] flex items-center justify-center rounded-xl mb-6 group-hover:scale-110 group-hover:bg-[var(--color-brand-green-800)] group-hover:text-white transition-all">
-          <mat-icon>important_devices</mat-icon>
+      <div class="feat-card group relative overflow-hidden rounded-[24px] border border-white/8 p-7" style="background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%)">
+        <div class="absolute -right-3 -top-4 font-black text-[7rem] leading-none text-white/[0.04] select-none pointer-events-none">03</div>
+        <div class="mb-6 h-[3px] w-10 rounded-full" style="background: linear-gradient(90deg,#c8a96a,#e2c17a)"></div>
+        <div class="feat-icon mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] text-white" style="background: linear-gradient(135deg, #1a4a30 0%, #2d6a4a 100%); box-shadow: 0 8px 24px rgba(26,74,48,0.35)">
+          <mat-icon style="font-size:26px;width:26px;height:26px">important_devices</mat-icon>
         </div>
-        <p class="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-green-800)]/55">Accès privé en ligne</p>
-        <h3 class="font-sans font-bold text-[var(--color-brand-green-900)] mb-2">{{ t({ fr: 'Espace Élève Privé', en: 'Private Student Space', ar: 'فضاء الطالب الخاص' }) }}</h3>
-        <p class="font-sans text-[var(--color-brand-green-800)]/70 text-sm font-light leading-relaxed">
-          {{ t({ fr: 'Retrouvez vos cours, vos supports, vos ressources et vos contenus vidéo dans un environnement fluide, moderne et facile à utiliser.', en: 'Access your lessons, materials, resources and videos in a smooth, modern and easy-to-use environment.', ar: 'اعثري على دروسك ومواردك ومحتوياتك المرئية في بيئة حديثة وسهلة الاستخدام.' }) }}
-        </p>
+        <p class="mb-2 text-[9px] font-bold uppercase tracking-[0.3em] text-[#c8a96a]/70">{{ t({ fr: 'Accès privé en ligne', en: 'Private online access', ar: 'وصول خاص' }) }}</p>
+        <h3 class="font-serif text-lg text-white mb-3">{{ t({ fr: 'Espace Élève Privé', en: 'Private Student Space', ar: 'فضاء الطالب الخاص' }) }}</h3>
+        <p class="text-sm text-white/45 leading-relaxed">{{ t({ fr: 'Retrouvez vos cours, supports et ressources dans un environnement fluide, moderne et facile à utiliser.', en: 'Access your lessons and resources in a smooth, modern environment.', ar: 'اعثري على دروسك ومواردك في بيئة حديثة.' }) }}</p>
+        <div class="pointer-events-none absolute inset-0 rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="box-shadow: inset 0 0 0 1px rgba(200,169,106,0.32)"></div>
       </div>
-
-      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-[var(--color-brand-gold-300)]/50 transition-all opacity-100 group w-full max-w-sm">
-        <div class="w-12 h-12 bg-[var(--color-brand-gold-300)]/30 text-[var(--color-brand-gold-500)] flex items-center justify-center rounded-xl mb-6 group-hover:scale-110 group-hover:bg-[var(--color-brand-gold-500)] group-hover:text-white transition-all">
-          <mat-icon>gpp_good</mat-icon>
+      <div class="feat-card group relative overflow-hidden rounded-[24px] border border-white/8 p-7" style="background: linear-gradient(145deg, rgba(200,169,106,0.08) 0%, rgba(200,169,106,0.04) 100%)">
+        <div class="absolute -right-3 -top-4 font-black text-[7rem] leading-none text-white/[0.04] select-none pointer-events-none">04</div>
+        <div class="mb-6 h-[3px] w-10 rounded-full" style="background: linear-gradient(90deg,#c8a96a,#e2c17a)"></div>
+        <div class="feat-icon mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] text-white" style="background: linear-gradient(135deg, #8a6b20 0%, #c8a96a 100%); box-shadow: 0 8px 24px rgba(26,74,48,0.35)">
+          <mat-icon style="font-size:26px;width:26px;height:26px">gpp_good</mat-icon>
         </div>
-        <p class="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-gold-500)]/70">Suivi sécurisé</p>
-        <h3 class="font-sans font-bold text-[var(--color-brand-green-900)] mb-2">{{ t({ fr: 'Accompagnement Sécurisé', en: 'Secure Guidance', ar: 'مرافقة آمنة' }) }}</h3>
-        <p class="font-sans text-[var(--color-brand-green-800)]/70 text-sm font-light leading-relaxed">
-          {{ t({ fr: 'Profitez d\'une plateforme fiable et confidentielle, pensée pour vous accompagner sérieusement dans votre progression.', en: 'Benefit from a reliable and confidential platform designed to support your progress seriously.', ar: 'استفيدي من منصة موثوقة وسرية صممت لمرافقتك بجدية في تقدمك.' }) }}
-        </p>
+        <p class="mb-2 text-[9px] font-bold uppercase tracking-[0.3em] text-[#c8a96a]/70">{{ t({ fr: 'Suivi sécurisé', en: 'Secure guidance', ar: 'متابعة آمنة' }) }}</p>
+        <h3 class="font-serif text-lg text-white mb-3">{{ t({ fr: 'Accompagnement Sécurisé', en: 'Secure Guidance', ar: 'مرافقة آمنة' }) }}</h3>
+        <p class="text-sm text-white/45 leading-relaxed">{{ t({ fr: 'Une plateforme fiable et confidentielle, pensée pour vous accompagner sérieusement dans votre progression.', en: 'A reliable platform to seriously support your progress.', ar: 'منصة موثوقة وسرية لمرافقتك.' }) }}</p>
+        <div class="pointer-events-none absolute inset-0 rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="box-shadow: inset 0 0 0 1px rgba(200,169,106,0.32)"></div>
       </div>
+    </div>
+    <div class="mt-14 flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
+      <p class="text-sm text-white/40">{{ t({ fr: 'Prête à commencer votre transformation ?', en: 'Ready to start your transformation?', ar: 'هل أنت مستعدة؟' }) }}</p>
+      <a routerLink="/register" class="inline-flex items-center gap-2 rounded-full bg-[#c8a96a] px-6 py-2.5 text-sm font-bold text-[#0c1610] transition-all hover:bg-[#e2c17a] hover:shadow-[0_8px_28px_rgba(200,169,106,0.35)]">
+        {{ t({ fr: "S'inscrire gratuitement", en: 'Sign up for free', ar: 'سجلي مجاناً' }) }}
+      </a>
     </div>
   </div>
 </section>
