@@ -69,6 +69,14 @@ import { DisplayPreferencesService, LocalizedText } from '../../shared/services/
     .feat-icon { transition: transform 0.35s cubic-bezier(.4,0,.2,1); }
     .feat-card:hover { transform: translateY(-6px); }
     .feat-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .formula-card { animation: fadeUp 0.65s cubic-bezier(.4,0,.2,1) both; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .formula-card:nth-child(1) { animation-delay: 0.05s; }
+    .formula-card:nth-child(2) { animation-delay: 0.18s; }
+    .formula-card:nth-child(3) { animation-delay: 0.31s; }
+    .formula-card:nth-child(4) { animation-delay: 0.44s; }
+    .formula-card:hover { transform: translateY(-8px); box-shadow: 0 24px 56px rgba(15,23,19,0.14); }
+    .formula-img { transition: transform 0.6s cubic-bezier(.4,0,.2,1); }
+    .formula-card:hover .formula-img { transform: scale(1.06); }
   `]
 })
 export class LandingComponent implements AfterViewInit {

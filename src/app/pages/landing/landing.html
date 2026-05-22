@@ -196,70 +196,212 @@
   </div>
 </section>
 
-<!-- Formation Par Formule Section -->
-<section class="py-24 bg-gradient-to-br from-[var(--color-brand-cream)] via-white to-[var(--color-brand-gold-100)]">
-  <div class="mx-auto max-w-7xl px-6">
-    <h2 class="text-center font-serif text-4xl md:text-5xl text-[var(--color-brand-green-900)] mb-14">
-      Formation Par Formule :
-    </h2>
-    <div class="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
-      <!-- Formule Essentielle -->
-      <div class="rounded-3xl border-2 border-[var(--color-brand-gold-300)] bg-white shadow-lg p-8 flex flex-col items-center hover:scale-[1.03] transition-transform">
-        <div class="w-16 h-16 flex items-center justify-center rounded-full bg-[var(--color-brand-gold-500)]/20 mb-5">
-          <mat-icon class="text-[var(--color-brand-gold-700)]" style="font-size: 2.2rem;">verified</mat-icon>
-        </div>
-        <h3 class="font-serif text-2xl text-[var(--color-brand-gold-700)] mb-2">Essentielle</h3>
-        <p class="text-center text-[var(--color-brand-green-800)]/80 text-base mb-4">Une formule d’initiation structurée pour acquérir les fondamentaux du bien-être féminin avec clarté et méthode.</p>
-        <p class="text-center text-sm leading-6 text-[var(--color-brand-green-800)]/65 mb-6">Idéale pour démarrer sur des bases solides, développer une première expertise et avancer avec confiance dans un cadre professionnel.</p>
-        <span class="inline-block rounded-full bg-[var(--color-brand-gold-100)] px-4 py-1 text-xs font-bold text-[var(--color-brand-gold-700)]">Fondamentale</span>
-        <a routerLink="/formation" class="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-5 py-3 text-sm font-bold text-white no-underline transition-colors duration-300 hover:bg-black hover:text-white">
-          <mat-icon style="font-size: 18px;">explore</mat-icon>
-          Explorer
-        </a>
+<!-- ═══════════════════════════════════════════════════════════
+     Nos Formules — Premium redesign with images
+     ═══════════════════════════════════════════════════════════ -->
+<section class="relative overflow-hidden py-24 bg-white">
+
+  <!-- Background texture -->
+  <div class="pointer-events-none absolute inset-0 opacity-[0.025]"
+       style="background-image: radial-gradient(circle, #1a3a2a 1px, transparent 1px); background-size: 32px 32px"></div>
+
+  <div class="relative mx-auto max-w-7xl px-6">
+
+    <!-- Header -->
+    <div class="mx-auto max-w-3xl text-center mb-14">
+      <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/60 bg-[var(--color-brand-cream)] px-5 py-2 text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-700)] mb-6">
+        <span class="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-brand-gold-500)]"></span>
+        {{ t({ fr: 'Nos formules', en: 'Our programs', ar: 'برامجنا' }) }}
       </div>
-      <!-- Formule Premium -->
-      <div class="rounded-3xl border-2 border-[var(--color-brand-green-800)]/30 bg-gradient-to-br from-white to-[var(--color-brand-green-100)] shadow-xl p-8 flex flex-col items-center hover:scale-[1.03] transition-transform">
-        <div class="w-16 h-16 flex items-center justify-center rounded-full bg-[var(--color-brand-green-800)]/15 mb-5">
-          <mat-icon class="text-[var(--color-brand-green-800)]" style="font-size: 2.2rem;">military_tech</mat-icon>
-        </div>
-        <h3 class="font-serif text-2xl text-[var(--color-brand-green-800)] mb-2">Premium</h3>
-        <p class="text-center text-[var(--color-brand-green-800)]/80 text-base mb-4">Une formule renforcée pensée pour accélérer votre progression grâce à un contenu plus riche et un accompagnement approfondi.</p>
-        <p class="text-center text-sm leading-6 text-[var(--color-brand-green-800)]/65 mb-6">Elle combine davantage de modules, de pratique encadrée et de suivi pour soutenir une montée en compétence plus rapide.</p>
-        <span class="inline-block rounded-full bg-[var(--color-brand-green-200)] px-4 py-1 text-xs font-bold text-[var(--color-brand-green-900)]">Signature</span>
-        <a routerLink="/formation" class="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[var(--color-brand-green-800)] px-5 py-3 text-sm font-bold text-white no-underline transition-colors duration-300 hover:bg-black hover:text-white">
-          <mat-icon style="font-size: 18px;">explore</mat-icon>
-          Explorer
-        </a>
-      </div>
-      <!-- Formule Expert -->
-      <div class="rounded-3xl border-2 border-[var(--color-brand-gold-500)]/40 bg-gradient-to-br from-[var(--color-brand-gold-50)] to-white shadow-xl p-8 flex flex-col items-center hover:scale-[1.03] transition-transform">
-        <div class="w-16 h-16 flex items-center justify-center rounded-full bg-[var(--color-brand-gold-500)]/15 mb-5">
-          <mat-icon class="text-[var(--color-brand-gold-500)]" style="font-size: 2.2rem;">school</mat-icon>
-        </div>
-        <h3 class="font-serif text-2xl text-[var(--color-brand-gold-500)] mb-2">Expert</h3>
-        <p class="text-center text-[var(--color-brand-green-800)]/80 text-base mb-4">Une formule d’expertise dédiée aux profils qui souhaitent atteindre un niveau avancé de maîtrise et de spécialisation.</p>
-        <p class="text-center text-sm leading-6 text-[var(--color-brand-green-800)]/65 mb-6">Elle intègre des modules approfondis, des cas concrets et une approche orientée résultats pour une posture pleinement professionnelle.</p>
-        <span class="inline-block rounded-full bg-[var(--color-brand-gold-200)] px-4 py-1 text-xs font-bold text-[var(--color-brand-gold-700)]">Expertise</span>
-        <a routerLink="/formation" class="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-5 py-3 text-sm font-bold text-white no-underline transition-colors duration-300 hover:bg-black hover:text-white">
-          <mat-icon style="font-size: 18px;">explore</mat-icon>
-          Explorer
-        </a>
-      </div>
-      <!-- Formule Sur-mesure -->
-      <div class="rounded-3xl border-2 border-[var(--color-brand-green-800)]/20 bg-gradient-to-br from-white to-[var(--color-brand-green-50)] shadow-xl p-8 flex flex-col items-center hover:scale-[1.03] transition-transform">
-        <div class="w-16 h-16 flex items-center justify-center rounded-full bg-[var(--color-brand-green-800)]/10 mb-5">
-          <mat-icon class="text-[var(--color-brand-green-900)]" style="font-size: 2.2rem;">tune</mat-icon>
-        </div>
-        <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-2">Sur-mesure</h3>
-        <p class="text-center text-[var(--color-brand-green-800)]/80 text-base mb-4">Une formule sur mesure conçue pour répondre précisément à vos objectifs, votre niveau et vos priorités de développement.</p>
-        <p class="text-center text-sm leading-6 text-[var(--color-brand-green-800)]/65 mb-6">Elle permet de construire un parcours personnalisé, flexible et cohérent avec votre rythme, votre ambition et votre projet professionnel.</p>
-        <span class="inline-block rounded-full bg-[var(--color-brand-green-100)] px-4 py-1 text-xs font-bold text-[var(--color-brand-green-900)]">Exclusif</span>
-        <a routerLink="/formation" class="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[var(--color-brand-green-800)] px-5 py-3 text-sm font-bold text-white no-underline transition-colors duration-300 hover:bg-black hover:text-white">
-          <mat-icon style="font-size: 18px;">explore</mat-icon>
-          Explorer
-        </a>
-      </div>
+      <h2 class="font-serif text-4xl text-[var(--color-brand-green-900)] sm:text-5xl">
+        {{ t({ fr: 'Choisissez votre', en: 'Choose your', ar: 'اختاري' }) }}
+        <span class="relative">
+          {{ t({ fr: 'parcours', en: 'path', ar: 'مسارك' }) }}
+          <svg class="absolute -bottom-1 left-0 w-full" height="5" viewBox="0 0 120 5" preserveAspectRatio="none">
+            <path d="M0 4 Q30 0 60 4 Q90 8 120 4" stroke="#c8a96a" stroke-width="2" fill="none"/>
+          </svg>
+        </span>
+      </h2>
+      <p class="mt-5 text-base text-[var(--color-brand-green-800)]/60 max-w-xl mx-auto">
+        {{ t({ fr: "Des formules pensées pour chaque étape de votre développement professionnel, de l'initiation à l'expertise.", en: 'Programs designed for every stage of your professional growth.', ar: 'برامج مصممة لكل مرحلة من مراحل تطورك المهني.' }) }}
+      </p>
     </div>
+
+    <!-- Cards grid -->
+    <div class="grid gap-7 md:grid-cols-2 xl:grid-cols-4">
+
+      <!-- Essentielle -->
+      <div class="formula-card group flex flex-col overflow-hidden rounded-[28px] border border-[var(--color-brand-gold-300)]/30 bg-white shadow-[0_8px_32px_rgba(15,23,19,0.07)]">
+        <!-- Image header -->
+        <div class="relative h-52 overflow-hidden">
+          <img src="formation nutrition.jpeg" alt="Formule Essentielle" class="formula-img h-full w-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#1a3a2a]/80 via-[#1a3a2a]/25 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 p-4">
+            <span class="inline-flex items-center rounded-full bg-[#c8a96a] px-3 py-1 text-[9px] font-black uppercase tracking-[0.28em] text-[#1a3a2a]">Fondamentale</span>
+          </div>
+          <div class="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#c8a96a]/20 backdrop-blur-sm border border-[#c8a96a]/40">
+            <mat-icon class="text-[#ffd97a]" style="font-size:20px;width:20px;height:20px">verified</mat-icon>
+          </div>
+        </div>
+        <!-- Body -->
+        <div class="flex flex-1 flex-col p-6">
+          <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-2">Essentielle</h3>
+          <p class="text-sm text-[var(--color-brand-green-800)]/65 leading-relaxed mb-5">
+            {{ t({ fr: "L'initiation structurée pour acquérir les fondamentaux du bien-être féminin avec clarté et méthode.", en: 'A structured introduction to master the fundamentals of women wellness.', ar: 'المدخل المنظم لإتقان أساسيات رفاه المرأة.' }) }}
+          </p>
+          <ul class="space-y-2 mb-6 flex-1">
+            <li class="flex items-center gap-2.5 text-sm text-[var(--color-brand-green-800)]/75">
+              <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-100)] text-[var(--color-brand-gold-700)]">✓</span>
+              {{ t({ fr: 'Modules progressifs en ligne', en: 'Progressive online modules', ar: 'وحدات متدرجة عبر الإنترنت' }) }}
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-[var(--color-brand-green-800)]/75">
+              <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-100)] text-[var(--color-brand-gold-700)]">✓</span>
+              {{ t({ fr: 'Supports PDF & ressources', en: 'PDF resources & materials', ar: 'موارد PDF ومواد' }) }}
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-[var(--color-brand-green-800)]/75">
+              <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-100)] text-[var(--color-brand-gold-700)]">✓</span>
+              {{ t({ fr: 'Certificat de validation', en: 'Certificate of completion', ar: 'شهادة إتمام' }) }}
+            </li>
+          </ul>
+          <a routerLink="/formations" class="mt-auto inline-flex items-center justify-center gap-2 rounded-full border border-[var(--color-brand-gold-400)] bg-white px-5 py-2.5 text-sm font-bold text-[var(--color-brand-green-900)] transition hover:bg-[var(--color-brand-gold-500)] hover:text-white hover:border-[var(--color-brand-gold-500)]">
+            {{ t({ fr: 'Découvrir', en: 'Discover', ar: 'اكتشفي' }) }}
+            <mat-icon style="font-size:16px;width:16px;height:16px">arrow_forward</mat-icon>
+          </a>
+        </div>
+      </div>
+
+      <!-- Premium — featured -->
+      <div class="formula-card group flex flex-col overflow-hidden rounded-[28px] shadow-[0_16px_48px_rgba(26,58,42,0.22)]" style="background: linear-gradient(175deg, #1a3a2a 0%, #214b39 100%)">
+        <!-- Image header -->
+        <div class="relative h-52 overflow-hidden">
+          <img src="formationdétoxe.jpeg" alt="Formule Premium" class="formula-img h-full w-full object-cover opacity-60" />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#1a3a2a]/90 via-[#1a3a2a]/40 to-transparent"></div>
+          <div class="absolute left-4 top-4">
+            <span class="inline-flex items-center gap-1 rounded-full bg-[#c8a96a] px-3 py-1 text-[9px] font-black uppercase tracking-[0.28em] text-[#1a3a2a]">
+              ★ Signature
+            </span>
+          </div>
+          <div class="absolute bottom-4 left-0 right-0 text-center">
+            <span class="text-[10px] font-bold uppercase tracking-[0.22em] text-[#c8a96a]/80">La plus choisie</span>
+          </div>
+        </div>
+        <!-- Body -->
+        <div class="flex flex-1 flex-col p-6">
+          <h3 class="font-serif text-2xl text-white mb-2">Premium</h3>
+          <p class="text-sm text-white/60 leading-relaxed mb-5">
+            {{ t({ fr: "Accélérez votre progression grâce à un contenu enrichi et un accompagnement approfondi pour une montée en compétence rapide.", en: 'Accelerate your growth with richer content and deep coaching support.', ar: 'تسريع تقدمك بمحتوى غني ودعم متعمق.' }) }}
+          </p>
+          <ul class="space-y-2 mb-6 flex-1">
+            <li class="flex items-center gap-2.5 text-sm text-white/75">
+              <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#c8a96a]/20 text-[#c8a96a]">✓</span>
+              {{ t({ fr: 'Tout le contenu Essentielle', en: 'All Essentielle content', ar: 'كل محتوى الأساسية' }) }}
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-white/75">
+              <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#c8a96a]/20 text-[#c8a96a]">✓</span>
+              {{ t({ fr: 'Sessions live & accompagnement', en: 'Live sessions & coaching', ar: 'جلسات مباشرة ومرافقة' }) }}
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-white/75">
+              <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#c8a96a]/20 text-[#c8a96a]">✓</span>
+              {{ t({ fr: 'Certificats multiples', en: 'Multiple certificates', ar: 'شهادات متعددة' }) }}
+            </li>
+          </ul>
+          <a routerLink="/formations" class="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-[#c8a96a] px-5 py-2.5 text-sm font-bold text-[#1a3a2a] transition hover:bg-[#e2c17a] hover:shadow-[0_8px_24px_rgba(200,169,106,0.4)]">
+            {{ t({ fr: 'Découvrir', en: 'Discover', ar: 'اكتشفي' }) }}
+            <mat-icon style="font-size:16px;width:16px;height:16px">arrow_forward</mat-icon>
+          </a>
+        </div>
+      </div>
+
+      <!-- Expert -->
+      <div class="formula-card group flex flex-col overflow-hidden rounded-[28px] border border-[var(--color-brand-gold-300)]/30 bg-white shadow-[0_8px_32px_rgba(15,23,19,0.07)]">
+        <div class="relative h-52 overflow-hidden">
+          <img src="cupping.jpeg" alt="Formule Expert" class="formula-img h-full w-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#1a3a2a]/80 via-[#1a3a2a]/25 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 p-4">
+            <span class="inline-flex items-center rounded-full bg-[#c8a96a] px-3 py-1 text-[9px] font-black uppercase tracking-[0.28em] text-[#1a3a2a]">Expertise</span>
+          </div>
+          <div class="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#c8a96a]/20 backdrop-blur-sm border border-[#c8a96a]/40">
+            <mat-icon class="text-[#ffd97a]" style="font-size:20px;width:20px;height:20px">school</mat-icon>
+          </div>
+        </div>
+        <div class="flex flex-1 flex-col p-6">
+          <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-2">Expert</h3>
+          <p class="text-sm text-[var(--color-brand-green-800)]/65 leading-relaxed mb-5">
+            {{ t({ fr: "Atteignez un niveau avancé de maîtrise et de spécialisation avec des modules approfondis et une approche orientée résultats.", en: 'Reach advanced mastery with deep modules and a results-driven approach.', ar: 'الوصول إلى مستوى متقدم من الإتقان.' }) }}
+          </p>
+          <ul class="space-y-2 mb-6 flex-1">
+            <li class="flex items-center gap-2.5 text-sm text-[var(--color-brand-green-800)]/75">
+              <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-100)] text-[var(--color-brand-gold-700)]">✓</span>
+              {{ t({ fr: 'Modules spécialisés avancés', en: 'Advanced specialised modules', ar: 'وحدات متخصصة متقدمة' }) }}
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-[var(--color-brand-green-800)]/75">
+              <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-100)] text-[var(--color-brand-gold-700)]">✓</span>
+              {{ t({ fr: 'Études de cas & pratique', en: 'Case studies & practice', ar: 'دراسات حالة وتطبيق' }) }}
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-[var(--color-brand-green-800)]/75">
+              <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-100)] text-[var(--color-brand-gold-700)]">✓</span>
+              {{ t({ fr: 'Diplôme professionnel', en: 'Professional diploma', ar: 'دبلوم مهني' }) }}
+            </li>
+          </ul>
+          <a routerLink="/formations" class="mt-auto inline-flex items-center justify-center gap-2 rounded-full border border-[var(--color-brand-gold-400)] bg-white px-5 py-2.5 text-sm font-bold text-[var(--color-brand-green-900)] transition hover:bg-[var(--color-brand-gold-500)] hover:text-white hover:border-[var(--color-brand-gold-500)]">
+            {{ t({ fr: 'Découvrir', en: 'Discover', ar: 'اكتشفي' }) }}
+            <mat-icon style="font-size:16px;width:16px;height:16px">arrow_forward</mat-icon>
+          </a>
+        </div>
+      </div>
+
+      <!-- Sur-mesure -->
+      <div class="formula-card group flex flex-col overflow-hidden rounded-[28px] border border-[var(--color-brand-gold-300)]/30 bg-white shadow-[0_8px_32px_rgba(15,23,19,0.07)]">
+        <div class="relative h-52 overflow-hidden">
+          <img src="formation massage anti.jpeg" alt="Formule Sur-mesure" class="formula-img h-full w-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#1a3a2a]/80 via-[#1a3a2a]/25 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 p-4">
+            <span class="inline-flex items-center rounded-full bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-[0.28em] text-[#1a3a2a]">Exclusif</span>
+          </div>
+          <div class="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#c8a96a]/20 backdrop-blur-sm border border-[#c8a96a]/40">
+            <mat-icon class="text-[#ffd97a]" style="font-size:20px;width:20px;height:20px">tune</mat-icon>
+          </div>
+        </div>
+        <div class="flex flex-1 flex-col p-6">
+          <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-2">Sur-mesure</h3>
+          <p class="text-sm text-[var(--color-brand-green-800)]/65 leading-relaxed mb-5">
+            {{ t({ fr: "Un parcours entièrement personnalisé, conçu selon vos objectifs, votre niveau et votre rythme.", en: 'A fully personalised path built around your goals, level and pace.', ar: 'مسار مخصص بالكامل حول أهدافك ومستواك.' }) }}
+          </p>
+          <ul class="space-y-2 mb-6 flex-1">
+            <li class="flex items-center gap-2.5 text-sm text-[var(--color-brand-green-800)]/75">
+              <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-100)] text-[var(--color-brand-gold-700)]">✓</span>
+              {{ t({ fr: 'Programme 100% personnalisé', en: '100% personalised program', ar: 'برنامج 100٪ مخصص' }) }}
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-[var(--color-brand-green-800)]/75">
+              <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-100)] text-[var(--color-brand-gold-700)]">✓</span>
+              {{ t({ fr: 'Coaching individuel dédié', en: 'Dedicated individual coaching', ar: 'تدريب فردي مخصص' }) }}
+            </li>
+            <li class="flex items-center gap-2.5 text-sm text-[var(--color-brand-green-800)]/75">
+              <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-gold-100)] text-[var(--color-brand-gold-700)]">✓</span>
+              {{ t({ fr: 'Rythme & calendrier flexibles', en: 'Flexible pace & schedule', ar: 'وتيرة وجدول زمني مرن' }) }}
+            </li>
+          </ul>
+          <a routerLink="/contact" class="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[var(--color-brand-green-800)] hover:shadow-[0_8px_24px_rgba(26,58,42,0.28)]">
+            {{ t({ fr: 'Nous contacter', en: 'Contact us', ar: 'تواصلي معنا' }) }}
+            <mat-icon style="font-size:16px;width:16px;height:16px">arrow_forward</mat-icon>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom CTA -->
+    <div class="mt-12 text-center">
+      <p class="text-sm text-[var(--color-brand-green-800)]/50 mb-4">
+        {{ t({ fr: 'Pas sûre de votre choix ? Découvrez toutes nos formations en détail.', en: 'Not sure which to choose? Explore all our programs.', ar: 'غير متأكدة من اختيارك؟ اكتشفي جميع برامجنا.' }) }}
+      </p>
+      <a routerLink="/formations"
+         class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-green-900)]/30 bg-white px-7 py-3 text-sm font-bold text-[var(--color-brand-green-900)] shadow-sm transition hover:bg-[var(--color-brand-green-900)] hover:text-white hover:shadow-md">
+        {{ t({ fr: 'Voir toutes les formations', en: 'See all programs', ar: 'عرض جميع البرامج' }) }}
+        <mat-icon style="font-size:16px;width:16px;height:16px">arrow_forward</mat-icon>
+      </a>
+    </div>
+
   </div>
 </section>
 
