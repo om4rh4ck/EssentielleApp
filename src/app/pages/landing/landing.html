@@ -244,6 +244,199 @@
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════════════════════
+     DESTINATIONS — Infinite scrolling showcase
+     ═══════════════════════════════════════════════════════════ -->
+<section class="relative overflow-hidden bg-[#0c1610] py-20">
+
+  <!-- Decorative background texture -->
+  <div class="pointer-events-none absolute inset-0 opacity-20"
+       style="background-image: radial-gradient(circle at 20% 50%, rgba(200,169,106,.18) 0%, transparent 60%), radial-gradient(circle at 80% 30%, rgba(22,68,44,.4) 0%, transparent 55%)"></div>
+
+  <!-- Header -->
+  <div class="relative z-10 mx-auto max-w-7xl px-6 text-center">
+    <div class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-400)]/30 bg-white/5 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-5">
+      Nos destinations
+    </div>
+    <h2 class="font-serif text-3xl text-white sm:text-4xl lg:text-5xl">
+      Se former en <span class="text-[var(--color-brand-gold-400)]">France</span> &amp; en <span class="text-[var(--color-brand-gold-400)]">Tunisie</span>
+    </h2>
+    <p class="mx-auto mt-4 max-w-xl text-sm text-white/50 leading-relaxed">
+      Des sessions dans des cadres d'exception — de Paris à Djerba, vivez une formation dans un environnement inspirant.
+    </p>
+  </div>
+
+  <!-- Marquee strip -->
+  <div class="relative mt-12 overflow-hidden">
+
+    <!-- Left fade -->
+    <div class="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 sm:w-40"
+         style="background: linear-gradient(to right, #0c1610 0%, transparent 100%)"></div>
+    <!-- Right fade -->
+    <div class="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 sm:w-40"
+         style="background: linear-gradient(to left, #0c1610 0%, transparent 100%)"></div>
+
+    <!-- Track (duplicated for seamless loop) -->
+    <div class="dest-track flex gap-5 px-5" style="width: max-content;">
+
+      <!-- ── Set 1 ── -->
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/paris.jpg" alt="Paris" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">France</div>
+          <div class="font-serif text-2xl leading-tight text-white">Paris</div>
+          <div class="mt-1 text-xs text-white/55">Tour Eiffel · Île-de-France</div>
+        </div>
+      </div>
+
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/louvre2.jpg" alt="Paris Louvre" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">France</div>
+          <div class="font-serif text-2xl leading-tight text-white">Paris — Louvre</div>
+          <div class="mt-1 text-xs text-white/55">Musée du Louvre · Paris</div>
+        </div>
+      </div>
+
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/djerba.jpg" alt="Djerba" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">Tunisie</div>
+          <div class="font-serif text-2xl leading-tight text-white">Djerba</div>
+          <div class="mt-1 text-xs text-white/55">Île de Djerba · Sud Tunisien</div>
+        </div>
+      </div>
+
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/tunisiebousaid.jpg" alt="Sidi Bou Saïd" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">Tunisie</div>
+          <div class="font-serif text-2xl leading-tight text-white">Sidi Bou Saïd</div>
+          <div class="mt-1 text-xs text-white/55">Village bleu et blanc · Tunis</div>
+        </div>
+      </div>
+
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/djerbagallela.jpg" alt="Djerba Gallela" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">Tunisie</div>
+          <div class="font-serif text-2xl leading-tight text-white">Djerba — Galléla</div>
+          <div class="mt-1 text-xs text-white/55">Mosquée · Architecture traditionnelle</div>
+        </div>
+      </div>
+
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/tunisiebizerte.jpg" alt="Bizerte" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">Tunisie</div>
+          <div class="font-serif text-2xl leading-tight text-white">Bizerte</div>
+          <div class="mt-1 text-xs text-white/55">Port méditerranéen · Nord Tunisie</div>
+        </div>
+      </div>
+
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/djerbabateauxpirate.jpg" alt="Djerba bateaux" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">Tunisie</div>
+          <div class="font-serif text-2xl leading-tight text-white">Djerba — Port</div>
+          <div class="mt-1 text-xs text-white/55">Port de plaisance · Méditerranée</div>
+        </div>
+      </div>
+
+      <!-- ── Set 2 (duplicate for seamless loop) ── -->
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/paris.jpg" alt="Paris" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">France</div>
+          <div class="font-serif text-2xl leading-tight text-white">Paris</div>
+          <div class="mt-1 text-xs text-white/55">Tour Eiffel · Île-de-France</div>
+        </div>
+      </div>
+
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/louvre2.jpg" alt="Paris Louvre" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">France</div>
+          <div class="font-serif text-2xl leading-tight text-white">Paris — Louvre</div>
+          <div class="mt-1 text-xs text-white/55">Musée du Louvre · Paris</div>
+        </div>
+      </div>
+
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/djerba.jpg" alt="Djerba" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">Tunisie</div>
+          <div class="font-serif text-2xl leading-tight text-white">Djerba</div>
+          <div class="mt-1 text-xs text-white/55">Île de Djerba · Sud Tunisien</div>
+        </div>
+      </div>
+
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/tunisiebousaid.jpg" alt="Sidi Bou Saïd" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">Tunisie</div>
+          <div class="font-serif text-2xl leading-tight text-white">Sidi Bou Saïd</div>
+          <div class="mt-1 text-xs text-white/55">Village bleu et blanc · Tunis</div>
+        </div>
+      </div>
+
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/djerbagallela.jpg" alt="Djerba Gallela" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">Tunisie</div>
+          <div class="font-serif text-2xl leading-tight text-white">Djerba — Galléla</div>
+          <div class="mt-1 text-xs text-white/55">Mosquée · Architecture traditionnelle</div>
+        </div>
+      </div>
+
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/tunisiebizerte.jpg" alt="Bizerte" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">Tunisie</div>
+          <div class="font-serif text-2xl leading-tight text-white">Bizerte</div>
+          <div class="mt-1 text-xs text-white/55">Port méditerranéen · Nord Tunisie</div>
+        </div>
+      </div>
+
+      <div class="dest-card group relative h-[420px] w-72 shrink-0 cursor-pointer overflow-hidden rounded-[24px] border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,.5)]">
+        <img src="/uploads/djerbabateauxpirate.jpg" alt="Djerba bateaux" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="dest-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-gold-400)] mb-1.5">Tunisie</div>
+          <div class="font-serif text-2xl leading-tight text-white">Djerba — Port</div>
+          <div class="mt-1 text-xs text-white/55">Port de plaisance · Méditerranée</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom CTA -->
+  <div class="relative z-10 mt-12 text-center">
+    <a routerLink="/formations"
+       class="inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-400)]/40 bg-white/8 px-6 py-3 text-sm font-semibold text-[var(--color-brand-gold-300)] transition hover:bg-white/12 hover:border-[var(--color-brand-gold-400)]/70">
+      Découvrir nos formations
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+      </svg>
+    </a>
+  </div>
+
+</section>
+
 <!-- Training Info Section -->
 <section class="border-t border-[var(--color-brand-gold-300)]/30 bg-[var(--color-brand-cream)] py-24">
   <div class="mx-auto max-w-7xl px-6">

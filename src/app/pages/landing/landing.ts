@@ -10,7 +10,22 @@ import { DisplayPreferencesService, LocalizedText } from '../../shared/services/
   standalone: true,
   imports: [RouterLink, MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './landing.html'
+  templateUrl: './landing.html',
+  styles: [`
+    @keyframes dest-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .dest-track {
+      animation: dest-scroll 45s linear infinite;
+      will-change: transform;
+    }
+    .dest-track:hover { animation-play-state: paused; }
+    .dest-card img { transition: transform .6s cubic-bezier(.4,0,.2,1); }
+    .dest-card:hover img { transform: scale(1.08); }
+    .dest-card:hover .dest-overlay { opacity: .55; }
+    .dest-overlay { transition: opacity .4s; }
+  `]
 })
 export class LandingComponent implements AfterViewInit {
   private readonly preferences = inject(DisplayPreferencesService);
