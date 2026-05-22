@@ -11,7 +11,13 @@ import { StudentCourse, StudentPortalService } from '../../services/student-port
   standalone: true,
   imports: [DashboardLayoutComponent, MatIconModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './course-detail.html'
+  templateUrl: './course-detail.html',
+  styles: [`
+    .quiz-option { transition: border-color 0.15s, background-color 0.15s; }
+    .quiz-option:hover { border-color: var(--color-brand-gold-300); background-color: rgba(254,249,237,0.6); }
+    .prog-card summary::-webkit-details-marker { display: none; }
+    .pdf-row { transition: background-color 0.2s, border-color 0.2s; }
+  `]
 })
 export class CourseDetailComponent implements OnInit, OnDestroy {
   private readonly route  = inject(ActivatedRoute);
@@ -31,6 +37,7 @@ export class CourseDetailComponent implements OnInit, OnDestroy {
   quizQuestions      = computed(() => this.course()?.quizQuestions ?? []);
   quizResult         = computed(() => this.course()?.quizResult ?? null);
   attemptsRemaining  = computed(() => this.course()?.quizAttemptsRemaining ?? 2);
+  totalChapters      = computed(() => this.programModules().reduce((sum, m) => sum + m.chapters.length, 0));
 
   quizOpen        = signal(false);
   quizAnswers     = signal<Record<string, number>>({});

@@ -1,156 +1,322 @@
 <app-dashboard-layout [title]="course()?.title || 'Formation'" [menuItems]="menuItems">
-  <div class="max-w-6xl mx-auto space-y-8 pb-12">
-    @if (course(); as currentCourse) {
+
+  @if (course(); as c) {
+
+    <!-- ── HERO BANNER ── -->
+    <div class="relative rounded-2xl overflow-hidden mb-8" style="min-height:250px">
+      @if (c.thumbnail) {
+        <img [src]="c.thumbnail" alt="" class="absolute inset-0 w-full h-full object-cover" />
+      } @else {
+        <div class="absolute inset-0 bg-[var(--color-brand-green-900)]"></div>
+      }
+      <div class="absolute inset-0 bg-gradient-to-r from-[#091910]/96 via-[#0d2317]/82 to-[#0d2317]/35"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#091910]/75 via-transparent to-transparent"></div>
+      <div class="relative z-10 px-7 py-11 md:py-14 max-w-3xl">
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-[#c8a96a]/40 bg-[#c8a96a]/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-[#e2c17a] mb-5">
+          <mat-icon class="!h-3.5 !w-3.5 !text-[14px]">school</mat-icon>
+          Formation certifiante
+        </span>
+        <h1 class="font-serif text-3xl md:text-[2.5rem] leading-tight font-bold text-white max-w-2xl mb-5">{{ c.title }}</h1>
+        <div class="flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-white/60">
+          <span class="flex items-center gap-1.5">
+            <mat-icon class="!h-4 !w-4 !text-[15px] text-[#e2c17a]">menu_book</mat-icon>
+            {{ c.modules }} module(s)
+          </span>
+          @if (programModules().length > 0) {
+            <span class="flex items-center gap-1.5">
+              <mat-icon class="!h-4 !w-4 !text-[15px] text-[#e2c17a]">library_books</mat-icon>
+              {{ programModules().length }} modules détaillés
+            </span>
+          }
+          @if (moduleItems().length > 0) {
+            <span class="flex items-center gap-1.5">
+              <mat-icon class="!h-4 !w-4 !text-[15px] text-[#e2c17a]">picture_as_pdf</mat-icon>
+              {{ moduleItems().length }} support(s) PDF
+            </span>
+          }
+          @if (quizQuestions().length > 0) {
+            <span class="flex items-center gap-1.5">
+              <mat-icon class="!h-4 !w-4 !text-[15px] text-[#e2c17a]">quiz</mat-icon>
+              Quiz certifiant · 30 min · 2 essais max
+            </span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto space-y-6 pb-14">
+
+      <!-- ── MAIN GRID ── -->
       <div class="grid gap-6 md:grid-cols-[1.7fr_0.9fr]">
+
+        <!-- LEFT COLUMN -->
         <div class="space-y-6">
-          <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
-            <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-4 flex items-center gap-2">
-              <mat-icon class="text-[var(--color-brand-gold-500)]">emoji_people</mat-icon> Presentation
-            </h2>
-            <p class="text-gray-700 leading-relaxed mb-4">
-              {{ currentCourse.presentation || currentCourse.description }}
+
+          <!-- Présentation -->
+          <section class="bg-white rounded-2xl p-7 md:p-8 shadow-sm border border-gray-100">
+            <div class="flex items-center gap-2.5 mb-5">
+              <span class="inline-block w-1 h-7 rounded-full bg-[var(--color-brand-gold-500)]"></span>
+              <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Présentation</h2>
+            </div>
+            <p class="text-[var(--color-brand-green-800)]/80 leading-relaxed text-[0.96rem] mb-4">
+              {{ c.presentation || c.description }}
             </p>
-            @if (currentCourse.warning) {
-              <div class="p-4 bg-[var(--color-brand-cream)]/50 rounded-xl border border-[var(--color-brand-gold-300)]/30 text-sm italic text-gray-600 flex gap-3">
-                <mat-icon class="text-[var(--color-brand-gold-500)] shrink-0">info</mat-icon>
-                <p><strong>Avertissement :</strong> {{ currentCourse.warning }}</p>
+            @if (c.warning) {
+              <div class="flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                <mat-icon class="text-amber-500 shrink-0 mt-0.5">warning_amber</mat-icon>
+                <p class="leading-relaxed"><strong>Avertissement : </strong>{{ c.warning }}</p>
               </div>
             }
           </section>
 
+          <!-- Galerie -->
           @if (galleryImages().length > 0) {
-            <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
-              <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-4 flex items-center gap-2">
-                <mat-icon class="text-[var(--color-brand-gold-500)]">photo_library</mat-icon> Galerie
-              </h2>
-              <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <section class="bg-white rounded-2xl p-7 md:p-8 shadow-sm border border-gray-100">
+              <div class="flex items-center gap-2.5 mb-5">
+                <span class="inline-block w-1 h-7 rounded-full bg-[var(--color-brand-gold-500)]"></span>
+                <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Galerie photos</h2>
+              </div>
+              <div class="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
                 @for (image of galleryImages(); track image) {
-                  <a [href]="image" target="_blank" rel="noopener" class="group overflow-hidden rounded-[20px] border border-[var(--color-brand-gold-300)]/20 bg-[var(--color-brand-cream)]">
-                    <img [src]="image" alt="Illustration de la formation" class="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-105" referrerpolicy="no-referrer" />
-                  </a>
-                }
-              </div>
-            </section>
-          }
-
-          @if (moduleItems().length > 0) {
-            <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
-              <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-4 flex items-center gap-2">
-                <mat-icon class="text-[var(--color-brand-gold-500)]">picture_as_pdf</mat-icon> Support PDF
-              </h2>
-              <div class="space-y-4">
-                @for (module of moduleItems(); track module.id) {
-                  <a [href]="module.pdfDataUrl" target="_blank" rel="noopener" class="flex flex-col gap-4 rounded-2xl bg-[var(--color-brand-cream)] p-5 shadow-sm md:flex-row md:items-center md:justify-between">
-                    <div class="flex items-center gap-3">
-                      <mat-icon class="text-[#c62828]">picture_as_pdf</mat-icon>
-                      <div>
-                        <div class="font-bold text-[var(--color-brand-green-900)]">{{ module.title }}</div>
-                        <div class="text-sm text-[var(--color-brand-green-800)]/70">{{ module.pdfName }}</div>
-                      </div>
+                  <a [href]="image" target="_blank" rel="noopener"
+                     class="group relative overflow-hidden rounded-xl bg-[var(--color-brand-cream)]"
+                     [class.col-span-2]="$first"
+                     [class.row-span-2]="$first">
+                    <img [src]="image" alt="Illustration de la formation"
+                         class="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                         [style.height]="$first ? '13rem' : '6rem'" />
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors duration-300 flex items-center justify-center">
+                      <mat-icon class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 !h-8 !w-8 !text-[32px]">zoom_in</mat-icon>
                     </div>
-                    <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white">
-                      Ouvrir
-                      <mat-icon class="!h-[16px] !w-[16px] !text-[16px]">open_in_new</mat-icon>
-                    </span>
                   </a>
                 }
               </div>
             </section>
           }
 
+          <!-- Objectifs -->
           @if (objectives().length > 0) {
-            <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
-              <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-4 flex items-center gap-2">
-                <mat-icon class="text-[var(--color-brand-gold-500)]">track_changes</mat-icon> Objectifs
-              </h2>
-              <p class="text-gray-700 leading-relaxed mb-4">A la fin de cette formation, vous serez capable de :</p>
+            <section class="bg-white rounded-2xl p-7 md:p-8 shadow-sm border border-gray-100">
+              <div class="flex items-center gap-2.5 mb-2">
+                <span class="inline-block w-1 h-7 rounded-full bg-[var(--color-brand-gold-500)]"></span>
+                <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Objectifs pédagogiques</h2>
+              </div>
+              <p class="text-[var(--color-brand-green-800)]/55 text-sm mb-5 ml-3.5">À la fin de cette formation, vous serez capable de :</p>
               <ul class="space-y-3">
                 @for (objective of objectives(); track $index) {
                   <li class="flex items-start gap-3">
-                    <mat-icon class="text-green-500 text-[20px] shrink-0 mt-0.5">check_circle</mat-icon>
-                    <span class="text-gray-800">{{ objective }}</span>
+                    <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                      <mat-icon class="!h-3.5 !w-3.5 !text-[14px] text-emerald-600">check</mat-icon>
+                    </span>
+                    <span class="text-[var(--color-brand-green-800)]/80 text-sm leading-6">{{ objective }}</span>
                   </li>
                 }
               </ul>
             </section>
           }
+
         </div>
 
-        <aside class="bg-gray-50 rounded-2xl p-6 border border-gray-200 h-fit sticky top-6">
-          <h3 class="font-sans font-bold text-lg text-[var(--color-brand-green-900)] mb-4">Contenu de la formation</h3>
-          <ul class="space-y-4">
-            <li class="flex items-start gap-3 text-sm text-gray-700">
-              <mat-icon class="text-gray-400">menu_book</mat-icon>
-              <div>{{ currentCourse.modules }} module(s)</div>
-            </li>
-            @for (item of contentItems(); track item.id) {
-              <li class="flex items-start gap-3 text-sm text-gray-700">
-                <mat-icon class="text-gray-400">play_lesson</mat-icon>
-                <div>{{ item.text }}</div>
-              </li>
+        <!-- ── SIDEBAR ── -->
+        <aside class="h-fit sticky top-6 space-y-4">
+
+          <!-- Stats card -->
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+            @if (c.thumbnail) {
+              <div class="relative h-40 overflow-hidden">
+                <img [src]="c.thumbnail" alt="" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div class="absolute bottom-3 left-4 text-xs font-bold text-white/70 uppercase tracking-widest">Contenu</div>
+              </div>
             }
-            @if (programModules().length > 0) {
-              <li class="flex items-start gap-3 text-sm text-gray-700">
-                <mat-icon class="text-gray-400">library_books</mat-icon>
-                <div>{{ programModules().length }} modules detailles</div>
-              </li>
-            }
-            @if (moduleItems().length > 0) {
-              <li class="flex items-start gap-3 text-sm text-gray-700">
-                <mat-icon class="text-gray-400">attachment</mat-icon>
-                <div>{{ moduleItems().length }} support(s) PDF</div>
-              </li>
-            }
-          </ul>
+            <div class="p-5 divide-y divide-gray-100">
+              <div class="flex items-center gap-3 py-3 first:pt-0">
+                <div class="w-9 h-9 rounded-xl bg-[var(--color-brand-cream)] flex items-center justify-center shrink-0">
+                  <mat-icon class="!h-4.5 !w-4.5 !text-[18px] text-[var(--color-brand-gold-600)]">menu_book</mat-icon>
+                </div>
+                <div>
+                  <div class="font-semibold text-sm text-[var(--color-brand-green-900)]">{{ c.modules }} module(s)</div>
+                  <div class="text-xs text-gray-400">Programme complet</div>
+                </div>
+              </div>
+              @if (programModules().length > 0) {
+                <div class="flex items-center gap-3 py-3">
+                  <div class="w-9 h-9 rounded-xl bg-[var(--color-brand-cream)] flex items-center justify-center shrink-0">
+                    <mat-icon class="!h-4.5 !w-4.5 !text-[18px] text-[var(--color-brand-gold-600)]">library_books</mat-icon>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-sm text-[var(--color-brand-green-900)]">{{ programModules().length }} modules détaillés</div>
+                    <div class="text-xs text-gray-400">{{ totalChapters() }} chapitres au total</div>
+                  </div>
+                </div>
+              }
+              @if (moduleItems().length > 0) {
+                <div class="flex items-center gap-3 py-3">
+                  <div class="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+                    <mat-icon class="!h-4.5 !w-4.5 !text-[18px] text-red-500">picture_as_pdf</mat-icon>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-sm text-[var(--color-brand-green-900)]">{{ moduleItems().length }} support(s) PDF</div>
+                    <div class="text-xs text-gray-400">Cours téléchargeable</div>
+                  </div>
+                </div>
+              }
+              @if (quizQuestions().length > 0) {
+                <div class="flex items-center gap-3 py-3 last:pb-0">
+                  <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+                    <mat-icon class="!h-4.5 !w-4.5 !text-[18px] text-emerald-600">quiz</mat-icon>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-sm text-[var(--color-brand-green-900)]">Quiz certifiant</div>
+                    <div class="text-xs text-gray-400">{{ quizQuestions().length }} questions · 30 min</div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Content items -->
+          @if (contentItems().length > 0) {
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+              <h4 class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Au programme</h4>
+              <ul class="space-y-2.5">
+                @for (item of contentItems(); track item.id) {
+                  <li class="flex items-start gap-2.5 text-sm text-[var(--color-brand-green-800)]/80">
+                    <mat-icon class="!h-4 !w-4 !text-[15px] text-[var(--color-brand-gold-500)] shrink-0 mt-0.5">play_circle</mat-icon>
+                    {{ item.text }}
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+          <!-- Quiz result pill -->
+          @if (quizResult(); as qr) {
+            <div class="rounded-2xl p-5 border"
+                 [class.bg-emerald-50]="qr.passed"
+                 [class.border-emerald-200]="qr.passed"
+                 [class.bg-red-50]="!qr.passed"
+                 [class.border-red-200]="!qr.passed">
+              <div class="flex items-center gap-3 mb-3">
+                <mat-icon class="!h-8 !w-8 !text-[32px]"
+                          [class.text-emerald-500]="qr.passed"
+                          [class.text-red-400]="!qr.passed">
+                  {{ qr.passed ? 'emoji_events' : 'replay' }}
+                </mat-icon>
+                <div>
+                  <div class="font-bold text-sm"
+                       [class.text-emerald-700]="qr.passed"
+                       [class.text-red-600]="!qr.passed">
+                    {{ qr.passed ? 'Quiz validé !' : 'Quiz non validé' }}
+                  </div>
+                  <div class="text-xs opacity-70"
+                       [class.text-emerald-700]="qr.passed"
+                       [class.text-red-600]="!qr.passed">
+                    Score : {{ qr.score }}/{{ qr.total }} ({{ qr.percentage }}%)
+                  </div>
+                </div>
+              </div>
+              <div class="h-2 rounded-full bg-white/60 overflow-hidden">
+                <div class="h-full rounded-full transition-all"
+                     [class.bg-emerald-500]="qr.passed"
+                     [class.bg-red-400]="!qr.passed"
+                     [style.width.%]="qr.percentage"></div>
+              </div>
+            </div>
+          }
+
         </aside>
       </div>
 
-      @if (programModules().length > 0) {
-        <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
-          <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-6 flex items-center gap-2">
-            <mat-icon class="text-[var(--color-brand-gold-500)]">format_list_bulleted</mat-icon> Programme complet
-          </h2>
-
-          <div class="grid gap-4 lg:grid-cols-2">
-            @for (module of programModules(); track module.id) {
-              <details class="group rounded-[24px] border border-[var(--color-brand-gold-300)]/20 bg-[linear-gradient(180deg,#fffdf9_0%,#f8f1e5_100%)] p-5" [open]="$first">
-                <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
-                  <div>
-                    <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)]">{{ module.title }}</h3>
-                    <p class="mt-2 text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-gold-700)]">{{ module.chapters.length }} chapitres</p>
+      <!-- ── Support PDF — dark green ── -->
+      @if (moduleItems().length > 0) {
+        <section class="rounded-2xl overflow-hidden bg-[var(--color-brand-green-900)] shadow-md">
+          <div class="p-7 md:p-8">
+            <div class="flex items-center gap-2.5 mb-6">
+              <span class="inline-block w-1 h-7 rounded-full bg-[var(--color-brand-gold-500)]"></span>
+              <h2 class="font-serif text-2xl text-white">Support de cours PDF</h2>
+            </div>
+            <div class="space-y-3">
+              @for (module of moduleItems(); track module.id) {
+                <a [href]="module.pdfDataUrl" target="_blank" rel="noopener"
+                   class="pdf-row group flex flex-col gap-4 rounded-xl border border-white/10 bg-white/[0.06] hover:bg-white/[0.12] hover:border-[#c8a96a]/45 p-5 transition-all md:flex-row md:items-center md:justify-between">
+                  <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-xl bg-red-500/15 border border-red-400/20 flex items-center justify-center shrink-0">
+                      <mat-icon class="text-red-300 !h-6 !w-6 !text-[24px]">picture_as_pdf</mat-icon>
+                    </div>
+                    <div>
+                      <div class="font-bold text-white">{{ module.title }}</div>
+                      <div class="text-sm text-white/50 mt-0.5">{{ module.pdfName }}</div>
+                    </div>
                   </div>
-                  <mat-icon class="!h-[22px] !w-[22px] !text-[22px] text-[var(--color-brand-green-900)] transition-transform group-open:rotate-180">expand_more</mat-icon>
-                </summary>
-
-                <ul class="mt-5 space-y-3 border-t border-[var(--color-brand-gold-300)]/18 pt-5">
-                  @for (chapter of module.chapters; track chapter) {
-                    <li class="flex items-start gap-3 text-sm leading-6 text-[var(--color-brand-green-800)]/78">
-                      <span class="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-green-900)] text-[11px] font-bold text-white">{{ $index + 1 }}</span>
-                      <span>{{ chapter }}</span>
-                    </li>
-                  }
-                </ul>
-              </details>
-            }
+                  <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] group-hover:bg-[#e2c17a] px-5 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-brand-green-900)] transition-colors self-start md:self-auto shrink-0">
+                    <mat-icon class="!h-4 !w-4 !text-[16px]">file_download</mat-icon>
+                    Télécharger
+                  </span>
+                </a>
+              }
+            </div>
           </div>
         </section>
       }
 
-      @if (chapters().length > 0) {
-        <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
-          <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-6 flex items-center gap-2">
-            <mat-icon class="text-[var(--color-brand-gold-500)]">verified</mat-icon> Informations complementaires
-          </h2>
+      <!-- ── Programme complet — dark ── -->
+      @if (programModules().length > 0) {
+        <section class="rounded-2xl overflow-hidden shadow-md" style="background:#0d2317">
+          <div class="p-7 md:p-8">
+            <div class="flex items-center gap-2.5 mb-2">
+              <span class="inline-block w-1 h-7 rounded-full bg-[var(--color-brand-gold-500)]"></span>
+              <div>
+                <h2 class="font-serif text-2xl text-white">Programme complet</h2>
+              </div>
+            </div>
+            <p class="text-white/40 text-xs ml-3.5 mb-6">{{ programModules().length }} modules · {{ totalChapters() }} chapitres</p>
+            <div class="grid gap-3 lg:grid-cols-2">
+              @for (module of programModules(); track module.id) {
+                <details class="prog-card group rounded-xl border border-white/8 bg-white/[0.045] hover:bg-white/[0.07] transition-colors" [open]="$first">
+                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5">
+                    <div class="flex items-center gap-3.5 min-w-0">
+                      <span class="shrink-0 flex h-9 w-9 items-center justify-center rounded-xl bg-[#c8a96a]/12 border border-[#c8a96a]/25 text-[#e2c17a] text-sm font-bold">
+                        {{ ($index + 1) < 10 ? '0' + ($index + 1) : ($index + 1) }}
+                      </span>
+                      <div class="min-w-0">
+                        <h3 class="font-serif text-[1.05rem] text-white leading-snug">{{ module.title }}</h3>
+                        <p class="text-[11px] font-bold uppercase tracking-widest text-[#c8a96a]/60 mt-0.5">{{ module.chapters.length }} chapitres</p>
+                      </div>
+                    </div>
+                    <mat-icon class="!h-5 !w-5 !text-[20px] text-white/35 transition-transform group-open:rotate-180 shrink-0">expand_more</mat-icon>
+                  </summary>
+                  <ul class="px-5 pb-5 space-y-2.5 border-t border-white/8 pt-4">
+                    @for (chapter of module.chapters; track chapter) {
+                      <li class="flex items-start gap-3 text-[13px] text-white/58 leading-6">
+                        <span class="mt-1 shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-brand-green-900)] border border-white/12 text-[10px] font-bold text-white/65">{{ $index + 1 }}</span>
+                        <span>{{ chapter }}</span>
+                      </li>
+                    }
+                  </ul>
+                </details>
+              }
+            </div>
+          </div>
+        </section>
+      }
 
-          <div class="space-y-4">
+      <!-- ── Informations complémentaires ── -->
+      @if (chapters().length > 0) {
+        <section class="bg-white rounded-2xl p-7 md:p-8 shadow-sm border border-gray-100">
+          <div class="flex items-center gap-2.5 mb-5">
+            <span class="inline-block w-1 h-7 rounded-full bg-[var(--color-brand-gold-500)]"></span>
+            <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Informations complémentaires</h2>
+          </div>
+          <div class="space-y-3">
             @for (chapter of chapters(); track chapter.id) {
-              <details class="group bg-gray-50 border border-gray-100 rounded-xl cursor-pointer" [open]="$first">
-                <summary class="flex justify-between items-center p-4 font-bold text-[var(--color-brand-green-900)]">
+              <details class="group bg-gray-50 border border-gray-100 rounded-xl" [open]="$first">
+                <summary class="flex justify-between items-center p-4 cursor-pointer font-semibold text-[var(--color-brand-green-900)]">
                   <span>{{ chapter.title }}</span>
-                  <mat-icon class="group-open:rotate-180 transition-transform">expand_more</mat-icon>
+                  <mat-icon class="group-open:rotate-180 transition-transform text-[var(--color-brand-green-800)]/40">expand_more</mat-icon>
                 </summary>
-                <div class="px-4 pb-4 text-gray-700 text-sm">
-                  <p class="mt-2 border-t border-gray-200 pt-3 leading-7">{{ chapter.content }}</p>
+                <div class="px-4 pb-4 text-gray-600 text-sm border-t border-gray-100 pt-3">
+                  <p class="leading-7">{{ chapter.content }}</p>
                 </div>
               </details>
             }
@@ -158,107 +324,122 @@
         </section>
       }
 
-      <!-- ── QCM Section ── -->
+      <!-- ── QCM ── -->
       @if (quizQuestions().length > 0) {
-        <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-[var(--color-brand-gold-300)]/30">
+        <section class="bg-white rounded-2xl p-7 md:p-8 shadow-sm border border-[var(--color-brand-gold-300)]/25">
 
-          <!-- Header -->
-          <div class="flex items-start justify-between gap-4 mb-2">
+          <div class="flex items-start justify-between gap-4 mb-6">
             <div>
-              <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] flex items-center gap-2">
-                <mat-icon class="text-[var(--color-brand-gold-500)]">quiz</mat-icon>
-                {{ quizTitle() }}
-              </h2>
-              <p class="text-sm text-[var(--color-brand-green-800)]/60 mt-1">
-                {{ quizQuestions().length }} question(s) · notée sur 10 · 30 min · {{ attemptsRemaining() }}/2 essai(s) restant(s)
+              <div class="flex items-center gap-2.5 mb-1">
+                <span class="inline-block w-1 h-7 rounded-full bg-[var(--color-brand-gold-500)]"></span>
+                <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">{{ quizTitle() }}</h2>
+              </div>
+              <p class="text-[13px] text-[var(--color-brand-green-800)]/50 ml-3.5">
+                {{ quizQuestions().length }} questions · notées sur 10 · durée 30 min · {{ attemptsRemaining() }}/2 essai(s) restant
               </p>
             </div>
           </div>
 
-          <!-- Previous result -->
           @if (quizResult(); as result) {
-            <div class="rounded-[20px] p-5 mb-4 flex items-center gap-4"
+            <div class="rounded-xl p-5 mb-5 flex items-center gap-4 border"
                  [class.bg-emerald-50]="result.passed"
-                 [class.bg-red-50]="!result.passed">
+                 [class.border-emerald-100]="result.passed"
+                 [class.bg-red-50]="!result.passed"
+                 [class.border-red-100]="!result.passed">
               <mat-icon class="!h-10 !w-10 !text-[40px] shrink-0"
                         [class.text-emerald-500]="result.passed"
                         [class.text-red-400]="!result.passed">
-                {{ result.passed ? 'verified' : 'cancel' }}
+                {{ result.passed ? 'emoji_events' : 'cancel' }}
               </mat-icon>
               <div class="flex-1">
-                <div class="font-bold text-lg"
+                <div class="font-bold text-base"
                      [class.text-emerald-700]="result.passed"
                      [class.text-red-600]="!result.passed">
                   {{ result.passed ? 'Quiz réussi !' : 'Quiz non validé' }}
                 </div>
-                <div class="text-sm mt-0.5 opacity-80"
+                <div class="text-sm mt-0.5 opacity-75"
                      [class.text-emerald-600]="result.passed"
                      [class.text-rose-600]="!result.passed">
                   Note : {{ result.score }}/{{ result.total }} — {{ result.percentage }}%
                   · Essai {{ result.attemptCount }}/2
                 </div>
               </div>
+              <div class="text-3xl font-black tabular-nums shrink-0"
+                   [class.text-emerald-600]="result.passed"
+                   [class.text-red-500]="!result.passed">
+                {{ result.percentage }}%
+              </div>
             </div>
           }
 
-          <!-- Locked -->
           @if (attemptsRemaining() <= 0 && !quizOpen()) {
-            <div class="flex items-center gap-3 rounded-[18px] bg-gray-100 border border-gray-200 px-5 py-4 text-sm text-gray-600">
+            <div class="flex items-center gap-3 rounded-xl bg-gray-50 border border-gray-200 px-5 py-4 text-sm text-gray-500">
               <mat-icon class="text-gray-400">lock</mat-icon>
-              Nombre maximum d'essais atteint (2/2). Quiz verrouillé.
+              Nombre maximum d'essais atteint (2/2). Contactez votre formatrice pour un déblocage éventuel.
             </div>
           }
 
-          <!-- Start button -->
           @if (attemptsRemaining() > 0 && !quizOpen()) {
             <button (click)="openQuiz()"
-                    class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-6 py-3 text-sm font-bold text-white hover:bg-[var(--color-brand-green-900)] transition mt-2">
+                    class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] hover:bg-[var(--color-brand-gold-500)] px-7 py-3.5 text-sm font-bold text-white transition-colors mt-1">
               <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">play_arrow</mat-icon>
-              {{ quizResult() ? 'Repasser le quiz' : 'Passer le quiz' }}
+              {{ quizResult() ? 'Repasser le quiz' : 'Commencer le quiz' }}
             </button>
           }
 
-          <!-- Quiz form -->
           @if (quizOpen()) {
-            <div class="mt-4 space-y-5">
+            <div class="space-y-4">
 
-              <!-- Timer bar -->
-              <div class="flex items-center justify-between rounded-[18px] px-5 py-3"
-                   [class.bg-[var(--color-brand-cream)]]="timeRemaining() >= 60"
-                   [class.bg-red-50]="timeRemaining() < 60">
-                <div class="flex items-center gap-2">
-                  <mat-icon [class.text-[var(--color-brand-gold-600)]]="timeRemaining() >= 60"
-                             [class.text-red-500]="timeRemaining() < 60">timer</mat-icon>
-                  <span class="font-bold text-xl tabular-nums"
-                        [class.text-[var(--color-brand-green-900)]]="timeRemaining() >= 60"
-                        [class.text-red-600]="timeRemaining() < 60">
+              <!-- Timer -->
+              <div class="flex items-center justify-between rounded-xl px-5 py-3.5 border"
+                   [class.bg-amber-50]="timeRemaining() < 300 && timeRemaining() >= 60"
+                   [class.border-amber-200]="timeRemaining() < 300 && timeRemaining() >= 60"
+                   [class.bg-red-50]="timeRemaining() < 60"
+                   [class.border-red-300]="timeRemaining() < 60"
+                   [class.border-gray-100]="timeRemaining() >= 300"
+                   [class.bg-gray-50]="timeRemaining() >= 300">
+                <div class="flex items-center gap-2.5">
+                  <mat-icon [class.text-[var(--color-brand-gold-600)]]="timeRemaining() >= 300"
+                             [class.text-amber-500]="timeRemaining() < 300 && timeRemaining() >= 60"
+                             [class.text-red-600]="timeRemaining() < 60">timer</mat-icon>
+                  <span class="font-bold text-2xl tabular-nums"
+                        [class.text-[var(--color-brand-green-900)]]="timeRemaining() >= 300"
+                        [class.text-amber-600]="timeRemaining() < 300 && timeRemaining() >= 60"
+                        [class.text-red-700]="timeRemaining() < 60">
                     {{ formatTime(timeRemaining()) }}
                   </span>
                 </div>
-                <span class="text-xs text-[var(--color-brand-green-800)]/55">Temps restant — soumission automatique</span>
+                <div class="text-right">
+                  <div class="text-xs font-semibold text-gray-500">Temps restant</div>
+                  <div class="text-[10px] text-gray-400">Soumission automatique à 00:00</div>
+                </div>
               </div>
 
               <!-- Questions -->
               @for (q of quizQuestions(); track q.id; let qi = $index) {
-                <div class="rounded-[18px] bg-[var(--color-brand-cream)] p-4">
-                  <p class="text-sm font-semibold text-[var(--color-brand-green-900)] mb-3">
-                    {{ qi + 1 }}. {{ q.prompt }}
+                <div class="rounded-xl border border-gray-100 bg-gray-50 p-5">
+                  <p class="font-semibold text-[var(--color-brand-green-900)] mb-4 flex items-start gap-2.5 text-[0.95rem]">
+                    <span class="shrink-0 inline-flex h-6 w-6 items-center justify-center rounded-full bg-[var(--color-brand-green-900)] text-white text-xs font-bold">{{ qi + 1 }}</span>
+                    {{ q.prompt }}
                   </p>
                   <div class="space-y-2">
                     @for (opt of q.options; track $index; let oi = $index) {
-                      <label class="flex items-center gap-3 cursor-pointer rounded-xl bg-white px-4 py-2.5 text-sm text-[var(--color-brand-green-800)] border border-transparent hover:border-[var(--color-brand-gold-400)] transition">
+                      <label class="quiz-option flex items-center gap-3 cursor-pointer rounded-xl bg-white px-4 py-3 text-sm text-[var(--color-brand-green-800)] border"
+                             [class.border-[var(--color-brand-green-900)]]="quizAnswers()[q.id] === oi"
+                             [class.bg-[var(--color-brand-cream)]]="quizAnswers()[q.id] === oi"
+                             [class.border-gray-100]="quizAnswers()[q.id] !== oi">
                         <input type="radio"
                                [name]="'quiz-q-' + q.id"
                                [value]="oi"
                                [checked]="quizAnswers()[q.id] === oi"
                                (change)="setAnswer(q.id, oi)"
-                               class="accent-[var(--color-brand-green-900)]" />
-                        <span class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white transition"
-                              [class.bg-emerald-500]="quizAnswers()[q.id] === oi"
-                              [class.bg-gray-600]="quizAnswers()[q.id] !== oi">
+                               class="accent-[var(--color-brand-green-900)] sr-only" />
+                        <span class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white transition-colors"
+                              [class.bg-[var(--color-brand-green-900)]]="quizAnswers()[q.id] === oi"
+                              [class.bg-gray-300]="quizAnswers()[q.id] !== oi">
                           {{ letter(oi) }}
                         </span>
-                        {{ opt }}
+                        <span>{{ opt }}</span>
                       </label>
                     }
                   </div>
@@ -269,14 +450,14 @@
                 <div class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{{ submitError() }}</div>
               }
 
-              <div class="flex gap-3 pt-2">
+              <div class="flex gap-3 pt-1">
                 <button (click)="submitQuiz()" [disabled]="submitting()"
-                        class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-6 py-3 text-sm font-bold text-white disabled:opacity-60 hover:bg-[var(--color-brand-green-800)] transition">
+                        class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] hover:bg-[var(--color-brand-gold-500)] px-7 py-3.5 text-sm font-bold text-white disabled:opacity-60 transition-colors">
                   <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">task_alt</mat-icon>
                   {{ submitting() ? 'Validation...' : 'Valider le quiz' }}
                 </button>
                 <button (click)="closeQuiz()"
-                        class="rounded-full border border-[var(--color-brand-green-900)]/30 px-5 py-3 text-sm font-semibold text-[var(--color-brand-green-900)] hover:bg-[var(--color-brand-cream)] transition">
+                        class="rounded-full border border-gray-200 px-5 py-3.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
                   Annuler
                 </button>
               </div>
@@ -285,21 +466,28 @@
         </section>
       }
 
-    } @else {
-      <section class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center text-[var(--color-brand-green-800)]/70">
-        Cette formation sera accessible dans votre espace etudiante des la validation administrative de votre inscription. Une fois l'acces ouvert, il reste disponible pour votre suivi pedagogique.
-      </section>
-    }
-  </div>
+    </div>
 
-  <!-- ── Result popup ── -->
+  } @else {
+    <div class="max-w-xl mx-auto mt-16 text-center">
+      <div class="w-16 h-16 rounded-full bg-[var(--color-brand-cream)] flex items-center justify-center mx-auto mb-5">
+        <mat-icon class="!h-8 !w-8 !text-[32px] text-[var(--color-brand-green-900)]">lock</mat-icon>
+      </div>
+      <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)] mb-3">Formation non accessible</h2>
+      <p class="text-[var(--color-brand-green-800)]/60 leading-relaxed text-sm">
+        Cette formation sera accessible dans votre espace étudiante dès la validation administrative de votre inscription.
+        Une fois l'accès ouvert, il reste disponible pour votre suivi pédagogique.
+      </p>
+    </div>
+  }
+
+  <!-- ── Result Popup ── -->
   @if (showResultPopup() && lastResult(); as r) {
     <div class="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4"
          (click)="closePopup()">
       <div class="w-full max-w-md overflow-hidden rounded-t-[32px] bg-white shadow-[0_-8px_80px_rgba(0,0,0,0.3)] sm:rounded-[32px]"
            (click)="$event.stopPropagation()">
 
-        <!-- Colored header -->
         <div class="relative px-6 py-10 text-center"
              [class.bg-emerald-500]="r.passed"
              [class.bg-red-500]="!r.passed">
@@ -308,7 +496,7 @@
             <mat-icon class="!h-5 !w-5 !text-[20px]">close</mat-icon>
           </button>
           <mat-icon class="!h-14 !w-14 !text-[56px] text-white">
-            {{ r.passed ? 'verified' : 'cancel' }}
+            {{ r.passed ? 'emoji_events' : 'cancel' }}
           </mat-icon>
           <h2 class="mt-3 font-serif text-3xl font-bold text-white">
             {{ r.passed ? 'Félicitations !' : 'Résultat enregistré' }}
@@ -316,7 +504,6 @@
           <p class="mt-1 text-sm text-white/80">{{ quizTitle() }}</p>
         </div>
 
-        <!-- Score -->
         <div class="px-6 py-6 text-center">
           <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--color-brand-green-800)]/50">Votre note</p>
           <div class="mt-1 text-8xl font-black leading-none tabular-nums"
@@ -338,10 +525,9 @@
           }
         </div>
 
-        <!-- CTA -->
         <div class="flex justify-center px-5 pb-8">
           <button (click)="closePopup()"
-                  class="inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-bold text-white transition"
+                  class="inline-flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-sm font-bold text-white transition"
                   [class.bg-emerald-600]="r.passed"
                   [class.bg-red-500]="!r.passed">
             <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">grading</mat-icon>
