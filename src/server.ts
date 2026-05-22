@@ -789,6 +789,18 @@ const courses: Course[] = [
     category: 'Détox',
     status: 'published',
     moduleItems: [],
+    chapters: [
+      {
+        id: 'ch-2-1',
+        title: 'Certification France',
+        content: '790 EUR',
+      },
+      {
+        id: 'ch-2-2',
+        title: 'Certification France + Tunisie',
+        content: '',
+      },
+    ],
     contentItems: [
       { id: 'content-2-1', text: '10 modules complets — détox thérapeutique intégrale' },
       { id: 'content-2-2', text: 'Les 5 émonctoires : foie, reins, intestins, poumons, peau' },
@@ -4417,7 +4429,7 @@ app.put('/api/instructor/courses/:courseId', (req, res): any => {
     if (Array.isArray(req.body?.chapters)) {
       course.chapters = parseChapterItems(req.body.chapters);
     }
-    if (Array.isArray(req.body?.quizQuestions)) {
+    if (Array.isArray(req.body?.quizQuestions) && req.body.quizQuestions.length > 0) {
       course.quizQuestions = parseQuizQuestions(req.body.quizQuestions);
     }
     if (req.body?.quizTitle !== undefined) {
@@ -5316,7 +5328,7 @@ app.put('/api/admin/courses/:courseId', (req, res): any => {
     if (Array.isArray(req.body?.chapters)) {
       course.chapters = parseChapterItems(req.body.chapters);
     }
-    if (Array.isArray(req.body?.quizQuestions)) {
+    if (Array.isArray(req.body?.quizQuestions) && req.body.quizQuestions.length > 0) {
       course.quizQuestions = parseQuizQuestions(req.body.quizQuestions);
     }
     if (req.body?.quizTitle !== undefined) {
