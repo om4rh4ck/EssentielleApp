@@ -2774,6 +2774,16 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
   await dbAddCol(pool, 'course_quiz_attempts', 'best_score',      'DECIMAL(6,2) NOT NULL DEFAULT 0');
   await dbAddCol(pool, 'course_quiz_attempts', 'best_percentage', 'DECIMAL(5,2) NOT NULL DEFAULT 0');
 
+  // course_quiz_config — persists quiz questions per course in MySQL
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS course_quiz_config (
+      course_id VARCHAR(64) NOT NULL PRIMARY KEY,
+      quiz_title VARCHAR(200),
+      questions_json MEDIUMTEXT NOT NULL DEFAULT '[]',
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+
   // Sync all MySQL users into memoryUsers so getStoredUserById works for any registered user
   await loadUsersFromDb(pool);
   // Immediately backup MySQL users to JSON so next boot works even without MySQL
@@ -2783,6 +2793,12 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
   await loadExamsFromDb(pool);
   await loadAttemptsFromDb(pool);
   await loadCourseQuizAttemptsFromDb(pool);
+
+  // Load persisted course quiz questions from MySQL (overrides seed if DB has data)
+  await loadCourseQuizConfigFromDb(pool);
+
+  // Seed any course with quizQuestions into MySQL for persistence
+  await saveCourseQuizConfigToDb(pool);
 
   // Persist seed exams to MySQL so phpMyAdmin shows them and attempts FK works
   await seedExamsToDb(pool);
@@ -2851,6 +2867,48 @@ async function loadCourseQuizAttemptsFromDb(pool: Pool): Promise<void> {
   } catch (err) {
     console.warn('[DB] Could not load course quiz attempts from MySQL:', err);
   }
+}
+
+async function loadCourseQuizConfigFromDb(pool: Pool): Promise<void> {
+  try {
+    const [rows] = await pool.query<mysql.RowDataPacket[]>(
+      'SELECT course_id, quiz_title, questions_json FROM course_quiz_config'
+    );
+    let loaded = 0;
+    for (const row of rows) {
+      const course = courses.find((c) => c.id === String(row['course_id']));
+      if (!course) continue;
+      let questions: any[] = [];
+      try { questions = JSON.parse(String(row['questions_json'] ?? '[]')); } catch { questions = []; }
+      if (questions.length > 0) {
+        course.quizQuestions = questions;
+        if (row['quiz_title']) course.quizTitle = String(row['quiz_title']);
+        loaded++;
+      }
+    }
+    console.log(`[DB] Loaded course quiz config for ${loaded} course(s) from MySQL`);
+  } catch (err) {
+    console.warn('[DB] Could not load course_quiz_config from MySQL:', err);
+  }
+}
+
+async function saveCourseQuizConfigToDb(pool: Pool): Promise<void> {
+  for (const course of courses) {
+    if (!course.quizQuestions?.length) continue;
+    try {
+      await pool.query(
+        `INSERT INTO course_quiz_config (course_id, quiz_title, questions_json)
+         VALUES (?, ?, ?)
+         ON DUPLICATE KEY UPDATE
+           quiz_title = VALUES(quiz_title),
+           questions_json = VALUES(questions_json)`,
+        [course.id, course.quizTitle ?? null, JSON.stringify(course.quizQuestions)]
+      );
+    } catch (err) {
+      console.warn(`[DB] Could not save quiz config for course ${course.id}:`, err);
+    }
+  }
+  console.log('[DB] Course quiz config saved to MySQL');
 }
 
 async function upsertCourseQuizAttemptToDb(
@@ -4477,6 +4535,7 @@ app.put('/api/instructor/courses/:courseId', (req, res): any => {
     course.status = req.body?.status === 'draft' ? 'draft' : 'published';
 
     savePersistedData();
+    getDbPool().then((pool) => { if (pool) saveCourseQuizConfigToDb(pool).catch(() => {}); });
     console.log(`✅ Formation mise à jour: ${course.id}`);
     res.json(course);
   } catch (error) {
@@ -5377,6 +5436,7 @@ app.put('/api/admin/courses/:courseId', (req, res): any => {
     course.status = req.body?.status === 'draft' ? 'draft' : 'published';
 
     savePersistedData();
+    getDbPool().then((pool) => { if (pool) saveCourseQuizConfigToDb(pool).catch(() => {}); });
     console.log(`✅ Formation mise à jour par admin: ${course.id}`);
     res.json(course);
   } catch (error) {
