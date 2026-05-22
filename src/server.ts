@@ -1258,7 +1258,7 @@ function bootstrapRoleData(): void {
     phone: '+216 20 000 001',
     city: 'Djerba',
     country: 'Tunisie',
-    bio: 'Directrice administrative de la plateforme Essenti’Elle Santé.',
+    bio: "Directrice administrative de la plateforme Essenti’ Elle Formation et Bien Être.",
   });
   roleProfiles.set('2', {
     phone: '+216 20 000 002',
@@ -1282,7 +1282,7 @@ function bootstrapRoleData(): void {
           title: 'Certificat - Détox peau',
           issuedAt: '2026-04-12T09:00:00.000Z',
           status: 'issued',
-          signedBy: 'Direction Essenti’Elle Santé',
+          signedBy: "Direction Essenti’ Elle Formation et Bien Être",
         },
         {
           id: 'cert-3-1',
@@ -1470,11 +1470,11 @@ async function sendRegistrationSuccessEmail(user: PublicUser, req: Request): Pro
     from: config.from,
     to: user.email,
     replyTo: config.replyTo,
-    subject: 'Inscription reussie - Essenti' Elle Formation et Bien Être',
+    subject: "Inscription reussie - Essenti' Elle Formation et Bien Être",
     text: [
       `Bonjour ${user.name},`,
       '',
-      'Votre inscription sur Essenti' Elle Formation et Bien Être a bien ete enregistree.',
+      "Votre inscription sur Essenti' Elle Formation et Bien Être a bien ete enregistree.",
       `Votre e-mail de connexion : ${user.email}`,
       `Votre identifiant : ${user.username}`,
       `Acces a la connexion : ${loginUrl}`,
@@ -3324,7 +3324,7 @@ app.post('/api/student/messages', (req, res): any => {
     recipientId: recipient.id,
     recipientRole: recipient.role,
     recipientDisplayName: recipient.name,
-    recipientName: recipientRole === 'admin' ? 'Direction Essenti’Elle' : 'Dr. Expert',
+    recipientName: recipientRole === ‘admin’ ? "Direction Essenti’ Elle" : ‘Dr. Expert’,
     recipientDisplayNameFinal: recipient.name,
     subject,
     content,
