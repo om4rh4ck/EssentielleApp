@@ -1901,6 +1901,8 @@ function loadPersistedData(): void {
       requests?: PublicEnrollmentRequest[];
       dynamicExams?: ExamTemplate[];
       deletedExamIds?: string[];
+      courseQuizData?: Record<string, { quizTitle?: string; quizQuestions?: Array<{id: string; prompt: string; options: string[]; correctIndex: number}> }>;
+      courseChapters?: Record<string, Array<{id: string; title: string; content: string}>>;
     };
     for (const u of saved.users ?? []) {
       const idx = memoryUsers.findIndex((m) => m.id === u.id);
@@ -1926,6 +1928,19 @@ function loadPersistedData(): void {
       const idx = exams.findIndex((e) => e.id === id);
       if (idx >= 0) exams.splice(idx, 1);
     }
+    // Restore persisted course quiz data (only apply if non-empty, so seed wins when not customized)
+    for (const [courseId, data] of Object.entries(saved.courseQuizData ?? {})) {
+      const course = courses.find((c) => c.id === courseId);
+      if (course) {
+        if (data.quizTitle) course.quizTitle = data.quizTitle;
+        if (data.quizQuestions && data.quizQuestions.length > 0) course.quizQuestions = data.quizQuestions;
+      }
+    }
+    // Restore persisted course chapters
+    for (const [courseId, chapters] of Object.entries(saved.courseChapters ?? {})) {
+      const course = courses.find((c) => c.id === courseId);
+      if (course && chapters.length > 0) course.chapters = chapters;
+    }
     console.log('[STORE] Data loaded from', STORE_FILE);
   } catch (err) {
     console.warn('[STORE] Could not load persisted data:', err);
@@ -1937,6 +1952,16 @@ function savePersistedData(): void {
   if (_persistTimer) clearTimeout(_persistTimer);
   _persistTimer = setTimeout(() => {
     try {
+      const courseQuizData: Record<string, { quizTitle?: string; quizQuestions?: any[] }> = {};
+      const courseChapters: Record<string, any[]> = {};
+      for (const course of courses) {
+        if ((course.quizQuestions && course.quizQuestions.length > 0) || course.quizTitle) {
+          courseQuizData[course.id] = { quizTitle: course.quizTitle, quizQuestions: course.quizQuestions };
+        }
+        if (course.chapters && course.chapters.length > 0) {
+          courseChapters[course.id] = course.chapters;
+        }
+      }
       writeFileSync(STORE_FILE, JSON.stringify({
         savedAt: new Date().toISOString(),
         users: memoryUsers,
@@ -1945,6 +1970,8 @@ function savePersistedData(): void {
         requests: publicEnrollmentRequests,
         dynamicExams: exams.filter((e) => !SEED_EXAM_IDS.has(e.id)),
         deletedExamIds: Array.from(deletedExamIds),
+        courseQuizData,
+        courseChapters,
       }, null, 2), 'utf8');
     } catch (err) {
       console.warn('[STORE] Could not save data:', err);
@@ -4449,6 +4476,7 @@ app.put('/api/instructor/courses/:courseId', (req, res): any => {
     course.access = req.body?.access === 'paid' ? 'paid' : 'free';
     course.status = req.body?.status === 'draft' ? 'draft' : 'published';
 
+    savePersistedData();
     console.log(`✅ Formation mise à jour: ${course.id}`);
     res.json(course);
   } catch (error) {
@@ -5348,6 +5376,7 @@ app.put('/api/admin/courses/:courseId', (req, res): any => {
     course.access = req.body?.access === 'paid' ? 'paid' : 'free';
     course.status = req.body?.status === 'draft' ? 'draft' : 'published';
 
+    savePersistedData();
     console.log(`✅ Formation mise à jour par admin: ${course.id}`);
     res.json(course);
   } catch (error) {
