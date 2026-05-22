@@ -25,6 +25,21 @@ import { DisplayPreferencesService, LocalizedText } from '../../shared/services/
     .dest-card:hover img { transform: scale(1.08); }
     .dest-card:hover .dest-overlay { opacity: .55; }
     .dest-overlay { transition: opacity .4s; }
+    .social-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7);
+      font-size: 0.78rem; font-weight: 600;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .social-pill:hover {
+      background: rgba(200,169,106,0.18);
+      border-color: rgba(200,169,106,0.5);
+      color: #e2c17a;
+      transform: translateY(-2px);
+    }
   `]
 })
 export class LandingComponent implements AfterViewInit {
