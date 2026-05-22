@@ -23,8 +23,10 @@ import { DisplayPreferencesService, LocalizedText } from '../../shared/services/
     .dest-track:hover { animation-play-state: paused; }
     .dest-card img { transition: transform .6s cubic-bezier(.4,0,.2,1); }
     .dest-card:hover img { transform: scale(1.08); }
-    .dest-card:hover .dest-overlay { opacity: .55; }
+    .dest-card:hover .dest-overlay { opacity: .45; }
     .dest-overlay { transition: opacity .4s; }
+    .dest-text { text-shadow: 0 2px 12px rgba(0,0,0,.9), 0 1px 4px rgba(0,0,0,1); }
+    .dest-label { text-shadow: 0 1px 8px rgba(0,0,0,.8); }
     .social-pill {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 7px 14px; border-radius: 9999px;
@@ -40,6 +42,18 @@ import { DisplayPreferencesService, LocalizedText } from '../../shared/services/
       color: #e2c17a;
       transform: translateY(-2px);
     }
+    @keyframes testi-scroll-l {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    @keyframes testi-scroll-r {
+      from { transform: translateX(-50%); }
+      to   { transform: translateX(0); }
+    }
+    .testi-row-l { animation: testi-scroll-l 55s linear infinite; }
+    .testi-row-r { animation: testi-scroll-r 55s linear infinite; }
+    .testi-row-l:hover, .testi-row-r:hover { animation-play-state: paused; }
+    .testi-card { flex-shrink: 0; }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(32px); }
       to   { opacity: 1; transform: translateY(0); }
