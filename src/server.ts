@@ -384,7 +384,7 @@ const courses: Course[] = [
     modules: 5,
     students: 210,
     thumbnail: 'module-nutrition-pathologie.svg',
-    description: 'Comprendre les pathologies courantes comme l’hypertension et le diabète grâce à une approche nutritionnelle claire.',
+    description: "Comprendre les pathologies courantes comme l'hypertension et le diabète grâce à une approche nutritionnelle claire.",
     access: 'free',
     priceEur: 0,
     priceTnd: 0,
@@ -409,9 +409,9 @@ const courses: Course[] = [
     ],
     chapters: [
       { id: 'chapter-1-1', title: 'Chapitre 1 : Les bases de la nutrition', content: "Les macronutriments, leur rôle, les bonnes associations alimentaires et les premières bases d'équilibre nutritionnel." },
-      { id: 'chapter-1-2', title: 'Chapitre 2 : L’inflammation', content: 'Comprendre les facteurs inflammatoires, les erreurs alimentaires fréquentes et les pistes naturelles pour apaiser le terrain.' },
-      { id: 'chapter-1-3', title: 'Chapitre 3 : Diabète', content: 'Identifier les mécanismes du diabète, choisir les bons aliments et adapter l’accompagnement au quotidien.' },
-      { id: 'chapter-1-4', title: 'Chapitre 4 : Hypertension', content: 'Mettre en place une hygiène de vie adaptée, réduire les facteurs aggravants et soutenir l’équilibre cardiovasculaire.' },
+      { id: 'chapter-1-2', title: "Chapitre 2 : L'inflammation", content: "Comprendre les facteurs inflammatoires, les erreurs alimentaires fréquentes et les pistes naturelles pour apaiser le terrain." },
+      { id: 'chapter-1-3', title: 'Chapitre 3 : Diabète', content: "Identifier les mécanismes du diabète, choisir les bons aliments et adapter l'accompagnement au quotidien." },
+      { id: 'chapter-1-4', title: 'Chapitre 4 : Hypertension', content: "Mettre en place une hygiène de vie adaptée, réduire les facteurs aggravants et soutenir l'équilibre cardiovasculaire." },
       { id: 'chapter-1-5', title: 'Chapitre 5 : Troubles digestifs', content: 'Analyser les causes fréquentes, renforcer la digestion et proposer un protocole alimentaire plus confortable.' },
     ],
     moduleItems: [],
@@ -465,7 +465,7 @@ const courses: Course[] = [
     modules: 5,
     students: 185,
     thumbnail: 'module-detox-poids.svg',
-    description: 'Un protocole professionnel pour la détox, la silhouette et l’accompagnement durable de la perte de poids.',
+    description: "Un protocole professionnel pour la détox, la silhouette et l'accompagnement durable de la perte de poids.",
     access: 'paid',
     priceEur: 349,
     priceTnd: 1175,
@@ -1049,7 +1049,7 @@ const formulas: TrainingFormula[] = [
   {
     id: 'formula-3',
     title: 'Formule 3',
-    description: 'Une formule premium avec trois certificats, ebook offert et un suivi d’un mois.',
+    description: "Une formule premium avec trois certificats, ebook offert et un suivi d'un mois.",
     image: 'module-emonctoires.svg',
     highlights: [
       '3 certificats',
@@ -1258,7 +1258,7 @@ function bootstrapRoleData(): void {
     phone: '+216 20 000 001',
     city: 'Djerba',
     country: 'Tunisie',
-    bio: "Directrice administrative de la plateforme Essenti’ Elle Formation et Bien Être.",
+    bio: "Directrice administrative de la plateforme Essenti' Elle Formation et Bien Être.",
   });
   roleProfiles.set('2', {
     phone: '+216 20 000 002',
@@ -1282,7 +1282,7 @@ function bootstrapRoleData(): void {
           title: 'Certificat - Détox peau',
           issuedAt: '2026-04-12T09:00:00.000Z',
           status: 'issued',
-          signedBy: "Direction Essenti’ Elle Formation et Bien Être",
+          signedBy: "Direction Essenti' Elle Formation et Bien Être",
         },
         {
           id: 'cert-3-1',
@@ -1328,7 +1328,7 @@ function bootstrapRoleData(): void {
       recipientRole: 'student',
       recipientName: 'Jane Doe',
       subject: 'Re: Question sur le module hypertension',
-      content: 'Bien sûr. Le suivi nutritionnel s’inscrit dans la durée et comprend un protocole d’ajustement, alors qu’une recommandation ponctuelle reste plus générale.',
+      content: "Bien sûr. Le suivi nutritionnel s'inscrit dans la durée et comprend un protocole d'ajustement, alors qu'une recommandation ponctuelle reste plus générale.",
       sentAt: '2026-05-01T09:10:00.000Z',
     }
   );
@@ -1339,7 +1339,7 @@ function bootstrapRoleData(): void {
     courseId: '1',
     scheduledAt: '2026-05-14T18:00:00.000Z',
     meetLink: 'https://meet.google.com/ess-nutri-live',
-    notes: 'Analyse de cas autour du diabète et de l’hypertension.',
+    notes: "Analyse de cas autour du diabète et de l'hypertension.",
     createdBy: '2',
   });
 
@@ -1347,7 +1347,7 @@ function bootstrapRoleData(): void {
     {
       id: 'res-1',
       title: 'PDF - Guide nutrition inflammatoire',
-      description: 'Support PDF pour accompagner le module sur l’inflammation chronique.',
+      description: "Support PDF pour accompagner le module sur l'inflammation chronique.",
       courseId: '1',
       type: 'pdf',
       url: 'https://example.com/guide-nutrition.pdf',
@@ -1356,7 +1356,7 @@ function bootstrapRoleData(): void {
     {
       id: 'res-2',
       title: 'Audio - Drainage et émonctoires',
-      description: 'Audio d’accompagnement sur les axes majeurs de drainage.',
+      description: "Audio d'accompagnement sur les axes majeurs de drainage.",
       courseId: '3',
       type: 'audio',
       url: 'https://example.com/audio-emonctoires.mp3',
@@ -2980,7 +2980,7 @@ app.post('/api/register', authLimiter, async (req, res) => {
       return;
     }
     console.error('[API] Register failed', error);
-    res.status(500).json({ error: 'Erreur serveur pendant l’inscription.' });
+    res.status(500).json({ error: "Erreur serveur pendant l'inscription." });
   }
 });
 
@@ -3324,7 +3324,7 @@ app.post('/api/student/messages', (req, res): any => {
     recipientId: recipient.id,
     recipientRole: recipient.role,
     recipientDisplayName: recipient.name,
-    recipientName: recipientRole === ‘admin’ ? "Direction Essenti’ Elle" : ‘Dr. Expert’,
+    recipientName: recipientRole === 'admin' ? "Direction Essenti' Elle" : 'Dr. Expert',
     recipientDisplayNameFinal: recipient.name,
     subject,
     content,
