@@ -2794,6 +2794,43 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
   await loadAttemptsFromDb(pool);
   await loadCourseQuizAttemptsFromDb(pool);
 
+  // Fix exam-detox-final: correct course_id (13→2) and exam_type (final→quiz)
+  await pool.query(
+    `UPDATE exams SET course_id = '2', exam_type = 'quiz'
+     WHERE id = 'exam-detox-final' AND (course_id != '2' OR exam_type != 'quiz')`
+  ).catch(() => {});
+
+  // If course_quiz_config for course '2' is empty, migrate from exam_questions table
+  try {
+    const [cfgRows] = await pool.query<mysql.RowDataPacket[]>(
+      "SELECT questions_json FROM course_quiz_config WHERE course_id = '2' LIMIT 1"
+    );
+    const existingQs = cfgRows.length ? JSON.parse(String(cfgRows[0]['questions_json'] ?? '[]')) : [];
+    if (!existingQs.length) {
+      const [qRows] = await pool.query<mysql.RowDataPacket[]>(
+        `SELECT id, prompt, option_a, option_b, option_c, option_d, correct_index
+         FROM exam_questions WHERE exam_id = 'exam-detox-final' ORDER BY sort_index`
+      );
+      if (qRows.length > 0) {
+        const migrated = qRows.map((q) => ({
+          id: String(q['id']),
+          prompt: String(q['prompt']),
+          options: [q['option_a'], q['option_b'], q['option_c'], q['option_d']].filter(Boolean).map(String),
+          correctIndex: Number(q['correct_index']),
+        }));
+        await pool.query(
+          `INSERT INTO course_quiz_config (course_id, quiz_title, questions_json)
+           VALUES ('2', 'Examen Final — Détox Thérapeutique Complète (Modules 1 à 10)', ?)
+           ON DUPLICATE KEY UPDATE quiz_title = VALUES(quiz_title), questions_json = VALUES(questions_json)`,
+          [JSON.stringify(migrated)]
+        );
+        console.log(`[DB] Migrated ${migrated.length} detox questions from exam_questions → course_quiz_config`);
+      }
+    }
+  } catch (err) {
+    console.warn('[DB] Could not migrate exam_questions to course_quiz_config:', err);
+  }
+
   // Load persisted course quiz questions from MySQL (overrides seed if DB has data)
   await loadCourseQuizConfigFromDb(pool);
 
