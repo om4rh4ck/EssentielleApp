@@ -1,148 +1,245 @@
-.header-floating-menu {
-  position: relative;
+/* ── Header scroll state ──────────────────────────────────────────────── */
+.header-base {
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
 }
+.header-scrolled {
+  box-shadow: 0 4px 28px rgba(15, 23, 19, 0.10);
+  background-color: rgba(255, 255, 255, 0.98) !important;
+}
+
+/* ── Nav links with animated underline ───────────────────────────────── */
+.nav-link {
+  position: relative;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4a6a58;
+  letter-spacing: 0.01em;
+  padding-bottom: 4px;
+  transition: color 0.2s;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #c8a96a, #e2c17a);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s cubic-bezier(.4, 0, .2, 1);
+}
+.nav-link:hover { color: #1a3a2a; }
+.nav-link:hover::after { transform: scaleX(1); }
+.nav-link-active { color: #1a3a2a !important; }
+.nav-link-active::after { transform: scaleX(1); }
+
+/* ── CTA button shimmer ───────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.cta-btn {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a3a2a 0%, #2d5a40 60%, #1a3a2a 100%);
+  background-size: 200% auto;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border-radius: 9999px;
+  padding: 10px 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-position 0.4s ease, box-shadow 0.25s, transform 0.2s;
+  box-shadow: 0 4px 18px rgba(26, 58, 42, 0.28);
+}
+.cta-btn:hover {
+  background-position: right center;
+  box-shadow: 0 8px 28px rgba(26, 58, 42, 0.36);
+  transform: translateY(-1px);
+}
+.cta-btn-gold {
+  background: linear-gradient(135deg, #c8a96a 0%, #e2c17a 50%, #c8a96a 100%);
+  background-size: 200% auto;
+  color: #1a3a2a;
+  box-shadow: 0 4px 18px rgba(200, 169, 106, 0.32);
+}
+.cta-btn-gold:hover {
+  box-shadow: 0 8px 28px rgba(200, 169, 106, 0.44);
+}
+
+/* ── Ghost login button ───────────────────────────────────────────────── */
+.login-btn {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #3a5a48;
+  border: 1.5px solid rgba(200, 169, 106, 0.38);
+  border-radius: 9999px;
+  padding: 8px 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.login-btn:hover {
+  border-color: #c8a96a;
+  color: #1a3a2a;
+  background: rgba(200, 169, 106, 0.06);
+}
+
+/* ── Floating panels (selectors) ──────────────────────────────────────── */
+.header-floating-menu { position: relative; }
 
 .header-icon-button {
   display: inline-flex;
-  height: 40px;
-  width: 40px;
+  height: 36px;
+  width: 36px;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(200, 169, 106, 0.28);
+  border: 1.5px solid rgba(200, 169, 106, 0.3);
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--color-brand-green-900);
-  box-shadow: 0 10px 24px rgba(15, 23, 19, 0.08);
-  transition: all 0.25s ease;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.2s;
 }
-
 .header-icon-button:hover {
-  border-color: rgba(200, 169, 106, 0.7);
-  color: #c8a96a;
+  border-color: #c8a96a;
+  background: rgba(200, 169, 106, 0.08);
 }
 
-.selector-icon {
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
-  display: block;
-}
-
-.selector-icon-option {
-  width: 20px;
-  height: 20px;
-}
+.selector-icon { width: 20px; height: 20px; object-fit: contain; display: block; }
+.selector-icon-option { width: 18px; height: 18px; }
 
 .floating-panel {
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   padding: 8px;
   border: 1px solid rgba(200, 169, 106, 0.22);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 18px 40px rgba(15, 23, 19, 0.14);
-  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 16px 40px rgba(15, 23, 19, 0.12);
+  backdrop-filter: blur(16px);
+  z-index: 100;
+  animation: fadeDropDown 0.18s ease;
 }
-
-.floating-panel-desktop {
-  right: -8px;
+@keyframes fadeDropDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .floating-option {
   display: inline-flex;
-  min-width: 42px;
-  height: 42px;
+  min-width: 38px;
+  height: 38px;
   align-items: center;
   justify-content: center;
-  border: 1px solid transparent;
+  border: 1.5px solid transparent;
   border-radius: 9999px;
   background: #f8f4ec;
-  color: var(--color-brand-green-900);
-  font-size: 0.85rem;
-  font-weight: 700;
-  transition: all 0.25s ease;
-}
-
-.floating-option-text {
-  min-width: 42px;
   font-size: 0;
-  letter-spacing: 0;
+  transition: all 0.2s;
 }
-
 .floating-option:hover,
 .floating-option-active {
   background: #c8a96a;
   border-color: rgba(200, 169, 106, 0.55);
-  color: #ffffff;
 }
 
+/* ── Mobile hamburger ─────────────────────────────────────────────────── */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+.hamburger:hover { background: rgba(200, 169, 106, 0.1); }
+.hamburger span {
+  display: block;
+  height: 2px;
+  background: #1a3a2a;
+  border-radius: 9999px;
+  transition: all 0.28s cubic-bezier(.4, 0, .2, 1);
+  transform-origin: center;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── Mobile menu drawer ───────────────────────────────────────────────── */
+.mobile-drawer {
+  position: fixed;
+  top: 68px;
+  left: 0;
+  width: 100%;
+  z-index: 49;
+  background: #fff;
+  border-bottom: 1px solid rgba(200, 169, 106, 0.25);
+  box-shadow: 0 16px 40px rgba(15, 23, 19, 0.12);
+  transform: translateY(-10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(.4, 0, .2, 1), opacity 0.25s ease;
+}
+.mobile-drawer.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #3a5a48;
+  border-bottom: 1px solid rgba(200, 169, 106, 0.12);
+  transition: background 0.15s, color 0.15s;
+}
+.mobile-nav-link:hover { background: rgba(200, 169, 106, 0.06); color: #1a3a2a; }
+.mobile-nav-link-active { color: #1a3a2a; background: rgba(200, 169, 106, 0.08); }
+
+/* ── Bottom nav (mobile) ──────────────────────────────────────────────── */
 .bottom-nav {
   position: fixed;
-  bottom: 15px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
+  width: 92%;
   max-width: 420px;
-  background: #ffffff;
-  border-radius: 20px;
+  background: #fff;
+  border-radius: 22px;
   display: flex;
   justify-content: space-around;
-  padding: 12px 0;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 10px 4px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.10), 0 0 0 1px rgba(200,169,106,0.15);
 }
-
 .nav-item {
   display: flex;
   flex: 1;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: #6b7280;
-  transition: 0.3s;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #8ca898;
+  transition: color 0.2s;
 }
+.nav-item mat-icon { font-size: 20px; width: 20px; height: 20px; color: inherit; }
+.nav-item.active { color: #c8a96a; }
+.nav-item:hover { color: #c8a96a; }
 
-.nav-item mat-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
-  color: inherit;
-}
-
-.nav-item.active {
-  color: #c8a96a;
-}
-
-.nav-item:hover {
-  color: #c8a96a;
-}
-
-/* Masquer le menu du bas sur PC */
 @media (min-width: 768px) {
-  .header-icon-button {
-    height: 36px;
-    width: 36px;
-  }
-
-  .selector-icon {
-    width: 18px;
-    height: 18px;
-  }
-
-  .selector-icon-option {
-    width: 18px;
-    height: 18px;
-  }
-
-  .floating-option {
-    min-width: 38px;
-    height: 38px;
-  }
-
-  .bottom-nav {
-    display: none !important;
-  }
+  .bottom-nav { display: none !important; }
 }

@@ -1,123 +1,59 @@
 <div class="min-h-screen bg-[var(--color-brand-cream)] text-[var(--color-brand-green-900)] font-sans selection:bg-[var(--color-brand-gold-300)] selection:text-[var(--color-brand-green-900)] overflow-x-hidden flex flex-col">
-  <nav class="fixed top-0 left-0 w-full z-50 md:hidden">
-    <div class="mx-auto flex h-[82px] w-full items-center justify-between rounded-b-[1.75rem] bg-white/95 px-4 shadow-[0_14px_40px_rgba(15,23,19,0.10)] backdrop-blur-xl">
-      <a routerLink="/" class="flex items-center">
-        <img src="lo2 originale.png" alt="Essenti' Elle Formation et Bien Être" class="h-14 w-auto" />
+  <!-- ═══════════════════════════════════════════════════════════
+       HEADER — Pro e-learning style (Taki Academy inspired)
+       ═══════════════════════════════════════════════════════════ -->
+  <header class="header-base fixed top-0 left-0 w-full z-50 bg-white border-b border-[rgba(200,169,106,0.18)]"
+          [class.header-scrolled]="isScrolled()">
+
+    <!-- ── Desktop nav ──────────────────────────────────────────────── -->
+    <div class="hidden md:flex items-center justify-between h-[68px] max-w-7xl mx-auto px-6 gap-4">
+
+      <!-- Logo -->
+      <a routerLink="/" class="shrink-0 flex items-center hover:opacity-90 transition-opacity">
+        <img src="lo2 originale.png" alt="Essenti' Elle" class="h-[56px] w-auto" />
       </a>
-      <div class="flex items-center gap-3">
+
+      <!-- Nav links -->
+      <nav class="flex items-center gap-6 xl:gap-8">
+        <a routerLink="/" routerLinkActive="nav-link-active" [routerLinkActiveOptions]="{ exact: true }"
+           class="nav-link">{{ t({ fr: 'Accueil', en: 'Home', ar: 'الرئيسية' }) }}</a>
+        <a routerLink="/formations" routerLinkActive="nav-link-active"
+           class="nav-link">{{ t({ fr: 'Formations', en: 'Programs', ar: 'الدورات' }) }}</a>
+        <a routerLink="/about" routerLinkActive="nav-link-active"
+           class="nav-link">{{ t({ fr: 'À propos', en: 'About', ar: 'من نحن' }) }}</a>
+        <a routerLink="/contact" routerLinkActive="nav-link-active"
+           class="nav-link">{{ t({ fr: 'Contact', en: 'Contact', ar: 'اتصل بنا' }) }}</a>
+      </nav>
+
+      <!-- Right actions -->
+      <div class="flex items-center gap-2.5 xl:gap-3 shrink-0">
+
+        <!-- Currency selector -->
         <div class="header-floating-menu">
-          <button type="button" class="header-icon-button" (click)="toggleCurrencyMenu()" aria-label="Changer la devise">
+          <button type="button" class="header-icon-button" (click)="toggleCurrencyMenu()">
             <img [src]="currentCurrencyIcon()" alt="" class="selector-icon" />
           </button>
           @if (showCurrencyMenu) {
-            <div class="floating-panel">
-              @for (option of currencyOptions; track option.code) {
-                <button
-                  type="button"
-                  class="floating-option"
-                  [class.floating-option-active]="currency() === option.code"
-                  [attr.aria-label]="option.label"
-                  (click)="setCurrency(option.code)"
-                >
-                  <img [src]="option.icon" alt="" class="selector-icon selector-icon-option" />
+            <div class="floating-panel" style="right:-8px">
+              @for (opt of currencyOptions; track opt.code) {
+                <button type="button" class="floating-option" [class.floating-option-active]="currency()===opt.code" (click)="setCurrency(opt.code)">
+                  <img [src]="opt.icon" alt="" class="selector-icon selector-icon-option" />
                 </button>
               }
             </div>
           }
         </div>
 
+        <!-- Language selector -->
         <div class="header-floating-menu">
-          <button type="button" class="header-icon-button" (click)="toggleLanguageMenu()" aria-label="Changer la langue">
+          <button type="button" class="header-icon-button" (click)="toggleLanguageMenu()">
             <img [src]="currentLanguageIcon()" alt="" class="selector-icon" />
           </button>
           @if (showLanguageMenu) {
-            <div class="floating-panel">
-              @for (option of languageOptions; track option.code) {
-                <button
-                  type="button"
-                  class="floating-option floating-option-text"
-                  [class.floating-option-active]="language() === option.code"
-                  [attr.aria-label]="option.label"
-                  (click)="setLanguage(option.code)"
-                >
-                  <img [src]="option.icon" alt="" class="selector-icon selector-icon-option" />
-                </button>
-              }
-            </div>
-          }
-        </div>
-
-        <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-full text-[var(--color-brand-green-900)]/75">
-          <mat-icon style="font-size: 22px;">notifications_none</mat-icon>
-        </button>
-
-        @if (auth.isAuthenticated()) {
-          <button type="button" (click)="logout()" class="hidden items-center gap-2 rounded-2xl bg-[var(--color-brand-green-800)] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_24px_rgba(15,23,19,0.18)]">
-            <mat-icon style="font-size: 17px;">logout</mat-icon>
-            {{ t({ fr: 'Déconnexion', en: 'Logout', ar: 'تسجيل الخروج' }) }}
-          </button>
-        } @else {
-          <a routerLink="/register" class="inline-flex items-center gap-2 rounded-2xl bg-[var(--color-brand-green-800)] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_24px_rgba(15,23,19,0.18)]">
-            <mat-icon style="font-size: 17px;">auto_awesome</mat-icon>
-            {{ t({ fr: 'Essai Gratuit', en: 'Free Trial', ar: 'تجربة مجانية' }) }}
-          </a>
-        }
-      </div>
-    </div>
-  </nav>
-
-  <nav class="fixed top-0 left-0 hidden w-full z-50 border-b border-[var(--color-brand-gold-300)]/30 bg-white/80 backdrop-blur-xl md:block">
-    <div class="mx-auto flex h-20 w-full max-w-7xl items-center justify-between gap-4 px-6">
-      <div class="flex min-w-0 items-center gap-3 lg:w-[18%]">
-        <a routerLink="/" class="hover:opacity-80 transition-opacity">
-          <img src="lo2 originale.png" alt="Essenti' Elle Formation et Bien Être" class="h-20 w-auto" />
-        </a>
-      </div>
-
-      <div class="flex min-w-0 flex-1 items-center justify-center gap-5 lg:gap-6 xl:gap-8">
-        <a routerLink="/" routerLinkActive="text-[var(--color-brand-green-900)]" [routerLinkActiveOptions]="{ exact: true }" class="text-sm font-semibold tracking-wide text-[var(--color-brand-green-800)]/70 hover:text-[var(--color-brand-green-900)] transition-colors">{{ t({ fr: 'Accueil', en: 'Home', ar: 'الرئيسية' }) }}</a>
-        <a routerLink="/formations" routerLinkActive="text-[var(--color-brand-green-900)]" class="text-sm font-semibold tracking-wide text-[var(--color-brand-green-800)]/70 hover:text-[var(--color-brand-green-900)] transition-colors">{{ t({ fr: 'Formations', en: 'Programs', ar: 'الدورات' }) }}</a>
-        <a routerLink="/about" routerLinkActive="text-[var(--color-brand-green-900)]" class="text-sm font-semibold tracking-wide text-[var(--color-brand-green-800)]/70 hover:text-[var(--color-brand-green-900)] transition-colors">{{ t({ fr: 'À propos', en: 'About', ar: 'من نحن' }) }}</a>
-        <a routerLink="/contact" routerLinkActive="text-[var(--color-brand-green-900)]" class="text-sm font-semibold tracking-wide text-[var(--color-brand-green-800)]/70 hover:text-[var(--color-brand-green-900)] transition-colors">{{ t({ fr: 'Contact', en: 'Contact', ar: 'اتصل بنا' }) }}</a>
-      </div>
-
-      <div class="flex shrink-0 items-center justify-end gap-3 lg:w-[24%] xl:w-[26%]">
-        <div class="header-floating-menu">
-          <button type="button" class="header-icon-button" (click)="toggleCurrencyMenu()" aria-label="Changer la devise">
-            <img [src]="currentCurrencyIcon()" alt="" class="selector-icon" />
-          </button>
-          @if (showCurrencyMenu) {
-            <div class="floating-panel floating-panel-desktop">
-              @for (option of currencyOptions; track option.code) {
-                <button
-                  type="button"
-                  class="floating-option"
-                  [class.floating-option-active]="currency() === option.code"
-                  [attr.aria-label]="option.label"
-                  (click)="setCurrency(option.code)"
-                >
-                  <img [src]="option.icon" alt="" class="selector-icon selector-icon-option" />
-                </button>
-              }
-            </div>
-          }
-        </div>
-
-        <div class="header-floating-menu">
-          <button type="button" class="header-icon-button" (click)="toggleLanguageMenu()" aria-label="Changer la langue">
-            <img [src]="currentLanguageIcon()" alt="" class="selector-icon" />
-          </button>
-          @if (showLanguageMenu) {
-            <div class="floating-panel floating-panel-desktop">
-              @for (option of languageOptions; track option.code) {
-                <button
-                  type="button"
-                  class="floating-option floating-option-text"
-                  [class.floating-option-active]="language() === option.code"
-                  [attr.aria-label]="option.label"
-                  (click)="setLanguage(option.code)"
-                >
-                  <img [src]="option.icon" alt="" class="selector-icon selector-icon-option" />
+            <div class="floating-panel" style="right:-8px">
+              @for (opt of languageOptions; track opt.code) {
+                <button type="button" class="floating-option" [class.floating-option-active]="language()===opt.code" (click)="setLanguage(opt.code)">
+                  <img [src]="opt.icon" alt="" class="selector-icon selector-icon-option" />
                 </button>
               }
             </div>
@@ -125,29 +61,119 @@
         </div>
 
         @if (auth.isAuthenticated()) {
-          <button type="button" (click)="logout()" class="hidden lg:inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/45 bg-white/80 px-4 py-2 text-sm font-bold text-[var(--color-brand-green-900)] shadow-sm transition-all hover:border-[var(--color-brand-gold-500)]/50 hover:text-[var(--color-brand-gold-500)]">
-            <mat-icon class="w-4 h-4" style="font-size: 17px;">logout</mat-icon>
+          <button type="button" (click)="logout()" class="login-btn hidden lg:inline-flex">
+            <mat-icon style="font-size:16px;width:16px;height:16px">logout</mat-icon>
             {{ t({ fr: 'Déconnexion', en: 'Logout', ar: 'تسجيل الخروج' }) }}
           </button>
-          <button type="button" (click)="navigateToAccount()" class="text-sm font-bold bg-[var(--color-brand-green-800)] text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-[var(--color-brand-green-900)] hover:shadow-lg transition-all border border-transparent hover:border-[var(--color-brand-gold-500)]/30 inline-flex items-center gap-2">
-            <mat-icon class="w-4 h-4 text-base" style="font-size: 17px;">account_circle</mat-icon>
+          <button type="button" (click)="navigateToAccount()" class="cta-btn">
+            <mat-icon style="font-size:16px;width:16px;height:16px">account_circle</mat-icon>
             {{ t({ fr: 'Mon espace', en: 'My account', ar: 'حسابي' }) }}
-            <mat-icon class="w-4 h-4 text-base" style="font-size: 16px;">arrow_forward</mat-icon>
+            <mat-icon style="font-size:15px;width:15px;height:15px">arrow_forward</mat-icon>
           </button>
         } @else {
-          <a routerLink="/login" class="hidden lg:inline-flex items-center gap-2 rounded-full border border-[var(--color-brand-gold-300)]/45 bg-white/80 px-4 py-2 text-sm font-bold text-[var(--color-brand-green-900)] shadow-sm transition-all hover:border-[var(--color-brand-gold-500)]/50 hover:text-[var(--color-brand-gold-500)]">
-            <mat-icon class="w-4 h-4" style="font-size: 17px;">login</mat-icon>
+          <a routerLink="/login" class="login-btn">
+            <mat-icon style="font-size:16px;width:16px;height:16px">login</mat-icon>
             {{ t({ fr: 'Connexion', en: 'Login', ar: 'تسجيل الدخول' }) }}
           </a>
-          <a routerLink="/register" class="text-sm font-bold bg-[var(--color-brand-green-800)] text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-[var(--color-brand-green-900)] hover:shadow-lg transition-all border border-transparent hover:border-[var(--color-brand-gold-500)]/30 inline-flex items-center gap-2">
-            <mat-icon class="w-4 h-4 text-base" style="font-size: 17px;">auto_awesome</mat-icon>
-            {{ t({ fr: 'Essai Gratuit', en: 'Free Trial', ar: 'تجربة مجانية' }) }}
-            <mat-icon class="w-4 h-4 text-base" style="font-size: 16px;">arrow_forward</mat-icon>
+          <a routerLink="/register" class="cta-btn cta-btn-gold">
+            <mat-icon style="font-size:16px;width:16px;height:16px">school</mat-icon>
+            {{ t({ fr: 'Commencer', en: 'Get started', ar: 'ابدأ الآن' }) }}
+            <mat-icon style="font-size:15px;width:15px;height:15px">arrow_forward</mat-icon>
           </a>
         }
       </div>
     </div>
-  </nav>
+
+    <!-- ── Mobile nav ───────────────────────────────────────────────── -->
+    <div class="mobile-menu-wrapper md:hidden flex items-center justify-between h-[68px] px-4">
+
+      <!-- Logo -->
+      <a routerLink="/" (click)="closeMobile()" class="flex items-center">
+        <img src="lo2 originale.png" alt="Essenti' Elle" class="h-[52px] w-auto" />
+      </a>
+
+      <!-- Right: selectors + hamburger -->
+      <div class="flex items-center gap-2">
+        <div class="header-floating-menu">
+          <button type="button" class="header-icon-button" (click)="toggleCurrencyMenu()">
+            <img [src]="currentCurrencyIcon()" alt="" class="selector-icon" />
+          </button>
+          @if (showCurrencyMenu) {
+            <div class="floating-panel">
+              @for (opt of currencyOptions; track opt.code) {
+                <button type="button" class="floating-option" [class.floating-option-active]="currency()===opt.code" (click)="setCurrency(opt.code)">
+                  <img [src]="opt.icon" alt="" class="selector-icon selector-icon-option" />
+                </button>
+              }
+            </div>
+          }
+        </div>
+        <div class="header-floating-menu">
+          <button type="button" class="header-icon-button" (click)="toggleLanguageMenu()">
+            <img [src]="currentLanguageIcon()" alt="" class="selector-icon" />
+          </button>
+          @if (showLanguageMenu) {
+            <div class="floating-panel">
+              @for (opt of languageOptions; track opt.code) {
+                <button type="button" class="floating-option" [class.floating-option-active]="language()===opt.code" (click)="setLanguage(opt.code)">
+                  <img [src]="opt.icon" alt="" class="selector-icon selector-icon-option" />
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Hamburger -->
+        <button type="button" class="hamburger" [class.open]="mobileOpen()"
+                (click)="mobileOpen.set(!mobileOpen())" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="mobile-drawer md:hidden" [class.open]="mobileOpen()">
+      <a routerLink="/" routerLinkActive="mobile-nav-link-active" [routerLinkActiveOptions]="{ exact: true }"
+         class="mobile-nav-link" (click)="closeMobile()">
+        <mat-icon style="font-size:18px;color:#c8a96a">home</mat-icon>
+        {{ t({ fr: 'Accueil', en: 'Home', ar: 'الرئيسية' }) }}
+      </a>
+      <a routerLink="/formations" routerLinkActive="mobile-nav-link-active"
+         class="mobile-nav-link" (click)="closeMobile()">
+        <mat-icon style="font-size:18px;color:#c8a96a">school</mat-icon>
+        {{ t({ fr: 'Formations', en: 'Programs', ar: 'الدورات' }) }}
+      </a>
+      <a routerLink="/about" routerLinkActive="mobile-nav-link-active"
+         class="mobile-nav-link" (click)="closeMobile()">
+        <mat-icon style="font-size:18px;color:#c8a96a">info</mat-icon>
+        {{ t({ fr: 'À propos', en: 'About', ar: 'من نحن' }) }}
+      </a>
+      <a routerLink="/contact" routerLinkActive="mobile-nav-link-active"
+         class="mobile-nav-link" (click)="closeMobile()">
+        <mat-icon style="font-size:18px;color:#c8a96a">mail</mat-icon>
+        {{ t({ fr: 'Contact', en: 'Contact', ar: 'اتصل بنا' }) }}
+      </a>
+      <div class="p-4 flex gap-3">
+        @if (auth.isAuthenticated()) {
+          <button type="button" (click)="navigateToAccount()" class="cta-btn flex-1 justify-center">
+            <mat-icon style="font-size:16px;width:16px;height:16px">account_circle</mat-icon>
+            {{ t({ fr: 'Mon espace', en: 'My account', ar: 'حسابي' }) }}
+          </button>
+          <button type="button" (click)="logout()" class="login-btn">
+            <mat-icon style="font-size:16px;width:16px;height:16px">logout</mat-icon>
+          </button>
+        } @else {
+          <a routerLink="/login" class="login-btn flex-1 justify-center" (click)="closeMobile()">
+            {{ t({ fr: 'Connexion', en: 'Login', ar: 'تسجيل الدخول' }) }}
+          </a>
+          <a routerLink="/register" class="cta-btn cta-btn-gold flex-1 justify-center" (click)="closeMobile()">
+            {{ t({ fr: 'Commencer', en: 'Get started', ar: 'ابدأ الآن' }) }}
+          </a>
+        }
+      </div>
+    </div>
+
+  </header>
 
   <main class="flex-grow pb-28 md:pb-0">
     <router-outlet></router-outlet>
