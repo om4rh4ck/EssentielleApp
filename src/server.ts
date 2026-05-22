@@ -383,7 +383,7 @@ const courses: Course[] = [
     instructorId: '2',
     modules: 5,
     students: 210,
-    thumbnail: 'module-nutrition-pathologie.svg',
+    thumbnail: '/uploads/nutrition-cover.jpeg',
     description: "Comprendre les pathologies courantes comme l'hypertension et le diabète grâce à une approche nutritionnelle claire.",
     access: 'free',
     priceEur: 0,
@@ -402,10 +402,20 @@ const courses: Course[] = [
       'Proposer des programmes personnalisés',
     ],
     contentItems: [
-      { id: 'content-1-1', text: 'PDF de cours et supports visuels' },
-      { id: 'content-1-2', text: 'Vidéos explicatives par module' },
-      { id: 'content-1-3', text: 'Examens de validation' },
-      { id: 'content-1-4', text: 'QCM de contrôle des acquis' },
+      { id: 'content-1-1', text: 'PDF de cours complet téléchargeable' },
+      { id: 'content-1-2', text: 'Galerie illustrée (8 visuels)' },
+      { id: 'content-1-3', text: 'Quiz de contrôle des acquis' },
+      { id: 'content-1-4', text: 'Certificat de validation' },
+    ],
+    galleryImages: [
+      '/uploads/nutrition-im1.jpeg',
+      '/uploads/nutrition-im2.jpeg',
+      '/uploads/nutrition-im3.jpeg',
+      '/uploads/nutrition-im4.jpeg',
+      '/uploads/nutrition-im5.jpeg',
+      '/uploads/nutrition-im6.jpeg',
+      '/uploads/nutrition-im7.jpeg',
+      '/uploads/nutrition-im8.jpeg',
     ],
     chapters: [
       { id: 'chapter-1-1', title: 'Chapitre 1 : Les bases de la nutrition', content: "Les macronutriments, leur rôle, les bonnes associations alimentaires et les premières bases d'équilibre nutritionnel." },
@@ -414,7 +424,14 @@ const courses: Course[] = [
       { id: 'chapter-1-4', title: 'Chapitre 4 : Hypertension', content: "Mettre en place une hygiène de vie adaptée, réduire les facteurs aggravants et soutenir l'équilibre cardiovasculaire." },
       { id: 'chapter-1-5', title: 'Chapitre 5 : Troubles digestifs', content: 'Analyser les causes fréquentes, renforcer la digestion et proposer un protocole alimentaire plus confortable.' },
     ],
-    moduleItems: [],
+    moduleItems: [
+      {
+        id: 'module-1-pdf',
+        title: 'Formation Nutrition & Pathologies Courantes — Cours complet',
+        pdfName: 'formation-nutrition-pathologies.pdf',
+        pdfDataUrl: '/uploads/formation-nutrition-pathologies.pdf',
+      },
+    ],
     quizQuestions: [
       {
         id: 'nutrition-q1',
