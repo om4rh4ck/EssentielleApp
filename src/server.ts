@@ -2406,8 +2406,32 @@ const paymentRecords: PaymentRecord[] = [
   { id: 'pay-2', studentId: '3', studentName: 'Jane Doe', courseId: '3', amountEur: 329, status: 'pending', paidAt: '2026-04-26T12:00:00.000Z' },
 ];
 
+// ── Quiz Seed Backup — snapshot captured BEFORE any runtime modifications ─────
+// This guarantees quiz questions survive instructor saves that send empty arrays.
+const QUIZ_SEED_BACKUP: Map<string, { quizTitle: string; quizQuestions: NonNullable<Course['quizQuestions']> }> = new Map(
+  courses
+    .filter((c) => c.quizQuestions && c.quizQuestions.length > 0)
+    .map((c) => [c.id, { quizTitle: c.quizTitle ?? '', quizQuestions: c.quizQuestions! }])
+);
+
+function restoreQuizFromSeed(): void {
+  let restored = 0;
+  for (const course of courses) {
+    if (!course.quizQuestions?.length) {
+      const backup = QUIZ_SEED_BACKUP.get(course.id);
+      if (backup) {
+        course.quizTitle = course.quizTitle || backup.quizTitle;
+        course.quizQuestions = backup.quizQuestions;
+        restored++;
+      }
+    }
+  }
+  if (restored > 0) console.log(`[SEED] Restored quiz questions for ${restored} course(s) from seed backup`);
+}
+
 bootstrapRoleData();
 loadPersistedData();
+restoreQuizFromSeed(); // Always restore from seed if in-memory questions are missing
 
 // ── DATA MIGRATION: re-grade all stored attempts with the real engine ────────
 // Repairs attempts saved by old code that wrote score=0 / percentage=0 even
@@ -3256,6 +3280,9 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
 
   // Load persisted course quiz questions from MySQL (overrides seed if DB has data)
   await loadCourseQuizConfigFromDb(pool);
+
+  // Always restore from seed backup if course has no questions after DB load
+  restoreQuizFromSeed();
 
   // Seed any course with quizQuestions into MySQL for persistence
   await saveCourseQuizConfigToDb(pool);
