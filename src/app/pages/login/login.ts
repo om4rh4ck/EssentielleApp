@@ -28,7 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
             <div class="rounded-[30px] border border-[var(--color-brand-gold-300)]/22 bg-[linear-gradient(180deg,#fffefe_0%,#fbf7ef_100%)] p-6 shadow-[0_18px_40px_rgba(17,28,22,0.05)] sm:p-7 xl:p-9">
               <div class="mb-6 flex items-center gap-3">
                 <a routerLink="/" class="inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--color-brand-gold-300)]/35 bg-white p-2 shadow-lg shadow-[var(--color-brand-gold-300)]/20">
-                  <img src="lo2 originale.png" alt="Essenti' Elle Formation et Bien Être" class="h-full w-full rounded-xl object-contain" />
+                  <img src="/logo shih.png" alt="Essenti' Elle Formation et Bien Être" class="h-full w-full rounded-xl object-contain" />
                 </a>
                 <div>
                   <div class="text-xs font-bold uppercase tracking-[0.24em] text-[var(--color-brand-gold-500)]">Connexion</div>
