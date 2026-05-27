@@ -68,9 +68,9 @@ npx ng serve --port 3000 --host 0.0.0.0
 
 ## Comptes de test
 Le serveur crée automatiquement ces comptes au démarrage (avec hash sécurisé):
-- `admin@lessentielle-sante.site` / `password123`
-- `instructor@lessentielle-sante.site` / `password123`
-- `student@lessentielle-sante.site` / `password123`
+- `admin@lessentielle-bienetre.site` / `password123`
+- `instructor@lessentielle-bienetre.site` / `password123`
+- `student@lessentielle-bienetre.site` / `password123`
 
 ## Flux attendu
 - Inscription réussie => connexion automatique => dashboard étudiant
@@ -111,8 +111,8 @@ Ajoutez ces variables pour envoyer automatiquement les e-mails d'acceptation dep
 SMTP_HOST=smtp.example.com
 SMTP_PORT=587
 SMTP_SECURE=false
-SMTP_USER=contact@lessentielle-sante.site
+SMTP_USER=contact@lessentielle-bienetre.site
 SMTP_PASS=mot_de_passe_smtp
-SMTP_FROM="Essenti'elle Sante <contact@lessentielle-sante.site>"
-SMTP_REPLY_TO=contact@lessentielle-sante.site
+SMTP_FROM="Essenti'elle Sante <contact@lessentielle-bienetre.site>"
+SMTP_REPLY_TO=contact@lessentielle-bienetre.site
 ```

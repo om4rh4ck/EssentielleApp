@@ -121,7 +121,7 @@ import { MatIconModule } from '@angular/material/icon';
                       </span>
                       <span>
                         <span class="block text-sm font-bold text-[var(--color-brand-green-900)]">Admin</span>
-                        <span class="block text-xs text-[var(--color-brand-green-800)]/60">admin&#64;lessentielle-sante.site</span>
+                        <span class="block text-xs text-[var(--color-brand-green-800)]/60">admin&#64;lessentielle-bienetre.site</span>
                       </span>
                     </span>
                     <mat-icon class="text-[var(--color-brand-gold-500)]">arrow_forward</mat-icon>
@@ -134,7 +134,7 @@ import { MatIconModule } from '@angular/material/icon';
                       </span>
                       <span>
                         <span class="block text-sm font-bold text-[var(--color-brand-green-900)]">Formatrice</span>
-                        <span class="block text-xs text-[var(--color-brand-green-800)]/60">instructor&#64;lessentielle-sante.site</span>
+                        <span class="block text-xs text-[var(--color-brand-green-800)]/60">instructor&#64;lessentielle-bienetre.site</span>
                       </span>
                     </span>
                     <mat-icon class="text-[var(--color-brand-gold-500)]">arrow_forward</mat-icon>
@@ -147,7 +147,7 @@ import { MatIconModule } from '@angular/material/icon';
                       </span>
                       <span>
                         <span class="block text-sm font-bold text-[var(--color-brand-green-900)]">Etudiante</span>
-                        <span class="block text-xs text-[var(--color-brand-green-800)]/60">student&#64;lessentielle-sante.site</span>
+                        <span class="block text-xs text-[var(--color-brand-green-800)]/60">student&#64;lessentielle-bienetre.site</span>
                       </span>
                     </span>
                     <mat-icon class="text-[var(--color-brand-gold-500)]">arrow_forward</mat-icon>
@@ -236,7 +236,7 @@ export class LoginComponent {
 
   fillDemo(role: 'admin' | 'instructor' | 'student') {
     this.loginForm.patchValue({
-      email: role + '@lessentielle-sante.site',
+      email: role + '@lessentielle-bienetre.site',
       password: 'password123'
     });
     this.onSubmit();

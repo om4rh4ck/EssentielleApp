@@ -134,17 +134,42 @@ import { AuthService } from '../../services/auth.service';
         <div class="px-4 py-5 sm:px-5 lg:px-8 lg:py-8">
           <ng-content></ng-content>
 
-          <section class="mt-8 rounded-[28px] border border-[var(--color-brand-gold-300)]/28 bg-[linear-gradient(180deg,#fffdf9_0%,#f7efe1_100%)] p-5 shadow-[0_16px_34px_rgba(18,53,36,0.05)]">
-            <div class="flex items-start gap-3">
-              <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-brand-green-900)] text-white">
-                <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">gavel</mat-icon>
-              </span>
-              <div>
-                <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Reservation des droits</h3>
-                <p class="mt-2 text-sm leading-7 text-[var(--color-brand-green-800)]/78">
-                  Tous les contenus, images, videos, audios, documents et supports de cette plateforme sont reserves et proteges. Toute copie, recuperation, reutilisation, diffusion ou redistribution sans autorisation ecrite prealable est strictement interdite.
-                </p>
+          <section class="mt-8 rounded-[28px] border border-[var(--color-brand-gold-300)]/40 bg-[linear-gradient(135deg,#fffdf9_0%,#f3e9d5_100%)] p-5 md:p-6 shadow-[0_12px_32px_rgba(18,53,36,0.07)]">
+            <div class="flex flex-col sm:flex-row items-start gap-5 sm:gap-8">
+
+              <!-- Legal block -->
+              <div class="flex items-start gap-4 flex-1">
+                <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-brand-green-900)] text-white shadow-sm">
+                  <mat-icon class="!h-[20px] !w-[20px] !text-[20px]">gavel</mat-icon>
+                </span>
+                <div>
+                  <h3 class="font-serif text-[1.25rem] font-semibold text-[var(--color-brand-green-900)] tracking-tight">Réservation des droits</h3>
+                  <div class="mt-1 h-[2px] w-10 rounded-full bg-[var(--color-brand-gold-500)]"></div>
+                  <p class="mt-2.5 text-[0.82rem] leading-[1.85] text-[var(--color-brand-green-900)]/65">
+                    Tous les contenus, images, vidéos, audios, documents et supports de cette plateforme sont la propriété exclusive d'<strong class="text-[var(--color-brand-green-900)]/80 font-semibold">Essenti'Elle Santé</strong> et protégés par le droit d'auteur. Toute copie, récupération, réutilisation, diffusion ou redistribution sans autorisation écrite préalable est strictement interdite.
+                  </p>
+                  <p class="mt-1.5 text-[0.72rem] font-medium text-[var(--color-brand-green-900)]/40 tracking-wide">
+                    © ${new Date().getFullYear()} Essenti'Elle Santé — Tous droits réservés
+                  </p>
+                </div>
               </div>
+
+              <!-- QR code block -->
+              <div class="flex flex-col items-center gap-2 sm:w-[110px] shrink-0 self-center">
+                <p class="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-green-900)]/45">Site officiel</p>
+                <div class="p-2 rounded-xl border border-[var(--color-brand-gold-300)]/60 bg-white shadow-sm">
+                  <img
+                    src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&color=123524&bgcolor=ffffff&qzone=1&data=https%3A%2F%2Flessentielle-bienetre.site"
+                    alt="QR Code site Essenti'Elle"
+                    class="w-[90px] h-[90px] rounded"
+                    width="90" height="90" />
+                </div>
+                <a href="https://lessentielle-bienetre.site" target="_blank" rel="noopener noreferrer"
+                   class="text-[0.68rem] font-semibold text-[var(--color-brand-gold-500)] hover:text-[var(--color-brand-green-900)] transition-colors text-center">
+                  lessentielle-bienetre.site
+                </a>
+              </div>
+
             </div>
           </section>
         </div>

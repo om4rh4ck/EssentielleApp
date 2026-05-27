@@ -20,6 +20,7 @@ export class PublicLayoutComponent {
 
   readonly currency = this.preferences.currency;
   readonly language = this.preferences.language;
+  readonly currentYear = new Date().getFullYear();
 
   isScrolled  = signal(false);
   mobileOpen  = signal(false);

@@ -371,9 +371,9 @@ let useMemoryStore = false;
 let serverStarted = false;
 
 const memoryUsers: StoredUser[] = [
-  makeStoredUser('1', 'Admin User', 'admin@lessentielle-sante.site', 'admin', 'password123'),
-  makeStoredUser('2', 'Dr. Expert', 'instructor@lessentielle-sante.site', 'instructor', 'password123'),
-  makeStoredUser('3', 'Jane Doe', 'student@lessentielle-sante.site', 'student', 'password123'),
+  makeStoredUser('1', 'Admin User', 'admin@lessentielle-bienetre.site', 'admin', 'password123'),
+  makeStoredUser('2', 'Dr. Expert', 'instructor@lessentielle-bienetre.site', 'instructor', 'password123'),
+  makeStoredUser('3', 'Jane Doe', 'student@lessentielle-bienetre.site', 'student', 'password123'),
 ];
 
 const courses: Course[] = [
@@ -1323,7 +1323,7 @@ courses.push(
     id: '8',
     title: 'Massage anti-cellulite & drainage lymphatique',
     instructorId: '2',
-    modules: 7,
+    modules: 10,
     students: 76,
     thumbnail: 'formation massage anti.jpeg',
     description: 'Un parcours complet pour proposer des soins de drainage, remodelage et accompagnement anti-cellulite avec certifications au choix.',
@@ -1336,7 +1336,184 @@ courses.push(
     promoEnabled: false,
     category: 'Drainage',
     status: 'published',
-    moduleItems: [],
+    objectives: [
+      "Maîtriser l'anatomie du corps humain et le fonctionnement du système lymphatique",
+      "Appliquer les techniques de drainage lymphatique manuel selon la méthode Vodder",
+      "Réaliser des séances complètes de drainage corps et visage (60-90 min)",
+      "Identifier et traiter les différents types de cellulite avec les protocoles adaptés",
+      "Prendre en charge les clientes en post-opératoire (liposuccion, BBL, abdominoplastie)",
+      "Prévenir et traiter les fibroses et œdèmes post-chirurgicaux",
+      "Élaborer des cures remodelantes personnalisées de 6 à 15 séances",
+      "Accompagner la cliente avec un bilan esthétique et un suivi personnalisé",
+      "Réaliser des protocoles de massage anti-cellulite adaptés à chaque profil",
+      "Développer une pratique professionnelle autonome avec études de cas réels",
+    ],
+    contentItems: [
+      { id: 'content-8-1', text: '10 modules complets — anatomie, drainage, massage, post-op, pratique professionnelle' },
+      { id: 'content-8-2', text: 'PDF de formation complet téléchargeable (114 pages)' },
+      { id: 'content-8-3', text: '50 chapitres structurés avec protocoles pratiques détaillés' },
+      { id: 'content-8-4', text: 'Prise en charge post-opératoire : liposuccion, BBL, abdominoplastie' },
+      { id: 'content-8-5', text: "Études de cas cliniques : cellulite, rétention d'eau, post-opératoire" },
+      { id: 'content-8-6', text: "QCM d'évaluation finale — 30 questions" },
+      { id: 'content-8-7', text: 'Certificat de validation à la fin de la formation' },
+    ],
+    galleryImages: [
+      '/uploads/massage-anti-cover.jpeg',
+    ],
+    moduleItems: [
+      {
+        id: 'module-8-pdf',
+        title: 'Formation Complète Massage Anti-Cellulite & Drainage Lymphatique',
+        pdfName: 'formation-massage-anti-complete.pdf',
+        pdfDataUrl: '/uploads/formation-massage-anti-complete.pdf',
+      },
+    ],
+    programModules: [
+      {
+        id: 'pm-8-1',
+        title: 'Module 1 : Anatomie & Système Lymphatique',
+        chapters: [
+          "Anatomie du corps humain — régions corporelles, systèmes musculaire, osseux et circulatoire",
+          "Le système lymphatique — structure, organes lymphoïdes, rôle immunologique et de drainage",
+          "Circulation sanguine & lymphatique — échanges tissulaires, capillaires, vaisseaux collecteurs",
+          "Fonction des ganglions lymphatiques — filtration de la lymphe, production de lymphocytes",
+          "Indications & contre-indications — thrombose, cancer actif, infections aiguës, précautions pratiques",
+        ],
+      },
+      {
+        id: 'pm-8-2',
+        title: 'Module 2 : Bases du Drainage Lymphatique',
+        chapters: [
+          "Origines du drainage lymphatique — Emil Vodder, années 1930, historique et développement",
+          "Principes fondamentaux — douceur, rythme, direction, pression adaptée sans douleur",
+          "Gestes et pressions adaptées — mouvements circulaires, pompages, glissements stationnaires",
+          "Sens de circulation lymphatique — chevilles→genoux→aines ; mains→coudes→épaules→aisselles",
+          "Bienfaits physiologiques — réduction œdèmes, boost immunitaire, détoxification tissulaire",
+        ],
+      },
+      {
+        id: 'pm-8-3',
+        title: 'Module 3 : Techniques de Drainage Lymphatique Corps',
+        chapters: [
+          "Drainage des jambes — pompages chevilles, glissements mollets, cuisse jusqu'aux ganglions inguinaux",
+          "Drainage du ventre — mouvements circulaires en sens horaire, ganglions abdominaux, protocole complet",
+          "Drainage des bras — des mains aux poignets, coudes, épaules et ganglions axillaires",
+          "Drainage du dos — techniques adaptées, colonnes vertébrales et drainage des flancs",
+          "Séance complète corps — protocole 60-90 min, enchaînement des zones, conseils post-séance",
+        ],
+      },
+      {
+        id: 'pm-8-4',
+        title: 'Module 4 : Drainage Lymphatique Visage',
+        chapters: [
+          "Anatomie du visage — structures lymphatiques, ganglions cervicaux, sous-mandibulaires et parotidiens",
+          "Décongestion faciale — mouvements d'appel des ganglions, cercles autour des yeux et joues",
+          "Drainage anti-poches & cernes — techniques spécifiques contour des yeux, pommettes, tempes",
+          "Effet éclat & oxygénation — activation microcirculation, sérum drainant, résultats visibles",
+          "Protocole complet visage — durée 30-60 min, enchaînement précis, techniques mains nues",
+        ],
+      },
+      {
+        id: 'pm-8-5',
+        title: 'Module 5 : Massage Anti-Cellulite',
+        chapters: [
+          "Comprendre la cellulite — mécanismes physiopathologiques, facteurs hormonaux et alimentaires",
+          "Types de cellulite — aqueuse, adipeuse, fibreuse et mixte : diagnostic et différenciation",
+          "Techniques de palper-rouler — saisir le pli, progresser par roulements, zones cibles",
+          "Massage remodelant manuel — effleurage, pétrissage, friction profonde, pression rythmée",
+          "Protocoles anti-capitons — combinaison drainage + palper-rouler + modelage, fréquence recommandée",
+        ],
+      },
+      {
+        id: 'pm-8-6',
+        title: 'Module 6 : Remodelage & Raffermissement Corporel',
+        chapters: [
+          "Remodelage de la silhouette — objectifs, zones prioritaires, outils manuels complémentaires",
+          "Raffermissement des tissus — techniques de pétrissage profond, stimulation du collagène",
+          "Techniques ventre plat — abdomen, flancs, taille, enchaînement drainant-remodelant",
+          "Travail cuisses & fessiers — palper-rouler intensif, massages profonds, modelage des capitons",
+          "Cure remodelante complète — programme 6-15 séances, suivi, résultats attendus, conseils associés",
+        ],
+      },
+      {
+        id: 'pm-8-7',
+        title: 'Module 7 : Prise en Charge Post-Opératoire',
+        chapters: [
+          "Suites opératoires esthétiques — liposuccion, BBL, abdominoplastie : anatomie des actes chirurgicaux",
+          "Gestion des œdèmes — mécanismes post-chirurgicaux, manœuvres douces de résorption lymphatique",
+          "Fibroses & adhérences — identification, prévention, traitement manuel spécifique",
+          "Drainage post-liposuccion — protocole démarrage J3-J7, manœuvres adaptées, contre-indications",
+          "Accompagnement post-BBL & abdominoplastie — précautions, positions, étapes de la récupération",
+        ],
+      },
+      {
+        id: 'pm-8-8',
+        title: 'Module 8 : Protocoles Post-Chirurgie Esthétique',
+        chapters: [
+          "Hygiène & sécurité — port de gants, stérilisation du matériel, protocole de protection individuelle",
+          "Fréquence des séances — phase aiguë (3-5/semaine), consolidation, phase de maintenance",
+          "Techniques adaptées selon chirurgie — liposuccion vs BBL vs abdominoplastie : nuances protocolaires",
+          "Cicatrisation & récupération — phases inflammatoire, réparation et maturation : actions adaptées",
+          "Suivi personnalisé cliente — fiche de suivi, observations visuelles, réorientation médicale si besoin",
+        ],
+      },
+      {
+        id: 'pm-8-9',
+        title: 'Module 9 : Bien-Être & Accompagnement Cliente',
+        chapters: [
+          "Accueil cliente — posture professionnelle, mise en confiance, préparation de l'espace de soin",
+          "Bilan esthétique — questionnaire préalable, objectifs, antécédents, état cutané, carte de soin",
+          "Conseils alimentation & hydratation — alimentation anti-inflammatoire, hydratation, compléments",
+          "Motivation & suivi — feuille de route personnalisée, photographies de suivi, encouragements",
+          "Fidélisation clientèle — programme cures, suivi entre séances, recommandations et partenariats",
+        ],
+      },
+      {
+        id: 'pm-8-10',
+        title: 'Module 10 : Pratique Professionnelle & Études de Cas',
+        chapters: [
+          "Étude de cas cellulite — analyse clinique, sélection du protocole, résultats attendus",
+          "Étude de cas rétention d'eau — évaluation, drainage ciblé, conseils complémentaires",
+          "Cas post-opératoire — gestion d'un cas réel, adaptation du protocole, suivi semaine par semaine",
+          "Élaboration d'une cure complète — construction d'un plan de 8 à 15 séances personnalisées",
+          "Examen pratique final — évaluation des compétences techniques et relationnelles en conditions réelles",
+        ],
+      },
+    ],
+    quizTitle: "Examen Final — Formation Massage Anti-Cellulite & Drainage Lymphatique",
+    quizAttemptsRemaining: 2,
+    quizQuestions: [
+      { id: 'q8-1',  prompt: "Quel est le rôle principal du système lymphatique ?", options: ["Produire du sucre", "Éliminer certains déchets et liquides", "Renforcer les os", "Produire des hormones"], correctIndex: 1 },
+      { id: 'q8-2',  prompt: "Les ganglions lymphatiques servent principalement à :", options: ["Digérer les aliments", "Filtrer la lymphe", "Produire du calcium", "Stocker le sucre"], correctIndex: 1 },
+      { id: 'q8-3',  prompt: "Le drainage lymphatique manuel vise principalement à :", options: ["Contracter les muscles", "Stimuler la circulation lymphatique", "Brûler les calories", "Augmenter la tension artérielle"], correctIndex: 1 },
+      { id: 'q8-4',  prompt: "Le drainage lymphatique doit être réalisé avec des gestes :", options: ["Violents", "Rapides et forts", "Doux et lents", "Irréguliers"], correctIndex: 2 },
+      { id: 'q8-5',  prompt: "La cellulite correspond principalement à :", options: ["Une fracture musculaire", "Une accumulation graisseuse et liquidienne", "Une infection osseuse", "Une maladie cardiaque"], correctIndex: 1 },
+      { id: 'q8-6',  prompt: "Quelle zone est fréquemment touchée par la cellulite ?", options: ["Les oreilles", "Les coudes", "Les cuisses", "Les poignets"], correctIndex: 2 },
+      { id: 'q8-7',  prompt: "Le palper-rouler est utilisé pour :", options: ["Stimuler les capitons", "Nettoyer la peau", "Contracter les muscles", "Mesurer la circulation"], correctIndex: 0 },
+      { id: 'q8-8',  prompt: "La cellulite aqueuse est souvent liée à :", options: ["Une fracture", "Une rétention d'eau", "Une infection", "Une brûlure"], correctIndex: 1 },
+      { id: 'q8-9',  prompt: "Le remodelage corporel aide à :", options: ["Stimuler les tissus", "Casser les os", "Modifier les organes", "Supprimer les muscles"], correctIndex: 0 },
+      { id: 'q8-10', prompt: "Le raffermissement corporel vise à :", options: ["Fragiliser la peau", "Tonifier les tissus", "Diminuer les muscles", "Réduire les os"], correctIndex: 1 },
+      { id: 'q8-11', prompt: "Le ventre peut être concerné par :", options: ["Les ballonnements", "La rétention d'eau", "Le relâchement cutané", "Toutes les réponses"], correctIndex: 3 },
+      { id: 'q8-12', prompt: "Le drainage des jambes aide à :", options: ["Alourdir les tissus", "Favoriser la circulation", "Bloquer la circulation", "Fatiguer les muscles"], correctIndex: 1 },
+      { id: 'q8-13', prompt: "Les mouvements du drainage lymphatique doivent suivre :", options: ["Le sens de circulation lymphatique", "Le hasard", "Les muscles uniquement", "Le rythme cardiaque"], correctIndex: 0 },
+      { id: 'q8-14', prompt: "La fibrose correspond à :", options: ["Une détente musculaire", "Un durcissement des tissus", "Une brûlure", "Une allergie"], correctIndex: 1 },
+      { id: 'q8-15', prompt: "Après une liposuccion, le drainage aide à :", options: ["Augmenter les œdèmes", "Réduire les gonflements", "Bloquer la circulation", "Créer des douleurs"], correctIndex: 1 },
+      { id: 'q8-16', prompt: "Le BBL signifie :", options: ["Massage musculaire", "Brazilian Butt Lift", "Blocage lymphatique", "Bien-être local"], correctIndex: 1 },
+      { id: 'q8-17', prompt: "L'abdominoplastie concerne principalement :", options: ["Les bras", "Le ventre", "Le visage", "Les jambes"], correctIndex: 1 },
+      { id: 'q8-18', prompt: "En post-opératoire, les gestes doivent être :", options: ["Agressifs", "Violents", "Progressifs et doux", "Rapides"], correctIndex: 2 },
+      { id: 'q8-19', prompt: "Une bonne hygiène professionnelle nécessite :", options: ["Un espace propre", "Du matériel désinfecté", "Une bonne hygiène des mains", "Toutes les réponses"], correctIndex: 3 },
+      { id: 'q8-20', prompt: "La cicatrisation comporte :", options: ["Une phase inflammatoire", "Une phase de réparation", "Une phase de maturation", "Toutes les réponses"], correctIndex: 3 },
+      { id: 'q8-21', prompt: "L'accueil cliente doit être :", options: ["Stressant", "Froid", "Chaleureux et professionnel", "Rapide et distant"], correctIndex: 2 },
+      { id: 'q8-22', prompt: "Le bilan esthétique permet :", options: ["D'identifier les besoins", "De vendre un produit", "De remplacer un médecin", "De diagnostiquer une maladie"], correctIndex: 0 },
+      { id: 'q8-23', prompt: "Une bonne hydratation aide à :", options: ["Favoriser la circulation", "Soutenir le drainage", "Améliorer la qualité de peau", "Toutes les réponses"], correctIndex: 3 },
+      { id: 'q8-24', prompt: "Le praticien doit respecter :", options: ["Les recommandations médicales", "Les contre-indications", "Le confort cliente", "Toutes les réponses"], correctIndex: 3 },
+      { id: 'q8-25', prompt: "La fidélisation clientèle repose principalement sur :", options: ["Le professionnalisme", "La qualité des soins", "L'écoute", "Toutes les réponses"], correctIndex: 3 },
+      { id: 'q8-26', prompt: "Les œdèmes correspondent à :", options: ["Une accumulation de liquides", "Une fracture", "Une brûlure", "Une infection osseuse"], correctIndex: 0 },
+      { id: 'q8-27', prompt: "Le drainage post-opératoire doit être :", options: ["Brutal", "Très douloureux", "Doux et progressif", "Rapide et agressif"], correctIndex: 2 },
+      { id: 'q8-28', prompt: "Le praticien doit éviter :", options: ["Les pressions excessives", "Les gestes agressifs", "Les zones inflammatoires", "Toutes les réponses"], correctIndex: 3 },
+      { id: 'q8-29', prompt: "Le remodelage manuel agit principalement sur :", options: ["Les tissus", "Les cheveux", "Les os", "Les dents"], correctIndex: 0 },
+      { id: 'q8-30', prompt: "Le drainage visage peut aider à :", options: ["Décongestionner le visage", "Réduire les poches", "Stimuler l'éclat de la peau", "Toutes les réponses"], correctIndex: 3 },
+    ],
   },
   {
     id: '9',
@@ -3195,9 +3372,9 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
     await pool.query('ALTER TABLE student_exam_attempts MODIFY COLUMN score DECIMAL(6,2) NOT NULL DEFAULT 0');
   } catch { /* ignore — already correct type */ }
 
-  await insertSeedUser(pool, 'Admin User', 'admin@lessentielle-sante.site', 'admin', 'password123');
-  await insertSeedUser(pool, 'Dr. Expert', 'instructor@lessentielle-sante.site', 'instructor', 'password123');
-  await insertSeedUser(pool, 'Jane Doe', 'student@lessentielle-sante.site', 'student', 'password123');
+  await insertSeedUser(pool, 'Admin User', 'admin@lessentielle-bienetre.site', 'admin', 'password123');
+  await insertSeedUser(pool, 'Dr. Expert', 'instructor@lessentielle-bienetre.site', 'instructor', 'password123');
+  await insertSeedUser(pool, 'Jane Doe', 'student@lessentielle-bienetre.site', 'student', 'password123');
 
   // course_quiz_attempts — persists student quiz results per course
   await pool.query(`
@@ -3770,7 +3947,7 @@ function getInstructorOwnerIds(user: PublicUser): string[] {
   const ownerIds = new Set<string>([user.id]);
   const normalizedEmail = normalizeEmail(user.email);
   const isLegacySeedInstructor =
-    normalizedEmail === 'instructor@lessentielle-sante.site' ||
+    normalizedEmail === 'instructor@lessentielle-bienetre.site' ||
     user.name.trim().toLowerCase() === 'dr. expert';
 
   if (isLegacySeedInstructor) {

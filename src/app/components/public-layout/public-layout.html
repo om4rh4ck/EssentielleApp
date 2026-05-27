@@ -181,17 +181,45 @@
 
   <section class="border-t border-[var(--color-brand-gold-300)]/30 bg-white py-8">
     <div class="mx-auto max-w-7xl px-6">
-      <div class="rounded-[28px] border border-[var(--color-brand-gold-300)]/28 bg-[linear-gradient(180deg,#fffdf9_0%,#f7efe1_100%)] p-6 shadow-[0_16px_34px_rgba(18,53,36,0.05)]">
-        <div class="flex items-start gap-3">
-          <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-brand-green-900)] text-white">
-            <mat-icon style="font-size: 20px; width: 20px; height: 20px;">gavel</mat-icon>
-          </span>
-          <div>
-            <h3 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Reservation des droits</h3>
-            <p class="mt-2 text-sm leading-7 text-[var(--color-brand-green-800)]/78">
-              Tous les contenus de ce site et de nos reseaux, y compris les textes, formations, images, videos, audios, documents et supports pedagogiques, sont strictement reserves et proteges. Toute copie, telechargement, reutilisation, extraction, diffusion, reproduction ou redistribution sans autorisation ecrite prealable de Essenti'Elle Sante est interdite.
-            </p>
+      <div class="rounded-[28px] border border-[var(--color-brand-gold-300)]/40 bg-[linear-gradient(135deg,#fffdf9_0%,#f3e9d5_100%)] p-6 md:p-8 shadow-[0_12px_32px_rgba(18,53,36,0.07)]">
+        <div class="flex flex-col md:flex-row items-start gap-6 md:gap-10">
+
+          <!-- Legal text block -->
+          <div class="flex items-start gap-4 flex-1">
+            <span class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-brand-green-900)] text-white shadow-sm">
+              <mat-icon style="font-size: 22px; width: 22px; height: 22px;">gavel</mat-icon>
+            </span>
+            <div>
+              <h3 class="font-serif text-[1.35rem] font-semibold text-[var(--color-brand-green-900)] tracking-tight">Réservation des droits</h3>
+              <div class="mt-1 h-[2px] w-12 rounded-full bg-[var(--color-brand-gold-500)]"></div>
+              <p class="mt-3 text-[0.84rem] leading-[1.9] text-[var(--color-brand-green-900)]/68">
+                Tous les contenus de ce site et de nos réseaux — textes, formations, images, vidéos, audios, documents et supports pédagogiques — sont la propriété exclusive d'<strong class="text-[var(--color-brand-green-900)]/85 font-semibold">Essenti'Elle Santé</strong> et sont strictement protégés par le droit d'auteur. Toute copie, téléchargement, réutilisation, extraction, diffusion, reproduction ou redistribution, même partielle, sans autorisation écrite préalable d'Essenti'Elle Santé, est formellement interdite et susceptible de faire l'objet de poursuites judiciaires.
+              </p>
+              <p class="mt-2 text-[0.78rem] font-medium text-[var(--color-brand-green-900)]/45 tracking-wide">
+                © {{ currentYear }} Essenti'Elle Santé — Tous droits réservés
+              </p>
+            </div>
           </div>
+
+          <!-- Vertical divider -->
+          <div class="hidden md:block w-px self-stretch bg-[var(--color-brand-gold-300)]/50 mx-2"></div>
+
+          <!-- QR code block -->
+          <div class="flex flex-col items-center gap-3 md:w-[130px] shrink-0 self-center">
+            <p class="text-[0.68rem] font-bold uppercase tracking-[0.15em] text-[var(--color-brand-green-900)]/50">Site officiel</p>
+            <div class="p-2.5 rounded-2xl border border-[var(--color-brand-gold-300)]/60 bg-white shadow-[0_4px_12px_rgba(18,53,36,0.08)]">
+              <img
+                src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&color=123524&bgcolor=ffffff&qzone=1&data=https%3A%2F%2Flessentielle-bienetre.site"
+                alt="QR Code — Site officiel Essenti'Elle Santé"
+                class="w-[110px] h-[110px] rounded-lg"
+                width="110" height="110" />
+            </div>
+            <a href="https://lessentielle-bienetre.site" target="_blank" rel="noopener noreferrer"
+               class="text-[0.72rem] font-semibold text-[var(--color-brand-gold-500)] hover:text-[var(--color-brand-green-900)] transition-colors text-center">
+              lessentielle-bienetre.site
+            </a>
+          </div>
+
         </div>
       </div>
     </div>
@@ -243,9 +271,9 @@
             <mat-icon style="font-size: 18px; width: 18px; height: 18px;">phone</mat-icon>
             <span>+33 6 77 28 10 07</span>
           </a>
-          <a href="mailto:contact@lessentielle-sante.site" class="inline-flex items-center gap-3 transition-colors hover:text-[var(--color-brand-gold-500)]">
+          <a href="mailto:contact@lessentielle-bienetre.site" class="inline-flex items-center gap-3 transition-colors hover:text-[var(--color-brand-gold-500)]">
             <mat-icon style="font-size: 18px; width: 18px; height: 18px;">email</mat-icon>
-            <span>contact@lessentielle-sante.site</span>
+            <span>contact@lessentielle-bienetre.site</span>
           </a>
         </div>
         <a href="https://maps.app.goo.gl/RkEp8VFiSXSuKYQM9?g_st=aw" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-brand-green-800)] border border-[var(--color-brand-gold-500)]/30 text-[var(--color-brand-gold-500)] rounded hover:bg-[var(--color-brand-green-900)] hover:border-[var(--color-brand-gold-500)] transition-colors">
