@@ -779,7 +779,7 @@ const courses: Course[] = [
     instructorId: '2',
     modules: 10,
     students: 185,
-    thumbnail: 'module-detox-poids.svg',
+    thumbnail: '/uploads/detox-cover.jpeg',
     description: "Une formation complète en 10 modules pour maîtriser la détox thérapeutique : émonctoires, foie, reins, intestins, poumons, peau, alimentation détox et suivi personnalisé.",
     access: 'paid',
     priceEur: 349,
@@ -789,7 +789,24 @@ const courses: Course[] = [
     promoEnabled: false,
     category: 'Détox',
     status: 'published',
-    moduleItems: [],
+    galleryImages: [
+      '/uploads/detox-im1.jpeg',
+      '/uploads/detox-im2.jpeg',
+      '/uploads/detox-im3.jpeg',
+      '/uploads/detox-im4.jpeg',
+      '/uploads/detox-im5.jpeg',
+      '/uploads/detox-im6.jpeg',
+      '/uploads/detox-im7.jpeg',
+      '/uploads/detox-im8.jpeg',
+    ],
+    moduleItems: [
+      {
+        id: 'module-2-pdf',
+        title: 'Formation Détox Thérapeutique Complète',
+        pdfName: 'formation-detox-complete.pdf',
+        pdfDataUrl: '/uploads/formation-detox-complete.pdf',
+      },
+    ],
     chapters: [
       {
         id: 'ch-2-1',
@@ -807,8 +824,10 @@ const courses: Course[] = [
       { id: 'content-2-2', text: 'Les 5 émonctoires : foie, reins, intestins, poumons, peau' },
       { id: 'content-2-3', text: 'Alimentation détox et batch cooking' },
       { id: 'content-2-4', text: "Plan de suivi et maintien après détox" },
-      { id: 'content-2-5', text: "Examen final — 50 questions noté sur 10" },
-      { id: 'content-2-6', text: "Certificat de validation à la fin de la formation" },
+      { id: 'content-2-5', text: "PDF de formation complet téléchargeable" },
+      { id: 'content-2-6', text: "Galerie illustrée — 8 visuels pédagogiques" },
+      { id: 'content-2-7', text: "Examen final — 50 questions noté sur 10" },
+      { id: 'content-2-8', text: "Certificat de validation à la fin de la formation" },
     ],
     quizTitle: "Examen Final — Détox Thérapeutique Complète (Modules 1 à 10)",
     quizQuestions: [
