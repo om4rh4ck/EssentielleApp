@@ -111,6 +111,7 @@ interface Course {
     audioDataUrl?: string;
   }>;
   quizTitle?: string;
+  quizAttemptsRemaining?: number;
   quizQuestions?: Array<{
     id: string;
     prompt: string;

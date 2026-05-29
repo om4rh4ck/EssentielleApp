@@ -149,7 +149,7 @@ import { AuthService } from '../../services/auth.service';
                     Tous les contenus, images, vidéos, audios, documents et supports de cette plateforme sont la propriété exclusive d'<strong class="text-[var(--color-brand-green-900)]/80 font-semibold">Essenti'Elle Santé</strong> et protégés par le droit d'auteur. Toute copie, récupération, réutilisation, diffusion ou redistribution sans autorisation écrite préalable est strictement interdite.
                   </p>
                   <p class="mt-1.5 text-[0.72rem] font-medium text-[var(--color-brand-green-900)]/40 tracking-wide">
-                    © ${new Date().getFullYear()} Essenti'Elle Santé — Tous droits réservés
+                    © {{ currentYear }} Essenti&apos;Elle Santé — Tous droits réservés
                   </p>
                 </div>
               </div>
@@ -181,6 +181,7 @@ export class DashboardLayoutComponent {
   title = input.required<string>();
   menuItems = input.required<{ label: string; icon: string; path: string }[]>();
   auth = inject(AuthService);
+  readonly currentYear = new Date().getFullYear();
   roleLabel = computed(() => {
     const role = this.auth.currentUser()?.role;
     if (role === 'admin') return 'Administration';
