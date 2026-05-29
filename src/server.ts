@@ -3409,9 +3409,25 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `);
 
+  // student_enrollments — persists student course enrollments + progress in MySQL
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS student_enrollments (
+      student_id VARCHAR(36) NOT NULL,
+      course_id  VARCHAR(20) NOT NULL,
+      progress   DECIMAL(5,2) NOT NULL DEFAULT 0,
+      enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      PRIMARY KEY (student_id, course_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+
   // Sync all MySQL users into memoryUsers so getStoredUserById works for any registered user
   await loadUsersFromDb(pool);
-  // Immediately backup MySQL users to JSON so next boot works even without MySQL
+  // Load enrollments from MySQL (fills gaps when JSON backup is missing or stale)
+  await loadEnrollmentsFromDb(pool);
+  // Push all in-memory enrollments (from JSON backup) to MySQL for forward persistence
+  await syncEnrollmentsToDb(pool);
+  // Backup everything to JSON so next boot works even without MySQL
   savePersistedData();
 
   // Load exam + attempt data from DB into in-memory maps
@@ -3493,6 +3509,66 @@ async function loadUsersFromDb(pool: Pool): Promise<void> {
   } catch (err) {
     console.warn('[DB] Could not load users from MySQL:', err);
   }
+}
+
+// Load all enrollments from MySQL into studentWorkspaces (fills gaps not covered by JSON backup)
+async function loadEnrollmentsFromDb(pool: Pool): Promise<void> {
+  try {
+    const [rows] = await pool.query<mysql.RowDataPacket[]>(
+      'SELECT student_id, course_id, progress FROM student_enrollments'
+    );
+    let loaded = 0;
+    for (const row of rows) {
+      const sid = String(row['student_id']);
+      const cid = String(row['course_id']);
+      const prog = Number(row['progress']) || 0;
+      const ws = studentWorkspaces.get(sid) ?? { enrollments: [], certificates: [], profile: { phone: '', city: '', country: '', objective: '' } };
+      const existing = ws.enrollments.find((e) => e.courseId === cid);
+      if (existing) {
+        // Keep the higher progress value between JSON and DB
+        existing.progress = Math.max(existing.progress, prog);
+      } else {
+        ws.enrollments.push({ courseId: cid, progress: prog });
+        loaded++;
+      }
+      studentWorkspaces.set(sid, ws);
+    }
+    console.log(`[DB] Loaded ${loaded} new enrollment(s) from MySQL (total rows: ${rows.length})`);
+  } catch (err) {
+    console.warn('[DB] Could not load enrollments from MySQL:', err);
+  }
+}
+
+// Push all in-memory enrollments to MySQL (run once at startup to migrate JSON → DB)
+async function syncEnrollmentsToDb(pool: Pool): Promise<void> {
+  try {
+    let synced = 0;
+    for (const [studentId, ws] of studentWorkspaces) {
+      for (const enrollment of ws.enrollments) {
+        await pool.execute(
+          `INSERT INTO student_enrollments (student_id, course_id, progress)
+           VALUES (?, ?, ?)
+           ON DUPLICATE KEY UPDATE progress = GREATEST(progress, VALUES(progress)), updated_at = CURRENT_TIMESTAMP`,
+          [studentId, enrollment.courseId, enrollment.progress]
+        );
+        synced++;
+      }
+    }
+    console.log(`[DB] Synced ${synced} enrollment(s) to MySQL`);
+  } catch (err) {
+    console.warn('[DB] Could not sync enrollments to MySQL:', err);
+  }
+}
+
+// Persist a single enrollment/progress update to MySQL (fire-and-forget)
+function saveEnrollmentToDb(studentId: string, courseId: string, progress: number): void {
+  if (!dbPool) return;
+  dbPool.execute(
+    `INSERT INTO student_enrollments (student_id, course_id, progress)
+     VALUES (?, ?, ?)
+     ON DUPLICATE KEY UPDATE progress = GREATEST(progress, VALUES(progress)), updated_at = CURRENT_TIMESTAMP`,
+    [studentId, courseId, progress]
+  ).catch((err) => console.error('[DB] Failed to save enrollment:', err));
 }
 
 async function loadCourseQuizAttemptsFromDb(pool: Pool): Promise<void> {
@@ -3876,6 +3952,7 @@ function ensureStudentWorkspace(user: PublicUser): StudentWorkspace {
       if (course.access === 'free' && course.status === 'published') {
         if (!existing.enrollments.some((e) => e.courseId === course.id)) {
           existing.enrollments.push({ courseId: course.id, progress: 0 });
+          saveEnrollmentToDb(user.id, course.id, 0);
         }
       }
     }
@@ -3895,6 +3972,10 @@ function ensureStudentWorkspace(user: PublicUser): StudentWorkspace {
     },
   };
   studentWorkspaces.set(user.id, created);
+  // Persist new workspace free-course enrollments to MySQL
+  for (const e of freeCourseEnrollments) {
+    saveEnrollmentToDb(user.id, e.courseId, 0);
+  }
   return created;
 }
 
@@ -4702,6 +4783,7 @@ app.post('/api/student/catalog/:courseId/enroll', (req, res): any => {
   if (!workspace.enrollments.some((item) => item.courseId === course.id)) {
     workspace.enrollments.push({ courseId: course.id, progress: 0 });
     course.students += 1;
+    saveEnrollmentToDb(user.id, course.id, 0);
     savePersistedData();
   }
   res.json(serializeCatalog(user).find((item) => item.id === course.id));
@@ -6183,6 +6265,7 @@ app.post('/api/admin/enrollment-requests/:requestId/approve', async (req, res): 
   if (!workspace.enrollments.some((item) => item.courseId === course.id)) {
     workspace.enrollments.push({ courseId: course.id, progress: 0 });
     course.students += 1;
+    saveEnrollmentToDb(student.id, course.id, 0);
   }
 
   request.studentId = student.id;
