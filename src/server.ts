@@ -3440,12 +3440,54 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `);
 
+  // courses — persists all course metadata + content so edits/deletions survive deployments
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS courses (
+      id                    VARCHAR(20)  NOT NULL PRIMARY KEY,
+      title                 VARCHAR(255) NOT NULL,
+      instructor_id         VARCHAR(36)  NOT NULL,
+      modules_count         INT          NOT NULL DEFAULT 0,
+      students              INT          NOT NULL DEFAULT 0,
+      thumbnail             VARCHAR(500),
+      description           TEXT,
+      access                VARCHAR(20)  NOT NULL DEFAULT 'paid',
+      price_eur             DECIMAL(10,2) NOT NULL DEFAULT 0,
+      price_tnd             DECIMAL(10,2),
+      price_usd             DECIMAL(10,2),
+      price_min_eur         DECIMAL(10,2),
+      price_max_eur         DECIMAL(10,2),
+      pricing_currency      VARCHAR(10)  DEFAULT 'EUR',
+      promo_enabled         TINYINT(1)   NOT NULL DEFAULT 0,
+      promo_price_eur       DECIMAL(10,2),
+      promo_price_tnd       DECIMAL(10,2),
+      promo_price_usd       DECIMAL(10,2),
+      certificate_options   MEDIUMTEXT,
+      category              VARCHAR(100),
+      status                VARCHAR(20)  NOT NULL DEFAULT 'published',
+      presentation          TEXT,
+      warning               TEXT,
+      objectives            MEDIUMTEXT,
+      content_items         MEDIUMTEXT,
+      chapters              MEDIUMTEXT,
+      program_modules       MEDIUMTEXT,
+      gallery_images        MEDIUMTEXT,
+      module_items          MEDIUMTEXT,
+      quiz_title            VARCHAR(255),
+      quiz_attempts_remaining INT DEFAULT 2,
+      deleted               TINYINT(1)   NOT NULL DEFAULT 0,
+      updated_at            TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      created_at            TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+
   // Sync all MySQL users into memoryUsers so getStoredUserById works for any registered user
   await loadUsersFromDb(pool);
   // Load enrollments from MySQL (fills gaps when JSON backup is missing or stale)
   await loadEnrollmentsFromDb(pool);
   // Push all in-memory enrollments (from JSON backup) to MySQL for forward persistence
   await syncEnrollmentsToDb(pool);
+  // Apply any course edits/deletions stored in DB on top of the seed courses array
+  await loadCoursesFromDb(pool);
   // Backup everything to JSON so next boot works even without MySQL
   savePersistedData();
 
@@ -3669,6 +3711,142 @@ async function saveCourseQuizConfigToDb(pool: Pool): Promise<void> {
     }
   }
   console.log('[DB] Course quiz config saved to MySQL');
+}
+
+// ─── Course persistence helpers ───────────────────────────────────────────────
+
+function safeJsonParse<T>(val: unknown, fallback: T): T {
+  if (val == null) return fallback;
+  if (typeof val === 'object') return val as T;
+  try { return JSON.parse(String(val)) as T; } catch { return fallback; }
+}
+
+async function saveCourseToDb(pool: Pool, course: Course): Promise<void> {
+  try {
+    await pool.execute(
+      `INSERT INTO courses (
+         id, title, instructor_id, modules_count, students, thumbnail, description,
+         access, price_eur, price_tnd, price_usd, price_min_eur, price_max_eur,
+         pricing_currency, promo_enabled, promo_price_eur, promo_price_tnd, promo_price_usd,
+         certificate_options, category, status, presentation, warning,
+         objectives, content_items, chapters, program_modules, gallery_images,
+         module_items, quiz_title, quiz_attempts_remaining, deleted
+       ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0)
+       ON DUPLICATE KEY UPDATE
+         title=VALUES(title), instructor_id=VALUES(instructor_id),
+         modules_count=VALUES(modules_count), students=VALUES(students),
+         thumbnail=VALUES(thumbnail), description=VALUES(description),
+         access=VALUES(access), price_eur=VALUES(price_eur),
+         price_tnd=VALUES(price_tnd), price_usd=VALUES(price_usd),
+         price_min_eur=VALUES(price_min_eur), price_max_eur=VALUES(price_max_eur),
+         pricing_currency=VALUES(pricing_currency), promo_enabled=VALUES(promo_enabled),
+         promo_price_eur=VALUES(promo_price_eur), promo_price_tnd=VALUES(promo_price_tnd),
+         promo_price_usd=VALUES(promo_price_usd), certificate_options=VALUES(certificate_options),
+         category=VALUES(category), status=VALUES(status),
+         presentation=VALUES(presentation), warning=VALUES(warning),
+         objectives=VALUES(objectives), content_items=VALUES(content_items),
+         chapters=VALUES(chapters), program_modules=VALUES(program_modules),
+         gallery_images=VALUES(gallery_images), module_items=VALUES(module_items),
+         quiz_title=VALUES(quiz_title), quiz_attempts_remaining=VALUES(quiz_attempts_remaining),
+         deleted=0`,
+      [
+        course.id, course.title, course.instructorId, course.modules, course.students,
+        course.thumbnail ?? null, course.description ?? null, course.access,
+        course.priceEur, course.priceTnd ?? null, course.priceUsd ?? null,
+        course.priceMinEur ?? null, course.priceMaxEur ?? null,
+        course.pricingCurrency ?? 'EUR',
+        course.promoEnabled ? 1 : 0,
+        course.promoPriceEur ?? null, course.promoPriceTnd ?? null, course.promoPriceUsd ?? null,
+        JSON.stringify(course.certificateOptions ?? []),
+        course.category ?? null, course.status,
+        course.presentation ?? null, course.warning ?? null,
+        JSON.stringify(course.objectives ?? []),
+        JSON.stringify(course.contentItems ?? []),
+        JSON.stringify(course.chapters ?? []),
+        JSON.stringify(course.programModules ?? []),
+        JSON.stringify(course.galleryImages ?? []),
+        JSON.stringify(course.moduleItems ?? []),
+        course.quizTitle ?? null,
+        course.quizAttemptsRemaining ?? 2,
+      ]
+    );
+  } catch (err) {
+    console.error(`[DB] Failed to save course ${course.id}:`, err);
+  }
+}
+
+function saveCourseToDbAsync(course: Course): void {
+  if (!dbPool) return;
+  saveCourseToDb(dbPool, course).catch((e) => console.error('[DB] saveCourseToDbAsync error:', e));
+}
+
+function deleteCourseFromDb(courseId: string): void {
+  if (!dbPool) return;
+  dbPool.execute('UPDATE courses SET deleted = 1 WHERE id = ?', [courseId])
+    .catch((e) => console.error('[DB] Failed to mark course deleted:', courseId, e));
+}
+
+async function loadCoursesFromDb(pool: Pool): Promise<void> {
+  try {
+    const [rows] = await pool.query<mysql.RowDataPacket[]>(
+      'SELECT * FROM courses ORDER BY created_at ASC'
+    );
+    let updated = 0;
+    let added = 0;
+    let removed = 0;
+    for (const row of rows) {
+      const cid = String(row['id']);
+      if (row['deleted']) {
+        const idx = courses.findIndex((c) => c.id === cid);
+        if (idx !== -1) { courses.splice(idx, 1); removed++; }
+        continue;
+      }
+      const fromDb: Course = {
+        id:             cid,
+        title:          String(row['title']          ?? ''),
+        instructorId:   String(row['instructor_id']   ?? ''),
+        modules:        Number(row['modules_count']   ?? 0),
+        students:       Number(row['students']        ?? 0),
+        thumbnail:      String(row['thumbnail']       ?? ''),
+        description:    String(row['description']     ?? ''),
+        access:         (row['access'] as CourseAccess) ?? 'paid',
+        priceEur:       Number(row['price_eur']       ?? 0),
+        priceTnd:       row['price_tnd']    != null ? Number(row['price_tnd'])    : undefined,
+        priceUsd:       row['price_usd']    != null ? Number(row['price_usd'])    : undefined,
+        priceMinEur:    row['price_min_eur'] != null ? Number(row['price_min_eur']) : undefined,
+        priceMaxEur:    row['price_max_eur'] != null ? Number(row['price_max_eur']) : undefined,
+        pricingCurrency: (row['pricing_currency'] as 'EUR' | 'TND' | 'USD') ?? 'EUR',
+        promoEnabled:   Boolean(row['promo_enabled']),
+        promoPriceEur:  row['promo_price_eur']  != null ? Number(row['promo_price_eur'])  : undefined,
+        promoPriceTnd:  row['promo_price_tnd']  != null ? Number(row['promo_price_tnd'])  : undefined,
+        promoPriceUsd:  row['promo_price_usd']  != null ? Number(row['promo_price_usd'])  : undefined,
+        certificateOptions: safeJsonParse<number[]>(row['certificate_options'], []),
+        category:       String(row['category']   ?? ''),
+        status:         (row['status'] as CourseStatus) ?? 'published',
+        presentation:   row['presentation'] != null ? String(row['presentation']) : undefined,
+        warning:        row['warning']      != null ? String(row['warning'])      : undefined,
+        objectives:     safeJsonParse<string[]>(row['objectives'], []) || undefined,
+        contentItems:   safeJsonParse<Course['contentItems']>(row['content_items'], []) || undefined,
+        chapters:       safeJsonParse<Course['chapters']>(row['chapters'], []) || undefined,
+        programModules: safeJsonParse<Course['programModules']>(row['program_modules'], []) || undefined,
+        galleryImages:  safeJsonParse<string[]>(row['gallery_images'], []) || undefined,
+        moduleItems:    safeJsonParse<Course['moduleItems']>(row['module_items'], []) ?? [],
+        quizTitle:      row['quiz_title'] != null ? String(row['quiz_title']) : undefined,
+        quizAttemptsRemaining: Number(row['quiz_attempts_remaining'] ?? 2),
+      };
+      const existing = courses.find((c) => c.id === cid);
+      if (existing) {
+        Object.assign(existing, fromDb);
+        updated++;
+      } else {
+        courses.unshift(fromDb);
+        added++;
+      }
+    }
+    console.log(`[DB] Courses: ${updated} updated, ${added} added, ${removed} removed`);
+  } catch (err) {
+    console.warn('[DB] Could not load courses from MySQL:', err);
+  }
 }
 
 async function upsertCourseQuizAttemptToDb(
@@ -5217,6 +5395,8 @@ app.post('/api/instructor/courses', (req, res): any => {
       quizQuestions,
     };
     courses.unshift(course);
+    savePersistedData();
+    saveCourseToDbAsync(course);
     console.log(`✅ Formation créée: ${course.id} par ${user.name}`);
     res.status(201).json(course);
   } catch (error) {
@@ -5301,6 +5481,7 @@ app.put('/api/instructor/courses/:courseId', (req, res): any => {
     course.status = req.body?.status === 'draft' ? 'draft' : 'published';
 
     savePersistedData();
+    saveCourseToDbAsync(course);
     getDbPool().then((pool) => { if (pool) saveCourseQuizConfigToDb(pool).catch(() => {}); });
     console.log(`✅ Formation mise à jour: ${course.id}`);
     res.json(course);
@@ -5316,7 +5497,9 @@ app.delete('/api/instructor/courses/:courseId', (req, res): any => {
 
   const index = courses.findIndex((item) => item.id === req.params.courseId && instructorOwnsCourse(user, item));
   if (index === -1) return res.status(404).json({ error: 'Formation introuvable.' });
-  courses.splice(index, 1);
+  const removedCourse = courses.splice(index, 1)[0];
+  deleteCourseFromDb(removedCourse.id);
+  savePersistedData();
   res.status(204).send();
 });
 
@@ -6118,6 +6301,8 @@ app.post('/api/admin/courses', (req, res): any => {
       moduleItems,
     };
     courses.unshift(course);
+    savePersistedData();
+    saveCourseToDbAsync(course);
     console.log(`✅ Formation créée par admin: ${course.id} par ${user.name}`);
     res.status(201).json(course);
   } catch (error) {
@@ -6202,6 +6387,7 @@ app.put('/api/admin/courses/:courseId', (req, res): any => {
     course.status = req.body?.status === 'draft' ? 'draft' : 'published';
 
     savePersistedData();
+    saveCourseToDbAsync(course);
     getDbPool().then((pool) => { if (pool) saveCourseQuizConfigToDb(pool).catch(() => {}); });
     console.log(`✅ Formation mise à jour par admin: ${course.id}`);
     res.json(course);
@@ -6220,6 +6406,8 @@ app.delete('/api/admin/courses/:courseId', (req, res): any => {
     if (index === -1) return res.status(404).json({ error: 'Formation introuvable.' });
     
     const deleted = courses.splice(index, 1)[0];
+    deleteCourseFromDb(deleted.id);
+    savePersistedData();
     console.log(`✅ Formation supprimée par admin: ${deleted.id}`);
     res.status(204).send();
   } catch (error) {
