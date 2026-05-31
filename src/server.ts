@@ -423,6 +423,9 @@ const courses: Course[] = [
       '/uploads/nutrition-im6.jpeg',
       '/uploads/nutrition-im7.jpeg',
       '/uploads/nutrition-im8.jpeg',
+      '/uploads/nutrition-im9.jpeg',
+      '/uploads/nutrition-im10.jpeg',
+      '/uploads/nutrition-im12.jpeg',
     ],
     chapters: [
       { id: 'ch-1-1', title: 'Module 1 : Bases de la Nutrition', content: "Introduction à l'alimentation, macronutriments (glucides, protéines, lipides), micronutriments, métabolisme, hydratation et équilibre nutritionnel." },
