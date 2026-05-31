@@ -868,6 +868,117 @@
 
 </section>
 
+<!-- Platform Objective Section -->
+<section class="relative overflow-hidden py-24" style="background: linear-gradient(160deg, #0b1510 0%, #122518 55%, #0d1c12 100%)">
+
+  <!-- Background texture -->
+  <div class="pointer-events-none absolute inset-0 opacity-[0.03]"
+       style="background-image: radial-gradient(circle, #c8a96a 1px, transparent 1px); background-size: 40px 40px"></div>
+  <div class="pointer-events-none absolute -left-32 -top-32 h-[420px] w-[420px] rounded-full opacity-[0.06]"
+       style="background: radial-gradient(circle, #c8a96a, transparent 70%)"></div>
+  <div class="pointer-events-none absolute -bottom-24 -right-24 h-[320px] w-[320px] rounded-full opacity-[0.05]"
+       style="background: radial-gradient(circle, #4a9e6a, transparent 70%)"></div>
+
+  <div class="relative mx-auto max-w-7xl px-6">
+
+    <!-- Header -->
+    <div class="mx-auto mb-16 max-w-3xl text-center">
+      <div class="mb-5 inline-flex items-center gap-2.5 rounded-full border border-[#c8a96a]/30 bg-[#c8a96a]/10 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-[#c8a96a]">
+        <mat-icon style="font-size:14px;width:14px;height:14px">flag</mat-icon>
+        {{ t({ fr: 'Notre mission', en: 'Our mission', ar: 'مهمتنا' }) }}
+      </div>
+      <h2 class="font-serif text-3xl font-semibold text-white md:text-4xl">
+        {{ t({ fr: 'Objectif de la plateforme', en: 'Platform objective', ar: 'هدف المنصة' }) }}
+      </h2>
+      <div class="mx-auto mt-4 h-[2px] w-16 rounded-full" style="background: linear-gradient(90deg,#c8a96a,#e2c17a)"></div>
+      <p class="mt-6 text-base leading-[1.85] text-white/55 md:text-[1.05rem]">
+        {{ t({
+          fr: 'La plateforme a pour objectif de proposer des formations professionnelles accessibles, modernes et de qualité, destinées aux apprenants souhaitant développer leurs compétences dans les domaines du bien-être, de l\'esthétique, des soins et des médecines naturelles.',
+          en: 'The platform aims to offer accessible, modern and high-quality professional training for learners seeking to develop their skills in wellness, aesthetics, care and natural medicine.',
+          ar: 'تهدف المنصة إلى تقديم تدريب مهني متاح وعصري وعالي الجودة للمتعلمين الراغبين في تطوير مهاراتهم في مجالات العافية والتجميل والرعاية والطب الطبيعي.'
+        }) }}
+      </p>
+    </div>
+
+    <!-- Intro label -->
+    <p class="mb-8 text-center text-[11px] font-bold uppercase tracking-[0.28em] text-[#c8a96a]/60">
+      {{ t({ fr: 'Chaque formation est présentée avec', en: 'Each course includes', ar: 'كل تدريب يتضمن' }) }}
+    </p>
+
+    <!-- 8-item grid -->
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-4">
+
+      <div class="group flex flex-col items-start gap-3 rounded-2xl border border-white/8 p-5 transition-all duration-300 hover:border-[#c8a96a]/40 hover:bg-white/[0.04]" style="background: rgba(255,255,255,0.03)">
+        <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#c8a96a]" style="background: rgba(200,169,106,0.12)">
+          <mat-icon style="font-size:22px;width:22px;height:22px">description</mat-icon>
+        </span>
+        <p class="text-[13px] font-semibold leading-tight text-white/85">{{ t({ fr: 'Description complète', en: 'Full description', ar: 'وصف كامل' }) }}</p>
+      </div>
+
+      <div class="group flex flex-col items-start gap-3 rounded-2xl border border-white/8 p-5 transition-all duration-300 hover:border-[#c8a96a]/40 hover:bg-white/[0.04]" style="background: rgba(255,255,255,0.03)">
+        <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#c8a96a]" style="background: rgba(200,169,106,0.12)">
+          <mat-icon style="font-size:22px;width:22px;height:22px">track_changes</mat-icon>
+        </span>
+        <p class="text-[13px] font-semibold leading-tight text-white/85">{{ t({ fr: 'Objectifs pédagogiques', en: 'Learning objectives', ar: 'الأهداف التعليمية' }) }}</p>
+      </div>
+
+      <div class="group flex flex-col items-start gap-3 rounded-2xl border border-white/8 p-5 transition-all duration-300 hover:border-[#c8a96a]/40 hover:bg-white/[0.04]" style="background: rgba(255,255,255,0.03)">
+        <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#c8a96a]" style="background: rgba(200,169,106,0.12)">
+          <mat-icon style="font-size:22px;width:22px;height:22px">menu_book</mat-icon>
+        </span>
+        <p class="text-[13px] font-semibold leading-tight text-white/85">{{ t({ fr: 'Programme détaillé', en: 'Detailed programme', ar: 'برنامج مفصّل' }) }}</p>
+      </div>
+
+      <div class="group flex flex-col items-start gap-3 rounded-2xl border border-white/8 p-5 transition-all duration-300 hover:border-[#c8a96a]/40 hover:bg-white/[0.04]" style="background: rgba(255,255,255,0.03)">
+        <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#c8a96a]" style="background: rgba(200,169,106,0.12)">
+          <mat-icon style="font-size:22px;width:22px;height:22px">devices</mat-icon>
+        </span>
+        <p class="text-[13px] font-semibold leading-tight text-white/85">{{ t({ fr: 'Modalités d\'apprentissage', en: 'Learning modalities', ar: 'طرق التعلم' }) }}</p>
+      </div>
+
+      <div class="group flex flex-col items-start gap-3 rounded-2xl border border-white/8 p-5 transition-all duration-300 hover:border-[#c8a96a]/40 hover:bg-white/[0.04]" style="background: rgba(255,255,255,0.03)">
+        <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#c8a96a]" style="background: rgba(200,169,106,0.12)">
+          <mat-icon style="font-size:22px;width:22px;height:22px">workspace_premium</mat-icon>
+        </span>
+        <p class="text-[13px] font-semibold leading-tight text-white/85">{{ t({ fr: 'Certifications délivrées', en: 'Certificates awarded', ar: 'الشهادات الممنوحة' }) }}</p>
+      </div>
+
+      <div class="group flex flex-col items-start gap-3 rounded-2xl border border-white/8 p-5 transition-all duration-300 hover:border-[#c8a96a]/40 hover:bg-white/[0.04]" style="background: rgba(255,255,255,0.03)">
+        <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#c8a96a]" style="background: rgba(200,169,106,0.12)">
+          <mat-icon style="font-size:22px;width:22px;height:22px">euro</mat-icon>
+        </span>
+        <p class="text-[13px] font-semibold leading-tight text-white/85">{{ t({ fr: 'Les tarifs', en: 'Pricing', ar: 'الأسعار' }) }}</p>
+      </div>
+
+      <div class="group flex flex-col items-start gap-3 rounded-2xl border border-white/8 p-5 transition-all duration-300 hover:border-[#c8a96a]/40 hover:bg-white/[0.04]" style="background: rgba(255,255,255,0.03)">
+        <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#c8a96a]" style="background: rgba(200,169,106,0.12)">
+          <mat-icon style="font-size:22px;width:22px;height:22px">photo_library</mat-icon>
+        </span>
+        <p class="text-[13px] font-semibold leading-tight text-white/85">{{ t({ fr: 'Les visuels associés', en: 'Associated visuals', ar: 'المرئيات المرتبطة' }) }}</p>
+      </div>
+
+      <div class="group flex flex-col items-start gap-3 rounded-2xl border border-white/8 p-5 transition-all duration-300 hover:border-[#c8a96a]/40 hover:bg-white/[0.04]" style="background: rgba(255,255,255,0.03)">
+        <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#c8a96a]" style="background: rgba(200,169,106,0.12)">
+          <mat-icon style="font-size:22px;width:22px;height:22px">support_agent</mat-icon>
+        </span>
+        <p class="text-[13px] font-semibold leading-tight text-white/85">{{ t({ fr: 'Accompagnements sur mesure', en: 'Personalised coaching', ar: 'مرافقة مخصصة' }) }}</p>
+      </div>
+
+    </div>
+
+    <!-- Bottom CTA -->
+    <div class="mt-14 text-center">
+      <a routerLink="/formations" class="inline-flex items-center gap-3 rounded-full px-8 py-4 text-[13px] font-bold uppercase tracking-[0.18em] text-[#0c1610] shadow-[0_8px_30px_rgba(200,169,106,0.35)] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(200,169,106,0.45)]"
+         style="background: linear-gradient(135deg, #c8a96a 0%, #e2c17a 100%)">
+        <mat-icon style="font-size:18px;width:18px;height:18px">school</mat-icon>
+        {{ t({ fr: 'Découvrir nos formations', en: 'Explore our courses', ar: 'استكشفي دوراتنا' }) }}
+        <mat-icon style="font-size:16px;width:16px;height:16px">arrow_forward</mat-icon>
+      </a>
+    </div>
+
+  </div>
+</section>
+
 <!-- Newsletter Section -->
 <section class="relative overflow-hidden border-t border-[var(--color-brand-gold-300)]/30 bg-white py-24">
   <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at 10% 20%, rgba(230,211,163,0.18), transparent 26%), radial-gradient(circle at 88% 80%, rgba(31,42,36,0.08), transparent 24%);"></div>
