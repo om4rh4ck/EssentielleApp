@@ -21,6 +21,8 @@
            class="nav-link">{{ t({ fr: 'Formations', en: 'Programs', ar: 'الدورات' }) }}</a>
         <a routerLink="/about" routerLinkActive="nav-link-active"
            class="nav-link">{{ t({ fr: 'À propos', en: 'About', ar: 'من نحن' }) }}</a>
+        <a routerLink="/voyage" routerLinkActive="nav-link-active"
+           class="nav-link">✈️ {{ t({ fr: 'Option Voyage', en: 'Travel Option', ar: 'خيار السفر' }) }}</a>
         <a routerLink="/contact" routerLinkActive="nav-link-active"
            class="nav-link">{{ t({ fr: 'Contact', en: 'Contact', ar: 'اتصل بنا' }) }}</a>
       </nav>
@@ -147,6 +149,11 @@
          class="mobile-nav-link" (click)="closeMobile()">
         <mat-icon style="font-size:18px;color:#c8a96a">info</mat-icon>
         {{ t({ fr: 'À propos', en: 'About', ar: 'من نحن' }) }}
+      </a>
+      <a routerLink="/voyage" routerLinkActive="mobile-nav-link-active"
+         class="mobile-nav-link" (click)="closeMobile()">
+        <mat-icon style="font-size:18px;color:#c8a96a">flight</mat-icon>
+        {{ t({ fr: 'Option Voyage', en: 'Travel Option', ar: 'خيار السفر' }) }}
       </a>
       <a routerLink="/contact" routerLinkActive="mobile-nav-link-active"
          class="mobile-nav-link" (click)="closeMobile()">
@@ -286,6 +293,7 @@
         <ul class="space-y-2">
           <li><a routerLink="/formations" class="hover:text-[var(--color-brand-gold-500)] transition-colors">{{ t({ fr: 'Catalogue de formations', en: 'Training catalog', ar: 'كتالوج الدورات' }) }}</a></li>
           <li><a routerLink="/formations" class="hover:text-[var(--color-brand-gold-500)] transition-colors">{{ t({ fr: 'Nos formules', en: 'Our plans', ar: 'باقاتنا' }) }}</a></li>
+          <li><a routerLink="/voyage" class="hover:text-[var(--color-brand-gold-500)] transition-colors">✈️ {{ t({ fr: 'Option Voyage', en: 'Travel Option', ar: 'خيار السفر' }) }}</a></li>
         </ul>
       </div>
       <div>
