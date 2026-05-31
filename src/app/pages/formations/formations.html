@@ -73,7 +73,22 @@
                 }
               </div>
 
-              <p class="mt-4 flex-1 text-sm leading-7 text-[var(--color-brand-green-800)]/74">{{ course.description }}</p>
+              <p class="mt-4 text-sm leading-7 text-[var(--color-brand-green-800)]/74">{{ course.description }}</p>
+
+              <!-- Programme de la formation -->
+              @if (course.contentItems?.length) {
+                <div class="mt-4 rounded-2xl border border-[var(--color-brand-gold-300)]/30 bg-[var(--color-brand-cream)] p-4">
+                  <p class="mb-3 text-[9.5px] font-bold uppercase tracking-[0.28em] text-[var(--color-brand-green-900)]/45">Programme inclus</p>
+                  <ul class="space-y-1.5">
+                    @for (item of course.contentItems; track item.id) {
+                      <li class="flex items-start gap-2 text-[12px] leading-[1.6] text-[var(--color-brand-green-800)]/78">
+                        <mat-icon class="mt-[1px] shrink-0 text-[var(--color-brand-gold-500)]" style="font-size:11px;width:11px;height:11px">fiber_manual_record</mat-icon>
+                        {{ item.text }}
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
 
               <div class="mt-5 grid grid-cols-2 gap-3 rounded-2xl bg-[var(--color-brand-cream)] p-4 text-center">
                 <div>
