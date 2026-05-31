@@ -85,6 +85,15 @@ export class LandingComponent implements AfterViewInit {
   @ViewChild('heroContent') heroContent!: ElementRef;
   readonly newsletterState = signal<'idle' | 'success' | 'error'>('idle');
 
+  readonly allCoursesInclude = [
+    { icon: 'view_module',      label: { fr: '10 Modules — 5 Chapitres chacun',  en: '10 Modules — 5 Chapters each',      ar: '١٠ وحدات — ٥ فصول لكل وحدة' } },
+    { icon: 'picture_as_pdf',   label: { fr: 'Supports PDF complets',             en: 'Complete PDF materials',             ar: 'مواد PDF كاملة' } },
+    { icon: 'tips_and_updates', label: { fr: 'Conseil ou plan personnalisé',      en: 'Personalised advice or plan',        ar: 'نصيحة أو خطة مخصصة' } },
+    { icon: 'workspace_premium',label: { fr: 'Certification reconnue',            en: 'Recognised certification',           ar: 'شهادة معترف بها' } },
+    { icon: 'all_inclusive',    label: { fr: 'Accès en ligne illimité',           en: 'Unlimited online access',            ar: 'وصول غير محدود عبر الإنترنت' } },
+    { icon: 'schedule',         label: { fr: 'Formation à votre rythme',          en: 'Learn at your own pace',             ar: 'التعلم بوتيرتك الخاصة' } },
+  ];
+
   t(value: LocalizedText): string {
     return this.preferences.text(value);
   }

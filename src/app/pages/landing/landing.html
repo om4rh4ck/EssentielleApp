@@ -407,8 +407,39 @@
 
     </div>
 
+    <!-- Inclus dans toutes les formations -->
+    <div class="mt-12 rounded-[24px] border border-[var(--color-brand-gold-300)]/35 bg-[var(--color-brand-cream)] px-7 py-7 shadow-[0_8px_28px_rgba(18,53,36,0.06)]">
+      <div class="flex flex-col gap-5 md:flex-row md:items-center md:gap-10">
+
+        <!-- Title -->
+        <div class="shrink-0">
+          <div class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-green-900)] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-white">
+            <mat-icon style="font-size:13px;width:13px;height:13px">check_circle</mat-icon>
+            {{ t({ fr: 'Inclus dans toutes les formations', en: 'Included in all courses', ar: 'متضمن في كل التكوينات' }) }}
+          </div>
+          <p class="mt-2 font-serif text-lg text-[var(--color-brand-green-900)] md:text-xl">
+            {{ t({ fr: 'Toutes les formations professionnelles comprennent', en: 'All professional courses include', ar: 'كل التكوينات المهنية تشمل' }) }}
+          </p>
+        </div>
+
+        <!-- Divider -->
+        <div class="hidden md:block w-px self-stretch bg-[var(--color-brand-gold-300)]/40"></div>
+
+        <!-- Items grid -->
+        <div class="grid grid-cols-2 gap-x-6 gap-y-2.5 flex-1 sm:grid-cols-3">
+          @for (item of allCoursesInclude; track item.icon) {
+            <div class="flex items-center gap-2">
+              <mat-icon class="text-[var(--color-brand-gold-500)] shrink-0" style="font-size:16px;width:16px;height:16px">{{ item.icon }}</mat-icon>
+              <span class="text-[13px] font-medium text-[var(--color-brand-green-900)]/80">{{ t(item.label) }}</span>
+            </div>
+          }
+        </div>
+
+      </div>
+    </div>
+
     <!-- Bottom CTA -->
-    <div class="mt-12 text-center">
+    <div class="mt-10 text-center">
       <p class="text-sm text-[var(--color-brand-green-800)]/50 mb-4">
         {{ t({ fr: 'Pas sûre de votre choix ? Découvrez toutes nos formations en détail.', en: 'Not sure which to choose? Explore all our programs.', ar: 'غير متأكدة من اختيارك؟ اكتشفي جميع برامجنا.' }) }}
       </p>
