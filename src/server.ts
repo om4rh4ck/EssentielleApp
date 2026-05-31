@@ -800,6 +800,10 @@ const courses: Course[] = [
       '/uploads/detox-im6.jpeg',
       '/uploads/detox-im7.jpeg',
       '/uploads/detox-im8.jpeg',
+      '/uploads/detox-im9.jpeg',
+      '/uploads/detox-im10.jpeg',
+      '/uploads/detox-im11.jpeg',
+      '/uploads/detox-im12.jpeg',
     ],
     moduleItems: [
       {
