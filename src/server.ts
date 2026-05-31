@@ -1252,7 +1252,7 @@ courses.push(
     instructorId: '2',
     modules: 8,
     students: 64,
-    thumbnail: '/uploads/reflexologie-cover.jpeg',
+    thumbnail: '/uploads/reflexologie-cover-new.jpeg',
     description: 'Apprenez les techniques de réflexologie auriculaire, plantaire et palmaire avec un parcours professionnalisant adaptable selon 1 à 3 certificats.',
     access: 'paid',
     priceEur: 990,
@@ -1271,7 +1271,21 @@ courses.push(
       { id: 'content-5-5', text: 'Études de cas' },
       { id: 'content-5-6', text: 'Certificat professionnel de fin de formation' },
     ],
-    moduleItems: [],
+    galleryImages: [
+      '/uploads/reflexologie-im1.jpeg',
+      '/uploads/reflexologie-im2.jpeg',
+      '/uploads/reflexologie-im3.jpeg',
+      '/uploads/reflexologie-im4.jpeg',
+      '/uploads/reflexologie-im6.jpeg',
+    ],
+    moduleItems: [
+      {
+        id: 'module-5-pdf',
+        title: 'Formation Réflexologie Professionnelle — Oreilles, Pieds & Mains',
+        pdfName: 'formation-reflexologie-complete.pdf',
+        pdfDataUrl: '/uploads/formation-reflexologie-complete.pdf',
+      },
+    ],
   },
   {
     id: '6',
