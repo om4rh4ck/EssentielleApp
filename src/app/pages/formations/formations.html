@@ -87,15 +87,15 @@
               <p class="mt-4 text-sm leading-7 text-[var(--color-brand-green-800)]/74">{{ course.description }}</p>
 
               <!-- Aperçu galerie — visible par tous -->
-              @if (course.galleryImages?.length) {
+              @if (course.galleryImages && course.galleryImages.length > 0) {
                 <div class="mt-4 flex gap-1.5 overflow-x-auto pb-1">
-                  @for (img of (course.galleryImages!.slice(0,4)); track img) {
+                  @for (img of course.galleryImages.slice(0,4); track img) {
                     <img [src]="img" alt="{{ course.title }}"
                          class="h-20 w-28 shrink-0 rounded-xl object-cover opacity-90 hover:opacity-100 transition-opacity shadow-sm" />
                   }
-                  @if (course.galleryImages!.length > 4) {
+                  @if (course.galleryImages.length > 4) {
                     <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-cream)] border border-[var(--color-brand-gold-300)]/40 text-[12px] font-bold text-[var(--color-brand-green-900)]/60">
-                      +{{ course.galleryImages!.length - 4 }}
+                      +{{ course.galleryImages.length - 4 }}
                     </div>
                   }
                 </div>
