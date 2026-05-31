@@ -20,6 +20,17 @@ export class AboutComponent {
     return this.preferences.text(value);
   }
 
+  readonly values = [
+    { icon: 'school',        label: { fr: 'Excellence pédagogique',      en: 'Pedagogical excellence',    ar: 'التميز التربوي' } },
+    { icon: 'verified_user', label: { fr: 'Professionnalisme & éthique', en: 'Professionalism & ethics',   ar: 'المهنية والأخلاق' } },
+    { icon: 'favorite',      label: { fr: 'Bienveillance & respect',     en: 'Kindness & respect',         ar: 'اللطف والاحترام' } },
+    { icon: 'support_agent', label: { fr: 'Accompagnement personnalisé', en: 'Personalised guidance',      ar: 'المرافقة الفردية' } },
+    { icon: 'auto_awesome',  label: { fr: 'Innovation & modernité',      en: 'Innovation & modernity',     ar: 'الابتكار والحداثة' } },
+    { icon: 'people',        label: { fr: 'Accessibilité pour tous',     en: 'Accessibility for all',      ar: 'الوصول للجميع' } },
+    { icon: 'public',        label: { fr: 'Ouverture internationale',    en: 'International openness',     ar: 'الانفتاح الدولي' } },
+    { icon: 'build',         label: { fr: 'Transmission de savoir-faire', en: 'Sharing practical skills', ar: 'نقل المهارات العملية' } },
+  ];
+
   onLogoClick() {
     if (!isPlatformBrowser(this.platformId) || !this.conceptLogo) {
       return;
