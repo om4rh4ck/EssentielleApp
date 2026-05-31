@@ -426,7 +426,7 @@ const courses: Course[] = [
     ],
     chapters: [
       { id: 'ch-1-1', title: 'Module 1 : Bases de la Nutrition', content: "Introduction à l'alimentation, macronutriments (glucides, protéines, lipides), micronutriments, métabolisme, hydratation et équilibre nutritionnel." },
-      { id: 'ch-1-2', title: 'Module 2 : Digestion & Microbiote', content: "Fonctionnement du système digestif, santé intestinale, microbiote, ballonnements, inflammation et alimentation anti-inflammatoire." },
+      { id: 'ch-1-2', title: 'Module 2 : Digestion & Microbiote', content: "Fonctionnement du système digestif, équilibre intestinal, microbiote, ballonnements, inflammation et alimentation anti-inflammatoire." },
       { id: 'ch-1-3', title: 'Module 3 : Glycémie & Diabète', content: "Comprendre la glycémie, index glycémique, impact du sucre sur l'inflammation, construction de menus adaptés et hygiène de vie." },
       { id: 'ch-1-4', title: 'Module 4 : Hypertension & Alimentation', content: "Mécanismes de l'hypertension, impact du sel, alimentation protectrice cardiovasculaire, menus adaptés et conseils pratiques." },
       { id: 'ch-1-5', title: 'Module 5 : Troubles Digestifs', content: "Constipation, reflux gastrique, intolérances alimentaires (lactose, gluten), aliments irritants et protocoles de rééquilibrage intestinal." },
@@ -438,7 +438,7 @@ const courses: Course[] = [
         id: 'pm-1-1',
         title: 'Module 1 : Bases de la Nutrition',
         chapters: [
-          "Introduction — Rôle de l'alimentation dans la santé",
+          "Introduction — Rôle de l'alimentation dans le bien-être",
           "Les macronutriments : glucides, protéines, lipides",
           "Les micronutriments : vitamines, minéraux, oligo-éléments",
           "Le métabolisme et la dépense énergétique",
@@ -450,7 +450,7 @@ const courses: Course[] = [
         id: 'pm-1-2',
         title: 'Module 2 : Digestion & Microbiote',
         chapters: [
-          "Introduction — Digestion et santé globale",
+          "Introduction — Digestion et bien-être global",
           "Fonctionnement du système digestif",
           "Intestin et immunité",
           "Le microbiote intestinal : rôle et facteurs d'équilibre",
@@ -663,7 +663,7 @@ const courses: Course[] = [
         prompt: "Pourquoi faut-il limiter le sel ?",
         options: [
           "Pour éviter les fibres",
-          "Pour soutenir la santé cardiovasculaire",
+          "Pour soutenir la bien-être cardiovasculaire",
           "Pour réduire l'hydratation",
           "Pour empêcher la digestion",
         ],
@@ -671,7 +671,7 @@ const courses: Course[] = [
       },
       {
         id: "nfinal-q18",
-        prompt: "Quel aliment est recommandé pour la santé cardiovasculaire ?",
+        prompt: "Quel aliment est recommandé pour la bien-être cardiovasculaire ?",
         options: ["Chips", "Soda", "Légumes verts", "Viennoiseries industrielles"],
         correctIndex: 2,
       },

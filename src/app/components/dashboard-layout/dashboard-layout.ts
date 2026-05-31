@@ -146,10 +146,10 @@ import { AuthService } from '../../services/auth.service';
                   <h3 class="font-serif text-[1.25rem] font-semibold text-[var(--color-brand-green-900)] tracking-tight">Réservation des droits</h3>
                   <div class="mt-1 h-[2px] w-10 rounded-full bg-[var(--color-brand-gold-500)]"></div>
                   <p class="mt-2.5 text-[0.82rem] leading-[1.85] text-[var(--color-brand-green-900)]/65">
-                    Tous les contenus, images, vidéos, audios, documents et supports de cette plateforme sont la propriété exclusive d'<strong class="text-[var(--color-brand-green-900)]/80 font-semibold">Essenti'Elle Santé</strong> et protégés par le droit d'auteur. Toute copie, récupération, réutilisation, diffusion ou redistribution sans autorisation écrite préalable est strictement interdite.
+                    Tous les contenus, images, vidéos, audios, documents et supports de cette plateforme sont la propriété exclusive d'<strong class="text-[var(--color-brand-green-900)]/80 font-semibold">Essenti'Elle Formation & Bien-Être</strong> et protégés par le droit d'auteur. Toute copie, récupération, réutilisation, diffusion ou redistribution sans autorisation écrite préalable est strictement interdite.
                   </p>
                   <p class="mt-1.5 text-[0.72rem] font-medium text-[var(--color-brand-green-900)]/40 tracking-wide">
-                    © {{ currentYear }} Essenti&apos;Elle Santé — Tous droits réservés
+                    © {{ currentYear }} Essenti&apos;Elle Formation & Bien-Être — Tous droits réservés
                   </p>
                 </div>
               </div>
