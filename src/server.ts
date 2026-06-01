@@ -415,6 +415,9 @@ const courses: Course[] = [
       { id: 'content-1-6', text: 'Certificat professionnel de fin de formation' },
     ],
     galleryImages: [
+      '/uploads/nutrition-im9.jpeg',
+      '/uploads/nutrition-im10.jpeg',
+      '/uploads/nutrition-im12.jpeg',
       '/uploads/nutrition-im1.jpeg',
       '/uploads/nutrition-im2.jpeg',
       '/uploads/nutrition-im3.jpeg',
@@ -423,9 +426,6 @@ const courses: Course[] = [
       '/uploads/nutrition-im6.jpeg',
       '/uploads/nutrition-im7.jpeg',
       '/uploads/nutrition-im8.jpeg',
-      '/uploads/nutrition-im9.jpeg',
-      '/uploads/nutrition-im10.jpeg',
-      '/uploads/nutrition-im12.jpeg',
     ],
     chapters: [
       { id: 'ch-1-1', title: 'Module 1 : Bases de la Nutrition', content: "Introduction à l'alimentation, macronutriments (glucides, protéines, lipides), micronutriments, métabolisme, hydratation et équilibre nutritionnel." },
@@ -795,6 +795,10 @@ const courses: Course[] = [
     category: 'Détox',
     status: 'published',
     galleryImages: [
+      '/uploads/detox-im12.jpeg',
+      '/uploads/detox-im10.jpeg',
+      '/uploads/detox-im9.jpeg',
+      '/uploads/detox-im11.jpeg',
       '/uploads/detox-im1.jpeg',
       '/uploads/detox-im2.jpeg',
       '/uploads/detox-im3.jpeg',
@@ -803,10 +807,6 @@ const courses: Course[] = [
       '/uploads/detox-im6.jpeg',
       '/uploads/detox-im7.jpeg',
       '/uploads/detox-im8.jpeg',
-      '/uploads/detox-im9.jpeg',
-      '/uploads/detox-im10.jpeg',
-      '/uploads/detox-im11.jpeg',
-      '/uploads/detox-im12.jpeg',
     ],
     moduleItems: [
       {
@@ -1279,10 +1279,10 @@ courses.push(
       { id: 'content-5-6', text: 'Certificat professionnel de fin de formation' },
     ],
     galleryImages: [
-      '/uploads/reflexologie-im1.jpeg',
       '/uploads/reflexologie-im2.jpeg',
       '/uploads/reflexologie-im3.jpeg',
       '/uploads/reflexologie-im4.jpeg',
+      '/uploads/reflexologie-im1.jpeg',
       '/uploads/reflexologie-im6.jpeg',
     ],
     moduleItems: [
