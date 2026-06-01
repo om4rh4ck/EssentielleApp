@@ -783,7 +783,7 @@ const courses: Course[] = [
     instructorId: '2',
     modules: 10,
     students: 185,
-    thumbnail: '/uploads/detox-cover.jpeg',
+    thumbnail: '/uploads/detox-cover-v2.jpeg',
     description: "Une formation complète en 10 modules pour maîtriser la détox thérapeutique : émonctoires, foie, reins, intestins, poumons, peau, alimentation détox et suivi personnalisé.",
     access: 'paid',
     priceEur: 790,
