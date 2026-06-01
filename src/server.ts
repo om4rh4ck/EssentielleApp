@@ -1280,6 +1280,7 @@ courses.push(
     ],
     galleryImages: [
       '/uploads/reflexologie-im2.jpeg',
+      '/uploads/reflexologie-im-2pos.jpeg',
       '/uploads/reflexologie-im3.jpeg',
       '/uploads/reflexologie-im4.jpeg',
       '/uploads/reflexologie-im1.jpeg',
