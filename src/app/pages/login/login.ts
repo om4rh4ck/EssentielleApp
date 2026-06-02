@@ -108,52 +108,6 @@ import { MatIconModule } from '@angular/material/icon';
                 </button>
               </form>
 
-              <div class="mt-8 border-t border-[var(--color-brand-gold-300)]/25 pt-6">
-                <div class="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--color-brand-green-800)]/52">
-                  <mat-icon class="!h-[16px] !w-[16px] !text-[16px] text-[var(--color-brand-gold-500)]">bolt</mat-icon>
-                  Comptes de test
-                </div>
-                <div class="grid gap-3">
-                  <button type="button" (click)="fillDemo('admin')" class="flex items-center justify-between rounded-2xl border border-[var(--color-brand-gold-300)]/20 bg-white px-4 py-3 text-left transition hover:-translate-y-0.5 hover:border-[var(--color-brand-gold-300)]/45 hover:shadow-[0_16px_28px_rgba(17,28,22,0.06)]">
-                    <span class="flex items-center gap-3">
-                      <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--color-brand-green-900)] text-white">
-                        <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">admin_panel_settings</mat-icon>
-                      </span>
-                      <span>
-                        <span class="block text-sm font-bold text-[var(--color-brand-green-900)]">Admin</span>
-                        <span class="block text-xs text-[var(--color-brand-green-800)]/60">admin&#64;lessentielle-bienetre.site</span>
-                      </span>
-                    </span>
-                    <mat-icon class="text-[var(--color-brand-gold-500)]">arrow_forward</mat-icon>
-                  </button>
-
-                  <button type="button" (click)="fillDemo('instructor')" class="flex items-center justify-between rounded-2xl border border-[var(--color-brand-gold-300)]/20 bg-white px-4 py-3 text-left transition hover:-translate-y-0.5 hover:border-[var(--color-brand-gold-300)]/45 hover:shadow-[0_16px_28px_rgba(17,28,22,0.06)]">
-                    <span class="flex items-center gap-3">
-                      <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--color-brand-gold-500)] text-white">
-                        <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">co_present</mat-icon>
-                      </span>
-                      <span>
-                        <span class="block text-sm font-bold text-[var(--color-brand-green-900)]">Formatrice</span>
-                        <span class="block text-xs text-[var(--color-brand-green-800)]/60">instructor&#64;lessentielle-bienetre.site</span>
-                      </span>
-                    </span>
-                    <mat-icon class="text-[var(--color-brand-gold-500)]">arrow_forward</mat-icon>
-                  </button>
-
-                  <button type="button" (click)="fillDemo('student')" class="flex items-center justify-between rounded-2xl border border-[var(--color-brand-gold-300)]/20 bg-white px-4 py-3 text-left transition hover:-translate-y-0.5 hover:border-[var(--color-brand-gold-300)]/45 hover:shadow-[0_16px_28px_rgba(17,28,22,0.06)]">
-                    <span class="flex items-center gap-3">
-                      <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--color-brand-cream)] text-[var(--color-brand-green-900)]">
-                        <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">school</mat-icon>
-                      </span>
-                      <span>
-                        <span class="block text-sm font-bold text-[var(--color-brand-green-900)]">Etudiante</span>
-                        <span class="block text-xs text-[var(--color-brand-green-800)]/60">student&#64;lessentielle-bienetre.site</span>
-                      </span>
-                    </span>
-                    <mat-icon class="text-[var(--color-brand-gold-500)]">arrow_forward</mat-icon>
-                  </button>
-                </div>
-              </div>
             </div>
 
             <aside class="rounded-[30px] border border-[var(--color-brand-gold-300)]/22 bg-[linear-gradient(180deg,#183126_0%,#101b16_100%)] p-6 text-white shadow-[0_28px_60px_rgba(15,23,19,0.28)] sm:p-7">
