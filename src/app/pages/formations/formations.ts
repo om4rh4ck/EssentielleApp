@@ -29,11 +29,11 @@ export class FormationsComponent implements OnInit {
           formula.id === 'formula-3'
             ? {
                 ...formula,
-                description: 'Une formule premium concue pour offrir un parcours professionnalisant complet, avec certifications, ressources exclusives et accompagnement personnalise.',
+                description: 'Option voyage et immersion professionnelle accessible aux apprenants inscrits et aux participants externes, avec 5 demi-journées de pratique, certificat remis en main propre et expérience culturelle encadrée.',
                 highlights: [
-                  '3 certificats professionnels inclus',
-                  'Ebook exclusif offert',
-                  'Suivi personnalise pendant 1 mois',
+                  '5 demi-journées de pratique',
+                  'Accessible avec ou sans formation',
+                  'Certificat remis en main propre pour les participants externes',
                 ],
               }
             : formula

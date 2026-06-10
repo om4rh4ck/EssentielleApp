@@ -10,9 +10,9 @@ import { RouterLink } from '@angular/router';
 })
 export class VoyageComponent {
   readonly stages = [
-    'Bien-être',
-    'Soins',
-    'Massage',
+    'Entreprises partenaires',
+    'Ateliers pratiques',
+    'Observation du terrain',
     'Accompagnement clientèle',
     'Hygiène professionnelle',
     'Organisation d\'un établissement',
@@ -26,10 +26,10 @@ export class VoyageComponent {
   ];
 
   readonly activities = [
-    { icon: 'two_wheeler',    label: 'Sortie en quad' },
-    { icon: 'pets',           label: 'Balade à cheval' },
-    { icon: 'agriculture',    label: 'Sortie en buggy' },
-    { icon: 'directions_car', label: 'Balade en carrosse' },
+    { icon: 'two_wheeler',    label: 'Découverte culturelle' },
+    { icon: 'pets',           label: 'Moments de détente' },
+    { icon: 'agriculture',    label: 'Visites locales' },
+    { icon: 'directions_car', label: 'Temps de cohésion' },
   ];
 
   readonly freeTime = [
