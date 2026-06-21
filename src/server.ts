@@ -1331,30 +1331,94 @@ courses.push(
   },
   {
     id: '6',
-    title: 'Formation Kinésiologie (muscles & articulations)',
+    title: 'Formation professionnelle complète en Kinésiologie',
     instructorId: '2',
     modules: 10,
     students: 41,
-    thumbnail: 'formation-kinesiologie.svg',
-    description: 'Une formation axée sur la lecture musculaire, les articulations et les protocoles de correction, avec tarification selon 1 à 3 certificats.',
+    thumbnail: '/formation%20kin%C3%A9silogie/photo%20de%20cover.jpeg',
+    description: "Formation complète en 10 modules pour maîtriser les bases de la kinésiologie, le test musculaire, l'anatomie fonctionnelle, les méridiens, les émotions, les réflexes archaïques et les protocoles professionnels.",
+    presentation: "Cette formation professionnelle complète en kinésiologie vous guide pas à pas dans l'écoute du corps, l'identification des déséquilibres et la mise en place de corrections adaptées. Le parcours couvre 10 modules, environ 50 chapitres, 300 à 500 heures de formation, avec une approche globale du corps, du mental, de l'énergie, des émotions et du mouvement.",
+    warning: "Cette formation est à visée éducative, bien-être et professionnelle. Elle ne remplace pas un diagnostic médical, un suivi thérapeutique réglementé ni un traitement prescrit. Le praticien accompagne la personne dans un cadre éthique, non médical et respectueux de ses limites professionnelles.",
     access: 'paid',
-    priceEur: 1800,
-    priceMinEur: 1800,
-    priceMaxEur: 3860,
+    priceEur: 2800,
+    priceMinEur: 2800,
+    priceMaxEur: 3900,
     pricingCurrency: 'EUR',
-    certificateOptions: [1, 2, 3, 4, 5],
+    certificateOptions: [1, 2, 3],
     promoEnabled: false,
     category: 'Kinésiologie',
     status: 'published',
+    objectives: [
+      "Comprendre l'histoire, les principes fondamentaux et le cadre éthique de la kinésiologie",
+      "Réaliser un test musculaire fiable, doux et sans douleur",
+      "Identifier les déséquilibres structurels, émotionnels, énergétiques et fonctionnels",
+      "Mobiliser les bases d'anatomie fonctionnelle, de biomécanique et de chaînes musculaires",
+      "Utiliser les points réflexes neuro-vasculaires, neuro-lymphatiques et énergétiques",
+      "Accompagner la gestion du stress, des émotions et des blocages corporels",
+      "Intégrer Brain Gym, réflexes archaïques et protocoles d'intégration",
+      "Construire une consultation professionnelle avec anamnèse, bilan, suivi et conseils personnalisés",
+      "Mettre en place des protocoles de correction et de rééquilibrage adaptés à chaque personne",
+      "Préparer une pratique professionnelle éthique avec étude de cas, stage supervisé et certification",
+    ],
     contentItems: [
-      { id: 'content-6-1', text: 'Anatomie fonctionnelle' },
-      { id: 'content-6-2', text: 'Tests musculaires' },
-      { id: 'content-6-3', text: 'Mobilité articulaire' },
-      { id: 'content-6-4', text: 'Rééquilibrage corporel' },
-      { id: 'content-6-5', text: 'Mise en pratique' },
+      { id: 'content-6-1', text: '10 modules complets' },
+      { id: 'content-6-2', text: '50 chapitres détaillés' },
+      { id: 'content-6-3', text: '300 à 500 heures de formation' },
+      { id: 'content-6-4', text: 'Test musculaire et bilan kinésiologique' },
+      { id: 'content-6-5', text: 'Protocoles professionnels, stage et étude de cas' },
       { id: 'content-6-6', text: 'Certificat professionnel de fin de formation' },
     ],
+    galleryImages: [
+      '/formation%20kin%C3%A9silogie/im1.jpeg',
+      '/formation%20kin%C3%A9silogie/im2.jpeg',
+      '/formation%20kin%C3%A9silogie/im3.jpeg',
+      '/formation%20kin%C3%A9silogie/im4.jpeg',
+      '/formation%20kin%C3%A9silogie/im5.jpeg',
+      '/formation%20kin%C3%A9silogie/im6.jpeg',
+      '/formation%20kin%C3%A9silogie/im7.jpeg',
+      '/formation%20kin%C3%A9silogie/im8.jpeg',
+      '/formation%20kin%C3%A9silogie/im9.jpeg',
+      '/formation%20kin%C3%A9silogie/im10.jpeg',
+      '/formation%20kin%C3%A9silogie/im11.jpeg',
+      '/formation%20kin%C3%A9silogie/im12.jpeg',
+      '/formation%20kin%C3%A9silogie/im13.jpeg',
+      '/formation%20kin%C3%A9silogie/im14.jpeg',
+    ],
+    programModules: [
+      { id: 'kinesio-module-1', title: 'Introduction à la kinésiologie', chapters: ['Histoire et origines', 'Principes fondamentaux', 'Les 5 éléments', 'Le praticien en kinésiologie'] },
+      { id: 'kinesio-module-2', title: 'Anatomie fonctionnelle et biomécanique', chapters: ['Système squelettique', 'Système musculaire', 'Articulations', 'Chaînes musculaires'] },
+      { id: 'kinesio-module-3', title: 'Test musculaire et bilan', chapters: ['Principes du test musculaire', 'Méthodologie du bilan', 'Échelles musculaires', 'Interprétation des résultats'] },
+      { id: 'kinesio-module-4', title: 'Méridiens énergétiques et équilibrage', chapters: ['Système des méridiens', 'Points énergétiques', 'Équilibrage énergétique', 'Cycles et éléments'] },
+      { id: 'kinesio-module-5', title: 'Émotions et gestion émotionnelle', chapters: ['Émotions et stress', 'Libération émotionnelle', 'Équilibrage émotionnel', 'Transgénérationnel'] },
+      { id: 'kinesio-module-6', title: 'Brain Gym et intégration cérébrale', chapters: ['Mouvements Brain Gym', 'Intégration hémisphérique', 'Apprentissage et performance', 'Équilibrage neurologique'] },
+      { id: 'kinesio-module-7', title: 'Réflexes archaïques et intégration', chapters: ['Réflexes primaires', 'Réflexes posturaux', "Impact sur l'apprentissage", "Protocoles d'intégration"] },
+      { id: 'kinesio-module-8', title: 'Protocoles avancés et approfondis', chapters: ['Protocoles structurels', 'Protocoles énergétiques', 'Protocoles émotionnels', 'Personnalisation des séances'] },
+      { id: 'kinesio-module-9', title: 'Consultation professionnelle', chapters: ["Déroulement d'une séance", "Relation d'accompagnement", 'Suivi et prise en charge', 'Outils et supports'] },
+      { id: 'kinesio-module-10', title: 'Pratique professionnelle et certification', chapters: ['Installation professionnelle', 'Études de cas et stage', 'Examen final', 'Certification internationale'] },
+    ],
+    chapters: [
+      { id: 'kinesio-info-1', title: 'Tarifs internationaux', content: 'France : 2 800 €. France et Tunisie : 3 900 €. La formation comprend 10 modules et une certification incluse.' },
+      { id: 'kinesio-info-2', title: 'Pour qui ?', content: 'Professionnels de santé, thérapeutes, coaches, praticiens du bien-être et personnes en reconversion professionnelle.' },
+      { id: 'kinesio-info-3', title: 'Certifications', content: 'Niveau 1 : praticien en kinésiologie fondamentale. Niveau 2 : praticien en kinésiologie énergétique et émotionnelle. Niveau 3 : maître praticien en protocoles avancés et gestion d’activité.' },
+      { id: 'kinesio-info-4', title: 'Voyage en excursion à Djerba', content: 'Possibilité de séjour avec vols directs Paris-Djerba, hôtels 4 et 5 étoiles, excursions et transferts inclus selon offre stagiaire.' },
+    ],
     moduleItems: [],
+    quizTitle: 'Examen Final — Formation professionnelle en Kinésiologie',
+    quizAttemptsRemaining: 2,
+    quizQuestions: [
+      { id: 'kinesio-q1', prompt: "Quel est l'outil principal de la kinésiologie ?", options: ['Le test musculaire', 'La prise de tension', 'La prescription médicale', 'La radiographie'], correctIndex: 0 },
+      { id: 'kinesio-q2', prompt: 'Que cherche principalement à rétablir la kinésiologie ?', options: ["L'équilibre du corps, du mental et des émotions", 'Un diagnostic médical', 'Une chirurgie correctrice', 'Un traitement pharmacologique'], correctIndex: 0 },
+      { id: 'kinesio-q3', prompt: 'Un muscle faible lors du test peut indiquer :', options: ['Un déséquilibre ou un blocage', 'Une force parfaite', 'Une absence totale de stress', 'Une urgence chirurgicale automatique'], correctIndex: 0 },
+      { id: 'kinesio-q4', prompt: 'Quel module aborde le système squelettique, musculaire et les articulations ?', options: ['Anatomie fonctionnelle et biomécanique', 'Brain Gym uniquement', 'Installation professionnelle', 'Voyage à Djerba'], correctIndex: 0 },
+      { id: 'kinesio-q5', prompt: 'Les méridiens énergétiques sont étudiés pour :', options: ["Comprendre et équilibrer la circulation de l'énergie", 'Calculer une posologie', 'Remplacer un bilan médical', 'Mesurer uniquement la tension artérielle'], correctIndex: 0 },
+      { id: 'kinesio-q6', prompt: "Dans une consultation professionnelle, l'anamnèse sert à :", options: ['Mieux connaître la personne et adapter la séance', 'Vendre obligatoirement un produit', 'Éviter toute écoute du client', 'Établir une ordonnance'], correctIndex: 0 },
+      { id: 'kinesio-q7', prompt: 'Brain Gym concerne principalement :', options: ["Le mouvement au service du cerveau et de l'apprentissage", 'La comptabilité du cabinet', 'La chirurgie articulaire', 'La fabrication de compléments'], correctIndex: 0 },
+      { id: 'kinesio-q8', prompt: 'Les réflexes archaïques peuvent influencer :', options: ["L'apprentissage, la posture et l'intégration corporelle", 'Uniquement la couleur des yeux', 'Le prix de la formation', 'Le numéro de certificat'], correctIndex: 0 },
+      { id: 'kinesio-q9', prompt: 'Quel élément fait partie de la pratique professionnelle ?', options: ['Études de cas, stage et examen final', 'Suppression de toute éthique', 'Promesse de guérison immédiate', 'Diagnostic médical obligatoire'], correctIndex: 0 },
+      { id: 'kinesio-q10', prompt: "Quel cadre doit respecter le praticien en kinésiologie ?", options: ['Un cadre éthique, bien-être et non médical', 'Un cadre de prescription médicale', 'Un cadre chirurgical', 'Un cadre sans confidentialité'], correctIndex: 0 },
+      { id: 'kinesio-q11', prompt: 'Les points neuro-vasculaires et neuro-lymphatiques sont utilisés pour :', options: ["Soutenir l'équilibrage du système nerveux, lymphatique et énergétique", 'Réaliser une injection', 'Remplacer une analyse sanguine', 'Bloquer toute respiration'], correctIndex: 0 },
+      { id: 'kinesio-q12', prompt: "La relation d'accompagnement implique principalement :", options: ['Écoute, respect, suivi et conseils personnalisés', 'Jugement du client', 'Absence de bilan', 'Secret non respecté'], correctIndex: 0 },
+    ],
   },
   {
     id: '7',
@@ -3316,8 +3380,16 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
   await loadEnrollmentsFromDb(pool);
   // Push all in-memory enrollments (from JSON backup) to MySQL for forward persistence
   await syncEnrollmentsToDb(pool);
+  const kinesiologieSeedCourse = JSON.parse(JSON.stringify(courses.find((c) => c.id === '6') ?? null)) as Course | null;
   // Apply any course edits/deletions stored in DB on top of the seed courses array
   await loadCoursesFromDb(pool);
+  if (kinesiologieSeedCourse) {
+    const existing = courses.find((c) => c.id === '6');
+    if (existing) {
+      Object.assign(existing, kinesiologieSeedCourse);
+      await saveCourseToDb(pool, existing);
+    }
+  }
   // Backup everything to JSON so next boot works even without MySQL
   savePersistedData();
 
@@ -3526,8 +3598,11 @@ async function loadCourseQuizConfigFromDb(pool: Pool): Promise<void> {
 
 async function saveCourseQuizConfigToDb(pool: Pool): Promise<void> {
   for (const course of courses) {
-    if (!course.quizQuestions?.length) continue;
     try {
+      if (!course.quizQuestions?.length) {
+        await pool.query('DELETE FROM course_quiz_config WHERE course_id = ?', [course.id]);
+        continue;
+      }
       await pool.query(
         `INSERT INTO course_quiz_config (course_id, quiz_title, questions_json)
          VALUES (?, ?, ?)
@@ -5186,9 +5261,10 @@ app.post('/api/instructor/courses', (req, res): any => {
     const objectives = parseTextList(req.body?.objectives);
     const contentItems = parseContentItems(req.body?.contentItems);
     const chapters = parseChapterItems(req.body?.chapters);
+    const quizQuestions = parseQuizQuestions(req.body?.quizQuestions);
+    const quizTitle = typeof req.body?.quizTitle === 'string' ? req.body.quizTitle.trim().slice(0, 200) : '';
     const presentation = typeof req.body?.presentation === 'string' ? req.body.presentation.trim() : '';
     const warning = typeof req.body?.warning === 'string' ? req.body.warning.trim() : '';
-    const quizQuestions = parseQuizQuestions(req.body?.quizQuestions);
 
     const status = req.body?.status === 'draft' ? 'draft' : 'published';
 
@@ -5290,7 +5366,7 @@ app.put('/api/instructor/courses/:courseId', (req, res): any => {
     if (Array.isArray(req.body?.chapters)) {
       course.chapters = parseChapterItems(req.body.chapters);
     }
-    if (Array.isArray(req.body?.quizQuestions) && req.body.quizQuestions.length > 0) {
+    if (Array.isArray(req.body?.quizQuestions)) {
       course.quizQuestions = parseQuizQuestions(req.body.quizQuestions);
     }
     if (req.body?.quizTitle !== undefined) {
@@ -6094,6 +6170,8 @@ app.post('/api/admin/courses', (req, res): any => {
     const objectives = parseTextList(req.body?.objectives);
     const contentItems = parseContentItems(req.body?.contentItems);
     const chapters = parseChapterItems(req.body?.chapters);
+    const quizQuestions = parseQuizQuestions(req.body?.quizQuestions);
+    const quizTitle = typeof req.body?.quizTitle === 'string' ? req.body.quizTitle.trim().slice(0, 200) : '';
     const presentation = typeof req.body?.presentation === 'string' ? req.body.presentation.trim() : '';
     const warning = typeof req.body?.warning === 'string' ? req.body.warning.trim() : '';
 
@@ -6129,10 +6207,13 @@ app.post('/api/admin/courses', (req, res): any => {
       contentItems,
       chapters,
       moduleItems,
+      quizTitle: quizTitle || undefined,
+      quizQuestions,
     };
     courses.unshift(course);
     savePersistedData();
     saveCourseToDbAsync(course);
+    getDbPool().then((pool) => { if (pool) saveCourseQuizConfigToDb(pool).catch(() => {}); });
     console.log(`✅ Formation créée par admin: ${course.id} par ${user.name}`);
     res.status(201).json(course);
   } catch (error) {
@@ -6196,7 +6277,7 @@ app.put('/api/admin/courses/:courseId', (req, res): any => {
     if (Array.isArray(req.body?.chapters)) {
       course.chapters = parseChapterItems(req.body.chapters);
     }
-    if (Array.isArray(req.body?.quizQuestions) && req.body.quizQuestions.length > 0) {
+    if (Array.isArray(req.body?.quizQuestions)) {
       course.quizQuestions = parseQuizQuestions(req.body.quizQuestions);
     }
     if (req.body?.quizTitle !== undefined) {

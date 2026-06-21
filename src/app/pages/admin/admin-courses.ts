@@ -8,6 +8,7 @@ import { ADMIN_MENU_ITEMS } from './admin-menu';
 type CourseModuleItem = NonNullable<ManagedCourse['moduleItems']>[number];
 type CourseContentItem = NonNullable<ManagedCourse['contentItems']>[number];
 type CourseChapterItem = NonNullable<ManagedCourse['chapters']>[number];
+type CourseQuizQuestion = NonNullable<ManagedCourse['quizQuestions']>[number];
 
 @Component({
   selector: 'app-admin-courses',
@@ -96,6 +97,41 @@ type CourseChapterItem = NonNullable<ManagedCourse['chapters']>[number];
                       <button type="button" (click)="removeChapter($index)" class="rounded-full bg-[#f8e7e7] px-4 py-3 text-sm font-semibold text-[#9b2c2c]">Supprimer</button>
                     </div>
                     <textarea formControlName="content" rows="4" placeholder="Texte du chapitre" class="mt-3 w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none"></textarea>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-white/75 p-4">
+              <div class="flex items-center justify-between gap-4">
+                <div>
+                  <div class="text-sm font-semibold text-[var(--color-brand-green-900)]">QCM de fin de formation</div>
+                  <div class="mt-1 text-xs uppercase tracking-[0.16em] text-[var(--color-brand-green-800)]/48">Questions, reponses et bonne reponse</div>
+                </div>
+                <button type="button" (click)="addQuizQuestion()" class="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-gold-500)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-green-900)]">
+                  <mat-icon class="!h-[18px] !w-[18px] !text-[18px]">add</mat-icon> Ajouter question
+                </button>
+              </div>
+              <input formControlName="quizTitle" placeholder="Titre du QCM" class="mt-4 w-full rounded-2xl bg-[var(--color-brand-cream)] px-4 py-3 text-sm outline-none" />
+              <div formArrayName="quizQuestions" class="mt-4 space-y-4">
+                @for (question of quizQuestions.controls; track $index) {
+                  <div [formGroupName]="$index" class="rounded-[22px] bg-[var(--color-brand-cream)]/65 p-4">
+                    <div class="grid gap-3 md:grid-cols-[1fr_auto]">
+                      <textarea formControlName="prompt" rows="3" placeholder="Question" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none"></textarea>
+                      <button type="button" (click)="removeQuizQuestion($index)" class="h-fit rounded-full bg-[#f8e7e7] px-4 py-3 text-sm font-semibold text-[#9b2c2c]">Supprimer</button>
+                    </div>
+                    <div class="mt-3 grid gap-3 md:grid-cols-2">
+                      <input formControlName="optionA" placeholder="Reponse A" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
+                      <input formControlName="optionB" placeholder="Reponse B" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
+                      <input formControlName="optionC" placeholder="Reponse C" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
+                      <input formControlName="optionD" placeholder="Reponse D" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none" />
+                    </div>
+                    <select formControlName="correctIndex" class="mt-3 w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none">
+                      <option value="0">Bonne reponse: A</option>
+                      <option value="1">Bonne reponse: B</option>
+                      <option value="2">Bonne reponse: C</option>
+                      <option value="3">Bonne reponse: D</option>
+                    </select>
                   </div>
                 }
               </div>
@@ -262,12 +298,15 @@ export class AdminCoursesComponent implements OnInit {
     contentItems: this.fb.array([]),
     chapters: this.fb.array([]),
     moduleItems: this.fb.array([]),
+    quizTitle: [''],
+    quizQuestions: this.fb.array([]),
   });
 
   get moduleItems(): FormArray { return this.form.get('moduleItems') as FormArray; }
   get objectives(): FormArray { return this.form.get('objectives') as FormArray; }
   get contentItems(): FormArray { return this.form.get('contentItems') as FormArray; }
   get chapters(): FormArray { return this.form.get('chapters') as FormArray; }
+  get quizQuestions(): FormArray { return this.form.get('quizQuestions') as FormArray; }
 
   ngOnInit(): void { this.load(); }
   load(): void { this.staff.getAdminCourses().subscribe((data) => this.courses.set(data)); }
@@ -290,6 +329,17 @@ export class AdminCoursesComponent implements OnInit {
   private createChapterGroup(chapter?: CourseChapterItem) {
     return this.fb.nonNullable.group({ id: [chapter?.id ?? `chapter-${Date.now()}-${this.chapters.length}`], title: [chapter?.title ?? ''], content: [chapter?.content ?? ''] });
   }
+  private createQuizQuestionGroup(question?: CourseQuizQuestion) {
+    return this.fb.nonNullable.group({
+      id: [question?.id ?? `quiz-${Date.now()}-${this.quizQuestions.length}`],
+      prompt: [question?.prompt ?? ''],
+      optionA: [question?.options?.[0] ?? ''],
+      optionB: [question?.options?.[1] ?? ''],
+      optionC: [question?.options?.[2] ?? ''],
+      optionD: [question?.options?.[3] ?? ''],
+      correctIndex: [String(question?.correctIndex ?? 0)],
+    });
+  }
 
   addObjective(): void { this.objectives.push(this.fb.nonNullable.control('')); }
   removeObjective(index: number): void { this.objectives.removeAt(index); }
@@ -297,6 +347,8 @@ export class AdminCoursesComponent implements OnInit {
   removeContentItem(index: number): void { this.contentItems.removeAt(index); }
   addChapter(): void { this.chapters.push(this.createChapterGroup()); }
   removeChapter(index: number): void { this.chapters.removeAt(index); }
+  addQuizQuestion(): void { this.quizQuestions.push(this.createQuizQuestionGroup()); }
+  removeQuizQuestion(index: number): void { this.quizQuestions.removeAt(index); }
   addModule(): void { this.moduleItems.push(this.createModuleGroup()); }
   removeModule(index: number): void { this.moduleItems.removeAt(index); }
 
@@ -338,24 +390,26 @@ export class AdminCoursesComponent implements OnInit {
 
   edit(course: ManagedCourse): void {
     this.editingId.set(course.id);
-    this.objectives.clear(); this.contentItems.clear(); this.chapters.clear(); this.moduleItems.clear();
+    this.objectives.clear(); this.contentItems.clear(); this.chapters.clear(); this.moduleItems.clear(); this.quizQuestions.clear();
     (course.objectives ?? []).forEach((objective) => this.objectives.push(this.fb.nonNullable.control(objective)));
     (course.contentItems ?? []).forEach((item) => this.contentItems.push(this.createContentItemGroup(item)));
     (course.chapters ?? []).forEach((chapter) => this.chapters.push(this.createChapterGroup(chapter)));
     (course.moduleItems ?? []).forEach((module) => this.moduleItems.push(this.createModuleGroup(module)));
+    (course.quizQuestions ?? []).forEach((question) => this.quizQuestions.push(this.createQuizQuestionGroup(question)));
     this.form.patchValue({
       title: course.title, description: course.description, presentation: course.presentation ?? '', warning: course.warning ?? '',
       thumbnail: course.thumbnail, category: course.category, access: course.access, pricingCurrency: course.pricingCurrency ?? 'EUR',
       priceEur: course.priceEur, priceTnd: course.priceTnd ?? 0, priceUsd: course.priceUsd ?? 0,
       promoEnabled: course.promoEnabled ?? false, promoPriceEur: course.promoPriceEur ?? 0, promoPriceTnd: course.promoPriceTnd ?? 0, promoPriceUsd: course.promoPriceUsd ?? 0,
       status: course.status,
+      quizTitle: course.quizTitle ?? '',
     });
   }
 
   resetForm(): void {
     this.editingId.set(null); this.feedback.set(null);
-    this.form.reset({ title: '', description: '', presentation: '', warning: '', thumbnail: 'module-nutrition-pathologie.svg', category: 'Formation', access: 'free', pricingCurrency: 'EUR', priceEur: 0, priceTnd: 0, priceUsd: 0, promoEnabled: false, promoPriceEur: 0, promoPriceTnd: 0, promoPriceUsd: 0, status: 'published' });
-    this.objectives.clear(); this.contentItems.clear(); this.chapters.clear(); this.moduleItems.clear();
+    this.form.reset({ title: '', description: '', presentation: '', warning: '', thumbnail: 'module-nutrition-pathologie.svg', category: 'Formation', access: 'free', pricingCurrency: 'EUR', priceEur: 0, priceTnd: 0, priceUsd: 0, promoEnabled: false, promoPriceEur: 0, promoPriceTnd: 0, promoPriceUsd: 0, status: 'published', quizTitle: '' });
+    this.objectives.clear(); this.contentItems.clear(); this.chapters.clear(); this.moduleItems.clear(); this.quizQuestions.clear();
   }
 
   save(): void {
@@ -366,6 +420,17 @@ export class AdminCoursesComponent implements OnInit {
     }
     const raw = this.form.getRawValue();
     const validModules = (raw.moduleItems as CourseModuleItem[]).filter((item) => item.title.trim() && item.pdfDataUrl);
+    const quizQuestions = (raw.quizQuestions as Array<{ id: string; prompt: string; optionA: string; optionB: string; optionC: string; optionD: string; correctIndex: string | number }>)
+      .map((item, index) => {
+        const options = [item.optionA, item.optionB, item.optionC, item.optionD].map((option) => String(option ?? '').trim()).filter(Boolean);
+        return {
+          id: item.id || `quiz-${Date.now()}-${index}`,
+          prompt: item.prompt.trim(),
+          options,
+          correctIndex: Math.min(Math.max(0, Number(item.correctIndex ?? 0)), Math.max(0, options.length - 1)),
+        };
+      })
+      .filter((item) => item.prompt && item.options.length >= 2);
     const payload: Partial<ManagedCourse> = {
       ...raw,
       objectives: (raw.objectives as string[]).map((item) => item.trim()).filter(Boolean),
@@ -373,6 +438,8 @@ export class AdminCoursesComponent implements OnInit {
       chapters: (raw.chapters as CourseChapterItem[]).filter((item) => item.title.trim() || item.content.trim()),
       moduleItems: validModules,
       modules: validModules.length,
+      quizTitle: raw.quizTitle.trim(),
+      quizQuestions,
     };
     const request = this.editingId() ? this.staff.updateAdminCourse(this.editingId()!, payload) : this.staff.createAdminCourse(payload);
     request.subscribe({
