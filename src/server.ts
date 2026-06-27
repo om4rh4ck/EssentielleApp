@@ -3597,13 +3597,21 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
   await loadEnrollmentsFromDb(pool);
   // Push all in-memory enrollments (from JSON backup) to MySQL for forward persistence
   await syncEnrollmentsToDb(pool);
-  const kinesiologieSeedCourse = JSON.parse(JSON.stringify(courses.find((c) => c.id === '6') ?? null)) as Course | null;
+  const seedCoursesToRestore = ['6', '9', '10'];
+  const seedCoursesBackup = new Map<string, Course>();
+  for (const courseId of seedCoursesToRestore) {
+    const seedCourse = courses.find((c) => c.id === courseId);
+    if (seedCourse) {
+      seedCoursesBackup.set(courseId, JSON.parse(JSON.stringify(seedCourse)) as Course);
+    }
+  }
+
   // Apply any course edits/deletions stored in DB on top of the seed courses array
   await loadCoursesFromDb(pool);
-  if (kinesiologieSeedCourse) {
-    const existing = courses.find((c) => c.id === '6');
+  for (const [courseId, seedCourse] of seedCoursesBackup.entries()) {
+    const existing = courses.find((c) => c.id === courseId);
     if (existing) {
-      Object.assign(existing, kinesiologieSeedCourse);
+      Object.assign(existing, seedCourse);
       await saveCourseToDb(pool, existing);
     }
   }
