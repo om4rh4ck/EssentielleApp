@@ -22,7 +22,7 @@
         <a routerLink="/about" routerLinkActive="nav-link-active"
            class="nav-link">{{ t({ fr: 'À propos', en: 'About', ar: 'من نحن' }) }}</a>
         <a routerLink="/voyage" routerLinkActive="nav-link-active"
-           class="nav-link">✈️ {{ t({ fr: 'Option Voyage', en: 'Travel Option', ar: 'خيار السفر' }) }}</a>
+           class="nav-link">{{ t({ fr: 'Option Voyage', en: 'Travel Option', ar: 'خيار السفر' }) }}</a>
         <a routerLink="/contact" routerLinkActive="nav-link-active"
            class="nav-link">{{ t({ fr: 'Contact', en: 'Contact', ar: 'اتصل بنا' }) }}</a>
       </nav>
@@ -152,7 +152,6 @@
       </a>
       <a routerLink="/voyage" routerLinkActive="mobile-nav-link-active"
          class="mobile-nav-link" (click)="closeMobile()">
-        <mat-icon style="font-size:18px;color:#c8a96a">flight</mat-icon>
         {{ t({ fr: 'Option Voyage', en: 'Travel Option', ar: 'خيار السفر' }) }}
       </a>
       <a routerLink="/contact" routerLinkActive="mobile-nav-link-active"

@@ -2954,7 +2954,7 @@ function getSmtpConfig(): MailerConfig | null {
   const port = Number(process.env['SMTP_PORT'] ?? '587');
   const user = process.env['SMTP_USER']?.trim() ?? '';
   const pass = process.env['SMTP_PASS']?.trim() ?? '';
-  const from = process.env['SMTP_FROM']?.trim() ?? user;
+  const from = process.env['SMTP_FROM']?.trim() || `Essenti'Elle Formation & Bien-Être <${user}>`;
   const replyTo = process.env['SMTP_REPLY_TO']?.trim() ?? '';
   const secure = (process.env['SMTP_SECURE'] ?? '').toLowerCase() === 'true';
 
@@ -2973,6 +2973,31 @@ function getSmtpConfig(): MailerConfig | null {
   };
 }
 
+function createMailerTransport(config: MailerConfig) {
+  return nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
+  });
+}
+
+function buildMailHeaders(): Record<string, string> {
+  return {
+    'X-Mailer': "Essenti'Elle Formation & Bien-Être",
+    'X-Priority': '3',
+    Importance: 'Normal',
+    'X-Entity-Ref-ID': `essentielle-${Date.now()}`,
+  };
+}
+
+function buildMailSignature(): string {
+  return "L'équipe Essenti'Elle Formation & Bien-Être";
+}
+
 function isMailerConfigured(): boolean {
   return !!getSmtpConfig();
 }
@@ -2985,20 +3010,14 @@ async function sendRegistrationSuccessEmail(user: PublicUser, req: Request): Pro
   }
 
   const loginUrl = `${getAppUrl(req)}/login`;
-  const transporter = nodemailer.createTransport({
-    host: config.host,
-    port: config.port,
-    secure: config.secure,
-    auth: {
-      user: config.user,
-      pass: config.pass,
-    },
-  });
+  const transporter = createMailerTransport(config);
+  const signature = buildMailSignature();
 
   await transporter.sendMail({
     from: config.from,
     to: user.email,
     replyTo: config.replyTo,
+    headers: buildMailHeaders(),
     subject: "Inscription reussie - Essenti' Elle Formation et Bien Être",
     text: [
       `Bonjour ${user.name},`,
@@ -3008,16 +3027,16 @@ async function sendRegistrationSuccessEmail(user: PublicUser, req: Request): Pro
       `Votre identifiant : ${user.username}`,
       `Acces a la connexion : ${loginUrl}`,
       '',
-      "L'equipe Essenti' Elle Formation et Bien Être",
+      signature,
     ].join('\n'),
     html: `
-      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173526">
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173526;max-width:640px;margin:0 auto">
         <p>Bonjour ${user.name},</p>
         <p>Votre inscription sur <strong>Essenti' Elle Formation et Bien Être</strong> a bien ete enregistree.</p>
         <p><strong>E-mail de connexion :</strong> ${user.email}<br>
         <strong>Identifiant :</strong> ${user.username}</p>
         <p><a href="${loginUrl}" style="display:inline-block;padding:12px 18px;background:#1F2A24;color:#fff;text-decoration:none;border-radius:12px;">Se connecter</a></p>
-        <p>L'equipe Essenti' Elle Formation et Bien Être</p>
+        <p>${signature}</p>
       </div>
     `,
   });
@@ -3032,15 +3051,8 @@ async function sendPaidEnrollmentApprovalEmail(student: PublicUser, course: Cour
     return false;
   }
 
-  const transporter = nodemailer.createTransport({
-    host: config.host,
-    port: config.port,
-    secure: config.secure,
-    auth: {
-      user: config.user,
-      pass: config.pass,
-    },
-  });
+  const transporter = createMailerTransport(config);
+  const signature = buildMailSignature();
 
   const formulaLine = request.formulaTitle ? `Formule choisie : ${request.formulaTitle}` : '';
   const certificateLine = request.certificateCount ? `Nombre de certificats : ${request.certificateCount}` : '';
@@ -3051,6 +3063,7 @@ async function sendPaidEnrollmentApprovalEmail(student: PublicUser, course: Cour
     from: config.from,
     to: student.email,
     replyTo: config.replyTo,
+    headers: buildMailHeaders(),
     subject: `Acceptation de votre inscription - ${course.title}`,
     text: [
       `Bonjour ${student.name},`,
@@ -3063,17 +3076,17 @@ async function sendPaidEnrollmentApprovalEmail(student: PublicUser, course: Cour
       'Connectez-vous avec votre adresse e-mail pour acceder a votre formation.',
       '',
       'Bien cordialement,',
-      "L'equipe Essenti' Elle Formation et Bien Être",
+      signature,
     ].filter(Boolean).join('\n'),
     html: `
-      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173526">
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173526;max-width:640px;margin:0 auto">
         <p>Bonjour ${student.name},</p>
         <p>Votre demande d'inscription a ete validee pour la formation <strong>${course.title}</strong>.</p>
         <p>Votre acces personnel a cette formation est maintenant ouvert dans votre espace etudiante sur la plateforme Essenti' Elle Formation et Bien Être.</p>
         <p>Une fois activee, la formation reste disponible pour votre suivi pedagogique, y compris apres vos evaluations.</p>
         ${htmlDetails ? `<ul>${htmlDetails}</ul>` : ''}
         <p>Connectez-vous avec votre adresse e-mail pour acceder a votre formation.</p>
-        <p>Bien cordialement,<br>L'equipe Essenti' Elle Formation et Bien Être</p>
+        <p>Bien cordialement,<br>${signature}</p>
       </div>
     `,
   });
@@ -3090,20 +3103,14 @@ async function sendPasswordResetEmail(user: PublicUser, token: string, req: Requ
   }
 
   const resetUrl = `${getAppUrl(req)}/reset-password?token=${encodeURIComponent(token)}`;
-  const transporter = nodemailer.createTransport({
-    host: config.host,
-    port: config.port,
-    secure: config.secure,
-    auth: {
-      user: config.user,
-      pass: config.pass,
-    },
-  });
+  const transporter = createMailerTransport(config);
+  const signature = buildMailSignature();
 
   const info = await transporter.sendMail({
     from: config.from,
     to: user.email,
     replyTo: config.replyTo,
+    headers: buildMailHeaders(),
     subject: 'Reinitialisation de votre mot de passe',
     text: [
       `Bonjour ${user.name},`,
@@ -3113,15 +3120,15 @@ async function sendPasswordResetEmail(user: PublicUser, token: string, req: Requ
       '',
       'Ce lien est valable pendant 1 heure.',
       '',
-      "L'equipe Essenti' Elle Formation et Bien Être",
+      signature,
     ].join('\n'),
     html: `
-      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173526">
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173526;max-width:640px;margin:0 auto">
         <p>Bonjour ${user.name},</p>
         <p>Vous avez demande la reinitialisation de votre mot de passe.</p>
         <p><a href="${resetUrl}" style="display:inline-block;padding:12px 18px;background:#1F2A24;color:#fff;text-decoration:none;border-radius:12px;">Definir un nouveau mot de passe</a></p>
         <p>Ce lien est valable pendant 1 heure.</p>
-        <p>L'equipe Essenti' Elle Formation et Bien Être</p>
+        <p>${signature}</p>
       </div>
     `,
   });

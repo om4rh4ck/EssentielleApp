@@ -113,6 +113,6 @@ SMTP_PORT=587
 SMTP_SECURE=false
 SMTP_USER=contact@lessentielle-bienetre.site
 SMTP_PASS=mot_de_passe_smtp
-SMTP_FROM="Essenti'elle Sante <contact@lessentielle-bienetre.site>"
+SMTP_FROM="Essenti'Elle Formation & Bien-Être <contact@lessentielle-bienetre.site>"
 SMTP_REPLY_TO=contact@lessentielle-bienetre.site
 ```
