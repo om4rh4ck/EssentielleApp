@@ -3597,21 +3597,25 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
   await loadEnrollmentsFromDb(pool);
   // Push all in-memory enrollments (from JSON backup) to MySQL for forward persistence
   await syncEnrollmentsToDb(pool);
-  const seedCoursesToRestore = ['6', '9', '10'];
-  const seedCoursesBackup = new Map<string, Course>();
+  const seedCoursesToRestore = ['1', '2', '6', '9', '10'];
+  const seedCoursesBackup = new Map<string, Pick<Course, 'thumbnail' | 'galleryImages'>>();
   for (const courseId of seedCoursesToRestore) {
     const seedCourse = courses.find((c) => c.id === courseId);
     if (seedCourse) {
-      seedCoursesBackup.set(courseId, JSON.parse(JSON.stringify(seedCourse)) as Course);
+      seedCoursesBackup.set(courseId, {
+        thumbnail: seedCourse.thumbnail,
+        galleryImages: seedCourse.galleryImages,
+      });
     }
   }
 
   // Apply any course edits/deletions stored in DB on top of the seed courses array
   await loadCoursesFromDb(pool);
-  for (const [courseId, seedCourse] of seedCoursesBackup.entries()) {
+  for (const [courseId, seedImageData] of seedCoursesBackup.entries()) {
     const existing = courses.find((c) => c.id === courseId);
     if (existing) {
-      Object.assign(existing, seedCourse);
+      existing.thumbnail = seedImageData.thumbnail ?? existing.thumbnail;
+      existing.galleryImages = seedImageData.galleryImages ?? existing.galleryImages;
       await saveCourseToDb(pool, existing);
     }
   }
