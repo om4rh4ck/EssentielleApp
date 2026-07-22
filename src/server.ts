@@ -2510,13 +2510,13 @@ const formulas: TrainingFormula[] = [
   },
   {
     id: 'formula-2',
-    title: 'Formule 2 - Formation + Tunisie',
-    description: 'Formation en ligne avec immersion internationale en Tunisie, voyage compris, stages en entreprise et doubles certificats.',
+    title: 'Formule 2 - Formation + Djerba',
+    description: 'Formation en ligne avec immersion internationale a Djerba, voyage compris, stages en entreprise et doubles certificats.',
     image: 'module-detox-poids.svg',
     highlights: [
       'Formation en ligne complète',
       'Certificat français et certificat tunisien',
-      'Voyage, hébergement et stages en entreprise en Tunisie',
+      'Voyage, hébergement et stages en entreprise a Djerba',
     ],
     instructorId: '2',
     priceEur: 890,
