@@ -29,6 +29,7 @@ import { apiLimiter, applyBaseSecurity, authLimiter, loginLimiter } from './serv
 import { registerUploadRoutes } from './server/uploads';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
+const CONTACT_NOTIFICATION_EMAIL = process.env['CONTACT_NOTIFICATION_EMAIL']?.trim() || 'contact@lessentielle-bienetre.site';
 
 type CourseAccess = 'free' | 'paid';
 type CourseStatus = 'published' | 'draft';
@@ -2998,6 +2999,38 @@ function buildMailSignature(): string {
   return "L'équipe Essenti'Elle Formation & Bien-Être";
 }
 
+function getNotificationMailboxForUser(user: PublicUser): string {
+  return user.role === 'admin' || user.role === 'instructor'
+    ? CONTACT_NOTIFICATION_EMAIL
+    : user.email;
+}
+
+async function sendInternalNotificationEmail(subject: string, textLines: string[], htmlLines: string[]): Promise<boolean> {
+  const config = getSmtpConfig();
+  if (!config) {
+    console.warn('[MAIL] SMTP not configured. Internal notification skipped.');
+    return false;
+  }
+
+  const transporter = createMailerTransport(config);
+  await transporter.sendMail({
+    from: config.from,
+    to: CONTACT_NOTIFICATION_EMAIL,
+    replyTo: config.replyTo,
+    headers: buildMailHeaders(),
+    subject,
+    text: [...textLines, '', buildMailSignature()].join('\n'),
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173526;max-width:640px;margin:0 auto">
+        ${htmlLines.join('')}
+        <p>${buildMailSignature()}</p>
+      </div>
+    `,
+  });
+
+  return true;
+}
+
 function isMailerConfigured(): boolean {
   return !!getSmtpConfig();
 }
@@ -3107,15 +3140,18 @@ async function sendPasswordResetEmail(user: PublicUser, token: string, req: Requ
   const resetUrl = `${getAppUrl(req)}/reset-password?token=${encodeURIComponent(token)}`;
   const transporter = createMailerTransport(config);
   const signature = buildMailSignature();
+  const recipient = getNotificationMailboxForUser(user);
 
   const info = await transporter.sendMail({
     from: config.from,
-    to: user.email,
+    to: recipient,
     replyTo: config.replyTo,
     headers: buildMailHeaders(),
     subject: 'Reinitialisation de votre mot de passe',
     text: [
       `Bonjour ${user.name},`,
+      '',
+      `Compte concerné : ${user.email}`,
       '',
       'Vous avez demande la reinitialisation de votre mot de passe.',
       `Cliquez sur ce lien pour definir un nouveau mot de passe : ${resetUrl}`,
@@ -3127,6 +3163,7 @@ async function sendPasswordResetEmail(user: PublicUser, token: string, req: Requ
     html: `
       <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173526;max-width:640px;margin:0 auto">
         <p>Bonjour ${user.name},</p>
+        <p>Compte concerné : <strong>${user.email}</strong></p>
         <p>Vous avez demande la reinitialisation de votre mot de passe.</p>
         <p><a href="${resetUrl}" style="display:inline-block;padding:12px 18px;background:#1F2A24;color:#fff;text-decoration:none;border-radius:12px;">Definir un nouveau mot de passe</a></p>
         <p>Ce lien est valable pendant 1 heure.</p>
@@ -3137,7 +3174,7 @@ async function sendPasswordResetEmail(user: PublicUser, token: string, req: Requ
 
   const accepted = Array.isArray(info.accepted) ? info.accepted.map((item: unknown) => String(item).toLowerCase()) : [];
   const rejected = Array.isArray(info.rejected) ? info.rejected.map((item: unknown) => String(item).toLowerCase()) : [];
-  const normalizedRecipient = user.email.toLowerCase();
+  const normalizedRecipient = recipient.toLowerCase();
 
   if (rejected.includes(normalizedRecipient) || !accepted.includes(normalizedRecipient)) {
     throw new Error('MAIL_NOT_ACCEPTED');
@@ -4888,6 +4925,18 @@ app.post('/api/register', authLimiter, async (req, res) => {
     } catch (mailError) {
       console.error('[MAIL] Registration success email failed', mailError);
     }
+    void sendInternalNotificationEmail(
+      `Nouvelle inscription - ${user.name}`,
+      [
+        `Nouvelle inscription reçue pour ${user.name}.`,
+        `Email : ${user.email}`,
+        `Rôle : ${user.role}`,
+      ],
+      [
+        `<p>Nouvelle inscription reçue pour <strong>${user.name}</strong>.</p>`,
+        `<p>Email : <strong>${user.email}</strong><br>Rôle : <strong>${user.role}</strong></p>`,
+      ]
+    ).catch((error) => console.error('[MAIL] Internal registration notification failed', error));
     const token = createToken(user);
     savePersistedData(); // Persist new user to JSON backup immediately
     res.status(201).json({ token, user });
@@ -5095,6 +5144,34 @@ app.post('/api/public/enrollment-requests', (req, res): any => {
   };
 
   publicEnrollmentRequests.unshift(request);
+  void sendInternalNotificationEmail(
+    `Nouvelle demande d'inscription - ${course.title}`,
+    [
+      `Nouvelle demande d'inscription reçue.`,
+      `Formation : ${course.title}`,
+      `Nom : ${name}`,
+      `Email : ${email}`,
+      `Téléphone : ${phone}`,
+      `Ville : ${city || '-'}`,
+      `Pays : ${country || '-'}`,
+      `Formule : ${request.formulaTitle || '-'}`,
+      `Certifications : ${request.certificateCount || 1}`,
+      `Message : ${message || '-'}`,
+    ],
+    [
+      `<p>Nouvelle demande d'inscription reçue pour <strong>${course.title}</strong>.</p>`,
+      `<ul>
+        <li><strong>Nom :</strong> ${name}</li>
+        <li><strong>Email :</strong> ${email}</li>
+        <li><strong>Téléphone :</strong> ${phone}</li>
+        <li><strong>Ville :</strong> ${city || '-'}</li>
+        <li><strong>Pays :</strong> ${country || '-'}</li>
+        <li><strong>Formule :</strong> ${request.formulaTitle || '-'}</li>
+        <li><strong>Certifications :</strong> ${request.certificateCount || 1}</li>
+        <li><strong>Message :</strong> ${message || '-'}</li>
+      </ul>`,
+    ]
+  ).catch((error) => console.error('[MAIL] Internal enrollment notification failed', error));
   const successMessage = course.access === 'free'
     ? 'Votre inscription a bien ete enregistree. La formation est maintenant disponible dans votre espace etudiante.'
     : 'Votre demande d inscription a bien ete enregistree. Apres validation administrative, vous recevrez une confirmation et votre acces personnel sera ouvert dans votre espace etudiante.';

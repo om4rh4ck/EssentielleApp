@@ -26,10 +26,24 @@ export class VoyageComponent {
   ];
 
   readonly activities = [
-    { icon: 'two_wheeler',    label: 'Découverte culturelle' },
-    { icon: 'pets',           label: 'Moments de détente' },
-    { icon: 'agriculture',    label: 'Visites locales' },
-    { icon: 'directions_car', label: 'Temps de cohésion' },
+    {
+      icon: 'pets',
+      label: 'Chevaux',
+      image: '/uploads/cheaveaux%20balade%20djerba.webp',
+      alt: 'Balade à cheval à Djerba',
+    },
+    {
+      icon: 'agriculture',
+      label: 'Chameaux',
+      image: '/uploads/balade-a-dos-de-chameau-a-djerba-3.jpg',
+      alt: 'Balade à dos de chameau à Djerba',
+    },
+    {
+      icon: 'directions_boat',
+      label: 'Jet ski',
+      image: '/uploads/activit%C3%A9%20jet%20ski%20djerba.avif',
+      alt: 'Activité jet ski à Djerba',
+    },
   ];
 
   readonly freeTime = [

@@ -17,6 +17,8 @@ import { INSTRUCTOR_MENU_ITEMS } from './instructor-menu';
           <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[var(--color-brand-gold-500)] text-3xl font-bold text-white">{{ initial() }}</div>
           <h2 class="mt-5 font-serif text-3xl text-[var(--color-brand-green-900)]">{{ profile()?.name }}</h2>
           <p class="mt-2 text-sm text-[var(--color-brand-green-800)]/70">{{ profile()?.email }}</p>
+          <p class="mt-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-gold-700)]">Boîte contact liée aux notifications et réinitialisations</p>
+          <p class="mt-2 text-sm font-semibold text-[var(--color-brand-green-900)]">contact@lessentielle-bienetre.site</p>
           <p class="mt-4 text-sm leading-7 text-[var(--color-brand-green-800)]/70">{{ profile()?.bio }}</p>
         </section>
 
