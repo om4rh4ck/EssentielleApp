@@ -3901,6 +3901,14 @@ function safeJsonParse<T>(val: unknown, fallback: T): T {
   try { return JSON.parse(String(val)) as T; } catch { return fallback; }
 }
 
+function normalizeFixedCoursePrice(course: Course): Course {
+  return {
+    ...course,
+    priceMinEur: course.priceEur,
+    priceMaxEur: course.priceEur,
+  };
+}
+
 async function saveCourseToDb(pool: Pool, course: Course): Promise<void> {
   try {
     await pool.execute(
@@ -3933,7 +3941,7 @@ async function saveCourseToDb(pool: Pool, course: Course): Promise<void> {
         course.id, course.title, course.instructorId, course.modules, course.students,
         course.thumbnail ?? null, course.description ?? null, course.access,
         course.priceEur, course.priceTnd ?? null, course.priceUsd ?? null,
-        course.priceMinEur ?? null, course.priceMaxEur ?? null,
+        course.priceEur, course.priceEur,
         course.pricingCurrency ?? 'EUR',
         course.promoEnabled ? 1 : 0,
         course.promoPriceEur ?? null, course.promoPriceTnd ?? null, course.promoPriceUsd ?? null,
@@ -3993,8 +4001,8 @@ async function loadCoursesFromDb(pool: Pool): Promise<void> {
         priceEur:       Number(row['price_eur']       ?? 0),
         priceTnd:       row['price_tnd']    != null ? Number(row['price_tnd'])    : undefined,
         priceUsd:       row['price_usd']    != null ? Number(row['price_usd'])    : undefined,
-        priceMinEur:    row['price_min_eur'] != null ? Number(row['price_min_eur']) : undefined,
-        priceMaxEur:    row['price_max_eur'] != null ? Number(row['price_max_eur']) : undefined,
+        priceMinEur:    Number(row['price_eur'] ?? 0),
+        priceMaxEur:    Number(row['price_eur'] ?? 0),
         pricingCurrency: (row['pricing_currency'] as 'EUR' | 'TND' | 'USD') ?? 'EUR',
         promoEnabled:   Boolean(row['promo_enabled']),
         promoPriceEur:  row['promo_price_eur']  != null ? Number(row['promo_price_eur'])  : undefined,
@@ -4732,6 +4740,7 @@ function serializeCatalog(user: PublicUser) {
   return courses
     .filter((course) => course.status === 'published')
     .map((course) => {
+      const fixedCourse = normalizeFixedCoursePrice(course);
       const enrollment = workspace.enrollments.find((item) => item.courseId === course.id);
       const pendingRequest = publicEnrollmentRequests.find((request) =>
         request.courseId === course.id &&
@@ -4758,8 +4767,8 @@ function serializeCatalog(user: PublicUser) {
       const quizAttemptsRemaining = Math.max(0, 2 - (quizAttempt?.attemptCount ?? 0));
 
       return {
-        ...course,
-        quizTitle: course.quizTitle ?? null,
+        ...fixedCourse,
+        quizTitle: fixedCourse.quizTitle ?? null,
         quizQuestions: quizQuestions ?? null,
         quizResult,
         quizAttemptsRemaining,
@@ -4775,10 +4784,13 @@ function serializePublicCatalog() {
   return {
     courses: courses
       .filter((course) => course.status === 'published')
-      .map((course) => ({
-        ...course,
-        modules: Math.max(course.moduleItems?.length ?? 0, course.modules),
-      })),
+      .map((course) => {
+        const fixedCourse = normalizeFixedCoursePrice(course);
+        return {
+          ...fixedCourse,
+          modules: Math.max(fixedCourse.moduleItems?.length ?? 0, fixedCourse.modules),
+        };
+      }),
     formulas: formulas
       .filter((formula) => formula.status === 'published')
       .map((formula) => ({
