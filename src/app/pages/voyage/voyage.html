@@ -148,17 +148,11 @@
             <h3 class="font-serif text-lg text-[var(--color-brand-green-900)]">5 demi-journées de pratique Starter</h3>
           </div>
         </div>
-        <div class="grid gap-3 mb-5 sm:grid-cols-3">
+        <div class="grid grid-cols-2 gap-3 mb-5">
           @for (act of activities; track act.label) {
-            <div class="overflow-hidden rounded-2xl border border-[var(--color-brand-gold-300)]/30 bg-[var(--color-brand-cream)] shadow-[0_8px_20px_rgba(18,53,36,0.05)]">
-              <div class="relative aspect-[4/3]">
-                <img [src]="act.image" [alt]="act.alt" class="h-full w-full object-cover" referrerpolicy="no-referrer" />
-                <div class="absolute inset-0 bg-gradient-to-t from-[rgba(9,25,16,0.62)] via-transparent to-transparent"></div>
-                <div class="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full bg-white/92 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-green-900)] shadow-sm">
-                  <mat-icon class="text-[var(--color-brand-gold-500)]" style="font-size:15px;width:15px;height:15px">{{ act.icon }}</mat-icon>
-                  {{ act.label }}
-                </div>
-              </div>
+            <div class="flex flex-col items-center gap-2 rounded-2xl border border-[var(--color-brand-gold-300)]/30 bg-[var(--color-brand-cream)] p-3 text-center">
+              <mat-icon class="text-[var(--color-brand-gold-500)]" style="font-size:22px;width:22px;height:22px">{{ act.icon }}</mat-icon>
+              <span class="text-[12px] font-semibold text-[var(--color-brand-green-900)]/80">{{ act.label }}</span>
             </div>
           }
         </div>
