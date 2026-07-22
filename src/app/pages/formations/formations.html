@@ -1,61 +1,78 @@
 <div class="pt-20">
 
   <!-- ═══ HERO ═══════════════════════════════════════════════════════════════ -->
-  <section class="relative overflow-hidden" style="min-height:340px">
+  <section class="relative overflow-hidden" style="min-height:420px">
     <!-- Background image -->
-    <img src="/uploads/image-toutes-formations.jpeg"
-         alt="Essenti'Elle — Toutes les formations professionnelles"
-         class="absolute inset-0 h-full w-full object-cover object-center" />
+    <img src="/imac%20vrai%20origin.png"
+         alt="Essenti'Elle — Formations professionnelles"
+         class="absolute inset-0 h-full w-full object-cover object-[center_28%] scale-[1.03]" />
     <!-- Dark overlay -->
-    <div class="absolute inset-0" style="background:linear-gradient(160deg,rgba(9,25,16,0.94) 0%,rgba(13,35,23,0.88) 50%,rgba(9,25,16,0.75) 100%)"></div>
-    <!-- Dot texture -->
-    <div class="pointer-events-none absolute inset-0 opacity-[0.025]" style="background-image:radial-gradient(circle,#c8a96a 1px,transparent 1px);background-size:32px 32px"></div>
+    <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,20,13,0.86)_0%,rgba(8,23,15,0.74)_48%,rgba(8,23,15,0.9)_100%)]"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_40%,rgba(200,169,106,0.12),transparent_30%)]"></div>
 
-    <div class="relative mx-auto max-w-7xl px-6 py-16 md:py-20">
-      <div class="max-w-3xl">
-        <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-[#c8a96a]/30 bg-[#c8a96a]/10 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[#c8a96a]">
-          <mat-icon style="font-size:13px;width:13px;height:13px">school</mat-icon>
-          Catalogue de Formations Professionnelles
+    <div class="relative mx-auto max-w-7xl px-6 py-16 md:py-24">
+      <div class="grid items-end gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+        <div class="max-w-3xl">
+          <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-[#c8a96a]/30 bg-[#c8a96a]/10 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[#c8a96a] backdrop-blur-sm">
+            <mat-icon style="font-size:13px;width:13px;height:13px">school</mat-icon>
+            Catalogue de Formations Professionnelles
+          </div>
+          <h1 class="font-serif text-4xl font-semibold text-white md:text-5xl lg:text-6xl leading-tight">
+            Nos Formations<br>
+            <span style="background:linear-gradient(90deg,#c8a96a,#e2c17a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Certifiantes</span>
+          </h1>
+          <p class="mt-4 max-w-xl text-[0.98rem] leading-[1.9] text-white/68">
+            Bien-être, nutrition, soins naturels et approches complémentaires. Des parcours clairs, visuels et structurés, avec un tarif fixe et des certifications internationales sur demande.
+          </p>
+
+          <div class="mt-8 flex flex-wrap gap-3">
+            <div class="flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.06] px-4 py-2.5 backdrop-blur-sm">
+              <mat-icon class="text-[#c8a96a]" style="font-size:18px;width:18px;height:18px">menu_book</mat-icon>
+              <span class="text-[12px] font-semibold text-white/82">{{ courses().length }} formations</span>
+            </div>
+            <div class="flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.06] px-4 py-2.5 backdrop-blur-sm">
+              <mat-icon class="text-[#c8a96a]" style="font-size:18px;width:18px;height:18px">workspace_premium</mat-icon>
+              <span class="text-[12px] font-semibold text-white/82">1 certificat inclus + options sur demande</span>
+            </div>
+            <div class="flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.06] px-4 py-2.5 backdrop-blur-sm">
+              <mat-icon class="text-[#c8a96a]" style="font-size:18px;width:18px;height:18px">language</mat-icon>
+              <span class="text-[12px] font-semibold text-white/82">100 % en ligne · 24h/24</span>
+            </div>
+            <div class="flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.06] px-4 py-2.5 backdrop-blur-sm">
+              <mat-icon class="text-[#c8a96a]" style="font-size:18px;width:18px;height:18px">flight_takeoff</mat-icon>
+              <span class="text-[12px] font-semibold text-white/82">Paris · Djerba</span>
+            </div>
+          </div>
+
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a routerLink="/register" class="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[13px] font-bold text-[#0c1610] shadow-[0_8px_28px_rgba(200,169,106,0.3)] transition hover:-translate-y-0.5"
+               style="background:linear-gradient(135deg,#c8a96a 0%,#e2c17a 100%)">
+              <mat-icon style="font-size:17px;width:17px;height:17px">rocket_launch</mat-icon>
+              Créer mon compte
+            </a>
+            <a routerLink="/contact" class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-7 py-3.5 text-[13px] font-bold text-white transition hover:bg-white/15 backdrop-blur-sm">
+              <mat-icon style="font-size:17px;width:17px;height:17px">mail_outline</mat-icon>
+              Nous contacter
+            </a>
+          </div>
         </div>
-        <h1 class="font-serif text-4xl font-semibold text-white md:text-5xl leading-tight">
-          Nos Formations<br>
-          <span style="background:linear-gradient(90deg,#c8a96a,#e2c17a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Certifiantes</span>
-        </h1>
-        <p class="mt-4 max-w-xl text-[0.97rem] leading-[1.85] text-white/55">
-          Bien-être, nutrition, soins naturels et approches complémentaires — des formations complètes avec certification professionnelle internationale.
-        </p>
 
-        <!-- Stats -->
-        <div class="mt-8 flex flex-wrap gap-4">
-          <div class="flex items-center gap-2.5 rounded-2xl border border-white/12 bg-white/[0.07] px-4 py-2.5">
-            <mat-icon class="text-[#c8a96a]" style="font-size:18px;width:18px;height:18px">menu_book</mat-icon>
-            <span class="text-[12px] font-semibold text-white/80">{{ courses().length }} formations</span>
+        <div class="hidden lg:block">
+          <div class="rounded-[28px] border border-white/10 bg-white/8 p-4 shadow-[0_24px_60px_rgba(0,0,0,0.18)] backdrop-blur-sm">
+            <img src="/imac%20vrai%20origin.png"
+                 alt="Essenti'Elle — aperçu formations"
+                 class="h-[300px] w-full rounded-[22px] object-cover object-center" />
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <div class="rounded-2xl border border-white/10 bg-black/20 p-4 text-white">
+                <div class="text-[10px] uppercase tracking-[0.22em] text-white/50">Tarif fixe</div>
+                <div class="mt-2 text-sm font-semibold">{{ courses().length }} parcours en catalogue</div>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-black/20 p-4 text-white">
+                <div class="text-[10px] uppercase tracking-[0.22em] text-white/50">Certification</div>
+                <div class="mt-2 text-sm font-semibold">Options internationales sur demande</div>
+              </div>
+            </div>
           </div>
-          <div class="flex items-center gap-2.5 rounded-2xl border border-white/12 bg-white/[0.07] px-4 py-2.5">
-            <mat-icon class="text-[#c8a96a]" style="font-size:18px;width:18px;height:18px">workspace_premium</mat-icon>
-            <span class="text-[12px] font-semibold text-white/80">1 certification incluse + options sur demande</span>
-          </div>
-          <div class="flex items-center gap-2.5 rounded-2xl border border-white/12 bg-white/[0.07] px-4 py-2.5">
-            <mat-icon class="text-[#c8a96a]" style="font-size:18px;width:18px;height:18px">language</mat-icon>
-            <span class="text-[12px] font-semibold text-white/80">100 % en ligne · 24h/24</span>
-          </div>
-          <div class="flex items-center gap-2.5 rounded-2xl border border-white/12 bg-white/[0.07] px-4 py-2.5">
-            <mat-icon class="text-[#c8a96a]" style="font-size:18px;width:18px;height:18px">flight_takeoff</mat-icon>
-            <span class="text-[12px] font-semibold text-white/80">Paris · Djerba</span>
-          </div>
-        </div>
-
-        <!-- CTAs -->
-        <div class="mt-8 flex flex-wrap gap-3">
-          <a routerLink="/register" class="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[13px] font-bold text-[#0c1610] shadow-[0_8px_28px_rgba(200,169,106,0.3)] transition hover:-translate-y-0.5"
-             style="background:linear-gradient(135deg,#c8a96a 0%,#e2c17a 100%)">
-            <mat-icon style="font-size:17px;width:17px;height:17px">rocket_launch</mat-icon>
-            Créer mon compte
-          </a>
-          <a routerLink="/contact" class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-7 py-3.5 text-[13px] font-bold text-white transition hover:bg-white/15">
-            <mat-icon style="font-size:17px;width:17px;height:17px">mail_outline</mat-icon>
-            Nous contacter
-          </a>
         </div>
       </div>
     </div>
