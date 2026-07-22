@@ -22,7 +22,7 @@
           <span style="background:linear-gradient(90deg,#c8a96a,#e2c17a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Certifiantes</span>
         </h1>
         <p class="mt-4 max-w-xl text-[0.97rem] leading-[1.85] text-white/55">
-          Bien-être, nutrition, soins naturels et médecines complémentaires — des formations complètes avec certification professionnelle internationale.
+          Bien-être, nutrition, soins naturels et approches complémentaires — des formations complètes avec certification professionnelle internationale.
         </p>
 
         <!-- Stats -->
@@ -33,7 +33,7 @@
           </div>
           <div class="flex items-center gap-2.5 rounded-2xl border border-white/12 bg-white/[0.07] px-4 py-2.5">
             <mat-icon class="text-[#c8a96a]" style="font-size:18px;width:18px;height:18px">workspace_premium</mat-icon>
-            <span class="text-[12px] font-semibold text-white/80">1 à 5 certifications</span>
+            <span class="text-[12px] font-semibold text-white/80">1 certification incluse + options sur demande</span>
           </div>
           <div class="flex items-center gap-2.5 rounded-2xl border border-white/12 bg-white/[0.07] px-4 py-2.5">
             <mat-icon class="text-[#c8a96a]" style="font-size:18px;width:18px;height:18px">language</mat-icon>
@@ -76,7 +76,7 @@
             Choisissez votre formation
           </h2>
           <p class="mt-2 max-w-xl text-[0.93rem] text-[var(--color-brand-green-800)]/60">
-            Chaque formation inclut PDF complet, galerie illustrée, examen final et certificat professionnel.
+            Chaque formation inclut PDF complet, galerie illustrée, examen final et certificat professionnel. Les 2e et 3e certifications internationales sont disponibles sur demande.
           </p>
         </div>
         <a routerLink="/register" class="inline-flex items-center gap-2 self-start rounded-full border border-[var(--color-brand-gold-400)]/60 bg-white px-5 py-2.5 text-[12px] font-bold text-[var(--color-brand-green-900)] shadow-sm transition hover:border-[var(--color-brand-gold-500)] hover:shadow-md md:self-auto">
@@ -116,7 +116,7 @@
               <!-- Bottom: price + CTA -->
               <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-2">
                 <div class="rounded-2xl bg-white/95 px-4 py-2 shadow-sm">
-                  <div class="text-[9px] uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/50 leading-none mb-0.5">À partir de</div>
+                  <div class="text-[9px] uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/50 leading-none mb-0.5">Prix de départ</div>
                   <div class="text-sm font-bold text-[var(--color-brand-green-900)]">{{ coursePrice(course) }}</div>
                 </div>
                 <a [routerLink]="currentUser()?.role === 'student' ? enrollmentLink(course.id) : registerLink(course.id)"
@@ -273,7 +273,7 @@
         <h2 class="font-serif text-3xl text-[var(--color-brand-green-900)] md:text-4xl">Vos Certifications</h2>
         <div class="mx-auto mt-3 h-[2px] w-14 rounded-full bg-[var(--color-brand-gold-500)]"></div>
         <p class="mx-auto mt-4 max-w-xl text-[0.93rem] text-[var(--color-brand-green-800)]/60">
-          Jusqu'à 5 certifications professionnelles internationales selon la formule choisie.
+          Certification de base incluse, avec 2e et 3e certifications internationales disponibles sur demande.
         </p>
       </div>
 
@@ -318,7 +318,7 @@
           }
         </div>
         <p class="mt-3 text-[0.82rem] italic text-[var(--color-brand-green-800)]/45">
-          Possibilité d'obtenir jusqu'à 5 certifications grâce à nos partenariats internationaux.
+          Possibilité d'ajouter une 2e ou 3e certification internationale à 300 EUR chacune sur demande.
         </p>
       </div>
 

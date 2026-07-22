@@ -72,10 +72,6 @@ export class FormationsComponent implements OnInit {
       return this.t({ fr: 'Acces libre', en: 'Free access', ar: 'دخول مجاني' });
     }
 
-    if (course.priceMinEur && course.priceMaxEur && course.priceMaxEur > course.priceMinEur) {
-      return `${this.formatPrice(course.priceMinEur)} - ${this.formatPrice(course.priceMaxEur)}`;
-    }
-
     const basePrice = course.promoEnabled && course.promoPriceEur && course.promoPriceEur > 0
       ? course.promoPriceEur
       : course.priceEur;
@@ -88,9 +84,10 @@ export class FormationsComponent implements OnInit {
       return null;
     }
 
-    const min = Math.min(...course.certificateOptions);
     const max = Math.max(...course.certificateOptions);
-    return `${min} - ${max} certificat${max > 1 ? 's' : ''}`;
+    return max > 1
+      ? '1 certificat inclus + 2e/3e sur demande'
+      : '1 certificat inclus';
   }
 
   enrollmentLink(courseId: string): string[] {

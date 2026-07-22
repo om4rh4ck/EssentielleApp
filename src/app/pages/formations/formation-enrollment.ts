@@ -42,7 +42,7 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
                     <div class="mt-2 text-lg font-bold text-[var(--color-brand-green-900)]">{{ selectedCourse.modules }}</div>
                   </div>
                   <div>
-                    <div class="text-[11px] uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Prix</div>
+                  <div class="text-[11px] uppercase tracking-[0.2em] text-[var(--color-brand-green-800)]/45">Prix de départ</div>
                     <div class="mt-2 text-lg font-bold text-[var(--color-brand-green-900)]">{{ priceLabel(selectedCourse) }}</div>
                   </div>
                 </div>
@@ -114,9 +114,9 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
 
                 @if (selectedCourse.certificateOptions?.length) {
                   <div class="rounded-[24px] border border-[var(--color-brand-gold-300)]/24 bg-[#fffaf2] p-5">
-                    <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Option 1 a 3 certificats</h2>
+                    <h2 class="font-serif text-2xl text-[var(--color-brand-green-900)]">Option certification internationale</h2>
                     <p class="mt-3 text-sm leading-7 text-[var(--color-brand-green-800)]/72">
-                      Le prix final depend du nombre de certificats choisis. Selectionnez 1, 2 ou 3 certificats dans votre demande.
+                      Le prix affiché correspond au prix de départ. Les 2e et 3e certifications internationales peuvent être demandées ici, à 300 EUR chacune.
                     </p>
 
                     @if (selectedCourse.chapters?.length) {
@@ -217,9 +217,9 @@ import { PublicCatalogCourse, PublicCatalogFormula, PublicCatalogService } from 
 
                 @if (selectedCourse.certificateOptions?.length) {
                   <select formControlName="certificateCount" class="w-full rounded-2xl bg-white px-4 py-3 text-sm outline-none">
-                    <option value="">Choisir le nombre de certificats</option>
+                    <option value="">Choisir l'option certification</option>
                     @for (count of selectedCourse.certificateOptions; track count) {
-                      <option [value]="count">{{ count }} certificat{{ count > 1 ? 's' : '' }}</option>
+                      <option [value]="count">{{ count }} certificat{{ count > 1 ? 's' : '' }} {{ count > 1 ? '(300 EUR chacun en supplément)' : '(inclus)' }}</option>
                     }
                   </select>
                 }
@@ -396,10 +396,6 @@ export class FormationEnrollmentComponent implements OnInit {
   }
 
   priceLabel(course: PublicCatalogCourse): string {
-    if (course.priceMinEur && course.priceMaxEur && course.priceMaxEur > course.priceMinEur) {
-      return `${course.priceMinEur} EUR - ${course.priceMaxEur} EUR`;
-    }
-
-    return `${course.priceEur} EUR`;
+    return `${course.promoEnabled && course.promoPriceEur && course.promoPriceEur > 0 ? course.promoPriceEur : course.priceEur} EUR`;
   }
 }

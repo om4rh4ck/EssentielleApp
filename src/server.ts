@@ -391,7 +391,7 @@ const courses: Course[] = [
     priceMinEur: 2590,
     priceMaxEur: 5990,
     pricingCurrency: 'EUR',
-    certificateOptions: [1, 2, 3, 4, 5],
+    certificateOptions: [1, 2, 3],
     promoEnabled: false,
     category: 'Nutrition',
     status: 'published',
@@ -779,18 +779,18 @@ const courses: Course[] = [
   },
   {
     id: '2',
-    title: "Formation Détox Thérapeutique Complète",
+    title: "Formation Détox Professionnelle Complète",
     instructorId: '2',
     modules: 10,
     students: 185,
     thumbnail: '/formation%20detox/cover%20detox%20origin.jpeg',
-    description: "Une formation complète en 10 modules pour maîtriser la détox thérapeutique : émonctoires, foie, reins, intestins, poumons, peau, alimentation détox et suivi personnalisé.",
+    description: "Une formation complète en 10 modules pour maîtriser la détox professionnelle : émonctoires, foie, reins, intestins, poumons, peau, alimentation détox et suivi personnalisé.",
     access: 'paid',
     priceEur: 790,
     priceMinEur: 790,
     priceMaxEur: 1590,
     pricingCurrency: 'EUR',
-    certificateOptions: [1, 2, 3, 4, 5],
+    certificateOptions: [1, 2, 3],
     promoEnabled: false,
     category: 'Détox',
     status: 'published',
@@ -811,7 +811,7 @@ const courses: Course[] = [
     moduleItems: [
       {
         id: 'module-2-pdf',
-        title: 'Formation Détox Thérapeutique Complète',
+        title: 'Formation Détox Professionnelle Complète',
         pdfName: 'formation-detox-complete.pdf',
         pdfDataUrl: '/uploads/formation-detox-complete.pdf',
       },
@@ -836,7 +836,7 @@ const courses: Course[] = [
       { id: 'content-2-5', text: 'Protocoles personnalisés' },
       { id: 'content-2-6', text: 'Certificat professionnel de fin de formation' },
     ],
-    quizTitle: "Examen Final — Détox Thérapeutique Complète (Modules 1 à 10)",
+    quizTitle: "Examen Final — Détox Professionnelle Complète (Modules 1 à 10)",
     quizQuestions: [
       // MODULE 1 — LES BASES DE LA DÉTOX
       {
@@ -1266,7 +1266,7 @@ courses.push(
     priceMinEur: 990,
     priceMaxEur: 2900,
     pricingCurrency: 'EUR',
-    certificateOptions: [1, 2, 3, 4, 5],
+    certificateOptions: [1, 2, 3],
     promoEnabled: false,
     category: 'Réflexologie',
     status: 'published',
@@ -1317,7 +1317,7 @@ courses.push(
       { id: 'ref-q18', prompt: "Le protocole en réflexologie est :", options: ["Aléatoire", "Structuré", "Inutile", "Interdit"], correctIndex: 1 },
       { id: 'ref-q19', prompt: "La fidélisation client consiste à :", options: ["Changer de clients", "Créer une relation durable", "Ignorer les clients", "Augmenter la douleur"], correctIndex: 1 },
       { id: 'ref-q20', prompt: "La réflexologie auriculaire agit sur :", options: ["Le système nerveux", "Les muscles uniquement", "Les os", "La peau uniquement"], correctIndex: 0 },
-      { id: 'ref-q21', prompt: "Quelle définition correspond à la réflexologie ?", options: ["Technique chirurgicale des pieds", "Technique de bien-être stimulant des zones réflexes pour l'équilibre du corps", "Méthode de diagnostic médical", "Pratique de nutrition thérapeutique"], correctIndex: 1 },
+      { id: 'ref-q21', prompt: "Quelle définition correspond à la réflexologie ?", options: ["Technique chirurgicale des pieds", "Technique de bien-être stimulant des zones réflexes pour l'équilibre du corps", "Méthode de diagnostic médical", "Pratique de nutrition spécialisée"], correctIndex: 1 },
       { id: 'ref-q22', prompt: "Parmi les zones réflexes principales, lesquelles sont correctes ?", options: ["Dos, ventre, nuque", "Pieds, mains, oreilles", "Yeux, dents, coude", "Genou, épaule, cheville"], correctIndex: 1 },
       { id: 'ref-q23', prompt: "Quel est le rôle de l'anamnèse en réflexologie ?", options: ["Effectuer un massage profond", "Recueillir les informations du client pour adapter la séance", "Prescrire un traitement médicamenteux", "Réaliser un bilan sanguin"], correctIndex: 1 },
       { id: 'ref-q24', prompt: "Parmi les techniques suivantes, lesquelles sont utilisées en réflexologie plantaire ?", options: ["Incisions et sutures", "Lissage et pression circulaire", "Injections et prises de sang", "Acupuncture et moxibustion"], correctIndex: 1 },
@@ -1338,7 +1338,7 @@ courses.push(
     thumbnail: '/formation%20kin%C3%A9silogie/photo%20de%20cover.jpeg',
     description: "Formation complète en 10 modules pour maîtriser les bases de la kinésiologie, le test musculaire, l'anatomie fonctionnelle, les méridiens, les émotions, les réflexes archaïques et les protocoles professionnels.",
     presentation: "Cette formation professionnelle complète en kinésiologie vous guide pas à pas dans l'écoute du corps, l'identification des déséquilibres et la mise en place de corrections adaptées. Le parcours couvre 10 modules, environ 50 chapitres, 300 à 500 heures de formation, avec une approche globale du corps, du mental, de l'énergie, des émotions et du mouvement.",
-    warning: "Cette formation est à visée éducative, bien-être et professionnelle. Elle ne remplace pas un diagnostic médical, un suivi thérapeutique réglementé ni un traitement prescrit. Le praticien accompagne la personne dans un cadre éthique, non médical et respectueux de ses limites professionnelles.",
+    warning: "Cette formation est à visée éducative, bien-être et professionnelle. Elle ne remplace pas un diagnostic médical, un suivi de santé réglementé ni un traitement prescrit. Le praticien accompagne la personne dans un cadre éthique, non médical et respectueux de ses limites professionnelles.",
     access: 'paid',
     priceEur: 2800,
     priceMinEur: 2800,
@@ -1433,7 +1433,7 @@ courses.push(
     priceMinEur: 590,
     priceMaxEur: 1500,
     pricingCurrency: 'EUR',
-    certificateOptions: [1, 2, 3, 4, 5],
+    certificateOptions: [1, 2, 3],
     promoEnabled: false,
     category: 'Massage',
     status: 'published',
@@ -1460,7 +1460,7 @@ courses.push(
     priceMinEur: 990,
     priceMaxEur: 2500,
     pricingCurrency: 'EUR',
-    certificateOptions: [1, 2, 3, 4, 5],
+    certificateOptions: [1, 2, 3],
     promoEnabled: false,
     category: 'Drainage',
     status: 'published',
@@ -1667,7 +1667,7 @@ courses.push(
     priceMinEur: 1190,
     priceMaxEur: 4500,
     pricingCurrency: 'EUR',
-    certificateOptions: [1, 2, 3, 4, 5],
+    certificateOptions: [1, 2, 3],
     promoEnabled: false,
     category: 'Soins infirmiers',
     status: 'published',
@@ -1746,7 +1746,7 @@ courses.push(
       {
         id: 'si-module-10',
         title: 'Relation soignant et patient',
-        chapters: ['Communication empathique', 'Consentement et respect', 'Confidentialité', 'Education thérapeutique'],
+        chapters: ['Communication empathique', 'Consentement et respect', 'Confidentialité', 'Éducation au bien-être'],
       },
       {
         id: 'si-module-11',
@@ -1811,7 +1811,7 @@ courses.push(
     priceMinEur: 1700,
     priceMaxEur: 3000,
     pricingCurrency: 'EUR',
-    certificateOptions: [1, 2, 3, 4, 5],
+    certificateOptions: [1, 2, 3],
     promoEnabled: false,
     category: 'Service à la personne',
     status: 'published',
@@ -1936,7 +1936,7 @@ courses.push(
     priceMinEur: 990,
     priceMaxEur: 3500,
     pricingCurrency: 'EUR',
-    certificateOptions: [1, 2, 3, 4, 5],
+    certificateOptions: [1, 2, 3],
     promoEnabled: false,
     category: 'Phytotherapie',
     status: 'published',
@@ -2013,7 +2013,7 @@ courses.push(
     quizTitle: "Examen Final — Formation Professionnelle en Herboristerie & Phytothérapie",
     quizAttemptsRemaining: 2,
     quizQuestions: [
-      { id: 'herb-q1',  prompt: "Quelle est la définition principale de la phytothérapie ?", options: ["Utilisation des huiles essentielles uniquement", "Utilisation des plantes médicinales pour la santé", "Utilisation des minéraux thérapeutiques", "Utilisation des médicaments chimiques"], correctIndex: 1 },
+      { id: 'herb-q1',  prompt: "Quelle est la définition principale de la phytothérapie ?", options: ["Utilisation des huiles essentielles uniquement", "Utilisation des plantes médicinales pour la santé", "Utilisation des minéraux naturels", "Utilisation des médicaments chimiques"], correctIndex: 1 },
       { id: 'herb-q2',  prompt: "Une infusion est principalement utilisée pour :", options: ["Racines et écorces", "Plantes dures", "Fleurs et feuilles", "Plantes toxiques"], correctIndex: 2 },
       { id: 'herb-q3',  prompt: "Quelle partie de la plante contient souvent le plus de principes actifs concentrés ?", options: ["Racines", "Tiges", "Eau", "Air"], correctIndex: 0 },
       { id: 'herb-q4',  prompt: "Le séchage des plantes doit se faire :", options: ["Au soleil direct", "Dans un endroit humide", "À l'ombre ventilée", "Dans l'eau"], correctIndex: 2 },
@@ -2132,7 +2132,7 @@ courses.push(
           "Les différents types de ventouses — verre, plastique, silicone, bambou : avantages et usages",
           "Utilisation du matériel — placement, aspiration, retrait, entretien des ventouses",
           "Désinfection & hygiène — protocoles de nettoyage, protection individuelle, hygiène de l'espace",
-          "Installation de l'espace de soin — aménagement professionnel, table, ambiance thérapeutique",
+          "Installation de l'espace de soin — aménagement professionnel, table, ambiance apaisante",
           "Sécurité professionnelle — questionnaire pré-séance, limites professionnelles, confidentialité",
         ],
       },
@@ -2165,7 +2165,7 @@ courses.push(
           "Gestion du stress — effets du stress chronique, action du cupping sur trapèzes et cervicales",
           "Relaxation profonde — mécanismes, zones clés (dos, épaules, nuque, jambes), techniques",
           "Respiration & détente — rôle de la respiration, techniques respiratoires, synchronisation",
-          "Ambiance thérapeutique — lumière, musique, température, posture du praticien",
+          "Ambiance professionnelle — lumière, musique, température, posture du praticien",
           "Protocoles anti-fatigue — zones, techniques mobiles + statiques, conseils post-séance",
         ],
       },
@@ -2366,7 +2366,7 @@ courses.push(
       },
       {
         id: "hijama-q19",
-        prompt: "Une ambiance thérapeutique professionnelle doit être :",
+        prompt: "Une ambiance professionnelle doit être :",
         options: ["Stressante", "Bruyante", "Calme et propre", "Désorganisée"],
         correctIndex: 2,
       },
@@ -2482,7 +2482,7 @@ courses.push(
     priceMinEur: 600,
     priceMaxEur: 2000,
     pricingCurrency: 'EUR',
-    certificateOptions: [1, 2, 3, 4, 5],
+    certificateOptions: [1, 2, 3],
     promoEnabled: false,
     category: 'Ventouses',
     status: 'published',
@@ -3055,7 +3055,9 @@ async function sendPaidEnrollmentApprovalEmail(student: PublicUser, course: Cour
   const signature = buildMailSignature();
 
   const formulaLine = request.formulaTitle ? `Formule choisie : ${request.formulaTitle}` : '';
-  const certificateLine = request.certificateCount ? `Nombre de certificats : ${request.certificateCount}` : '';
+  const certificateLine = request.certificateCount
+    ? `Certifications internationales demandées : ${request.certificateCount} (${request.certificateCount > 1 ? `${request.certificateCount - 1} supplément(s) à 300 EUR` : 'tarif de base'})`
+    : '';
   const detailsBlock = [formulaLine, certificateLine].filter(Boolean).join('\n');
   const htmlDetails = [formulaLine, certificateLine].filter(Boolean).map((line) => `<li>${line}</li>`).join('');
 
@@ -3660,7 +3662,7 @@ async function ensureSchemaAndSeed(pool: Pool): Promise<void> {
         }));
         await pool.query(
           `INSERT INTO course_quiz_config (course_id, quiz_title, questions_json)
-           VALUES ('2', 'Examen Final — Détox Thérapeutique Complète (Modules 1 à 10)', ?)
+           VALUES ('2', 'Examen Final — Détox Professionnelle Complète (Modules 1 à 10)', ?)
            ON DUPLICATE KEY UPDATE quiz_title = VALUES(quiz_title), questions_json = VALUES(questions_json)`,
           [JSON.stringify(migrated)]
         );
@@ -4352,10 +4354,9 @@ function estimateEnrollmentAmount(course: Course, request?: PublicEnrollmentRequ
     }
   }
 
-  if (request?.certificateCount && course.priceMinEur && course.priceMaxEur) {
-    if (request.certificateCount <= 1) return course.priceMinEur;
-    if (request.certificateCount >= 3) return course.priceMaxEur;
-    return Math.round((course.priceMinEur + course.priceMaxEur) / 2);
+  if (request?.certificateCount && course.priceEur) {
+    const extraCertificates = Math.max(0, request.certificateCount - 1);
+    return course.priceEur + (extraCertificates * 300);
   }
 
   return course.priceEur;
