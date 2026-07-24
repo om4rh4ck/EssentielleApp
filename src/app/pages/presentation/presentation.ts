@@ -60,11 +60,11 @@ export class PresentationComponent {
     },
     {
       emoji: '🌱', id: '11',
-      title: 'Herboristerie & Phytothérapie',
+      title: 'Herboristerie & Plantes médicinales',
       subtitle: 'Plantes médicinales et applications',
       desc: 'Découvrez les propriétés des plantes médicinales et leurs applications naturelles.',
       items: ['Botanique', 'Plantes médicinales', 'Préparations naturelles', 'Tisanes et macérations', 'Conseils bien-être'],
-      keywords: 'herboristerie phytothérapie plantes médicinales formation naturopathie',
+      keywords: 'herboristerie plantes médicinales formation naturopathie',
     },
     {
       emoji: '🔥', id: '12',
